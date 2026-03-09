@@ -1,1448 +1,1042 @@
 <!DOCTYPE html>
-<html lang="en" translate="no">
+<html lang="pt-BR" translate="no">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HEILLON — Computational Legitimacy Infrastructure</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Outfit:wght@200;300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Mono:wght@300;400&family=Outfit:wght@200;300;400&display=swap" rel="stylesheet">
 <style>
-:root {
-  --void: #060608;
-  --depth: #0a0b12;
-  --surface: #0f1020;
-  --indigo-deep: #12142a;
-  --indigo: #1e2048;
-  --indigo-mid: #2a2d6e;
-  --lavender: #7b7fc4;
-  --lavender-bright: #a8abdf;
-  --lavender-glow: #c4c6f0;
-  --lilac: #d0b8f8;
-  --proof: #5b8fff;
-  --proof-dim: rgba(91,143,255,0.15);
-  --gold: #b89c6a;
-  --gold-dim: rgba(184,156,106,0.12);
-  --ink: #e8e6f0;
-  --ink-dim: rgba(232,230,240,0.55);
-  --ink-ghost: rgba(232,230,240,0.25);
-  --ink-faint: rgba(232,230,240,0.08);
-
-  --t-display: clamp(3rem, 7vw, 6.5rem);
-  --t-hero: clamp(2.2rem, 5vw, 4.8rem);
-  --t-section: clamp(1.8rem, 3.5vw, 3.2rem);
-  --t-body: clamp(1rem, 1.5vw, 1.15rem);
-  --t-small: 0.8rem;
-  --t-micro: 0.7rem;
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  background: var(--void);
-  color: var(--ink);
-  font-family: 'Outfit', sans-serif;
-  font-weight: 300;
-  overflow-x: hidden;
-  cursor: default;
-}
-
-/* ─── SCROLLBAR ─── */
-::-webkit-scrollbar { width: 2px; }
-::-webkit-scrollbar-track { background: var(--void); }
-::-webkit-scrollbar-thumb { background: var(--indigo-mid); }
-
-/* ─── NOISE OVERLAY ─── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 1000;
-  opacity: 0.6;
-}
-
-/* ─── AMBIENT GLOW ─── */
-.ambient {
-  position: fixed;
-  border-radius: 50%;
-  filter: blur(120px);
-  pointer-events: none;
-  z-index: 0;
-}
-.ambient-1 {
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(30,32,72,0.5) 0%, transparent 70%);
-  top: -200px; left: -100px;
-}
-.ambient-2 {
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(123,127,196,0.08) 0%, transparent 70%);
-  top: 30vh; right: -150px;
-}
-.ambient-3 {
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(208,184,248,0.05) 0%, transparent 70%);
-  bottom: 20vh; left: 30%;
-}
-
-/* ─── NAV ─── */
-nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 900;
-  padding: 1.5rem 3rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: linear-gradient(to bottom, rgba(6,6,8,0.9) 0%, transparent 100%);
-  backdrop-filter: blur(8px);
-}
-
-.nav-logo {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.3rem;
-  font-weight: 400;
-  letter-spacing: 0.15em;
-  color: var(--lavender-glow);
-  text-decoration: none;
-}
-
-.nav-links {
-  display: flex;
-  gap: 2.5rem;
-  list-style: none;
-}
-
-.nav-links a {
-  font-size: var(--t-small);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ink-ghost);
-  text-decoration: none;
-  transition: color 0.3s;
-}
-.nav-links a:hover { color: var(--lavender-bright); }
-
-.nav-cta {
-  font-size: var(--t-small);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--lavender);
-  text-decoration: none;
-  border: 1px solid rgba(123,127,196,0.3);
-  padding: 0.5rem 1.2rem;
-  transition: all 0.3s;
-}
-.nav-cta:hover {
-  background: rgba(123,127,196,0.08);
-  color: var(--lavender-glow);
-  border-color: rgba(123,127,196,0.6);
-}
-
-/* ─── SECTIONS BASE ─── */
-section {
-  position: relative;
-  z-index: 10;
-}
-
-/* ─── HERO ─── */
-#hero {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 0 clamp(2rem, 6vw, 8rem);
-  padding-top: 8rem;
-}
-
-.hero-eyebrow {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--lavender);
-  opacity: 0.7;
-  margin-bottom: 2.5rem;
-  animation: fadeUp 1.2s ease forwards;
-  animation-delay: 0.2s;
-  opacity: 0;
-}
-
-.hero-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: var(--t-display);
-  font-weight: 300;
-  line-height: 1.0;
-  letter-spacing: -0.02em;
-  max-width: 900px;
-  animation: fadeUp 1.2s ease forwards;
-  animation-delay: 0.5s;
-  opacity: 0;
-}
-
-.hero-title em {
-  font-style: italic;
-  color: var(--lavender-bright);
-}
-
-.hero-subtitle {
-  margin-top: 2.5rem;
-  font-size: var(--t-body);
-  color: var(--ink-dim);
-  max-width: 520px;
-  line-height: 1.7;
-  font-weight: 300;
-  animation: fadeUp 1.2s ease forwards;
-  animation-delay: 0.8s;
-  opacity: 0;
-}
-
-.hero-actions {
-  margin-top: 3.5rem;
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-  animation: fadeUp 1.2s ease forwards;
-  animation-delay: 1.1s;
-  opacity: 0;
-}
-
-.btn-primary {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-small);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--void);
-  background: var(--lavender-bright);
-  text-decoration: none;
-  padding: 0.85rem 2rem;
-  transition: all 0.3s;
-  display: inline-block;
-}
-.btn-primary:hover {
-  background: var(--lavender-glow);
-  transform: translateY(-1px);
-}
-
-.btn-secondary {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-small);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--lavender);
-  text-decoration: none;
-  padding: 0.85rem 2rem;
-  border: 1px solid rgba(123,127,196,0.25);
-  transition: all 0.3s;
-}
-.btn-secondary:hover {
-  border-color: rgba(123,127,196,0.6);
-  color: var(--lavender-bright);
-}
-
-.hero-scroll-indicator {
-  position: absolute;
-  bottom: 3rem;
-  left: clamp(2rem, 6vw, 8rem);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  animation: fadeUp 1s ease forwards;
-  animation-delay: 1.5s;
-  opacity: 0;
-}
-
-.scroll-line {
-  width: 40px;
-  height: 1px;
-  background: var(--lavender);
-  opacity: 0.3;
-  animation: expandLine 2s ease-in-out infinite;
-}
-
-.scroll-text {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ink-ghost);
-}
-
-/* ─── HERO VISUAL ─── */
-.hero-visual {
-  position: absolute;
-  right: clamp(2rem, 5vw, 6rem);
-  top: 50%;
-  transform: translateY(-50%);
-  width: min(45%, 600px);
-  opacity: 0;
-  animation: fadeIn 1.5s ease forwards;
-  animation-delay: 1s;
-}
-
-.hero-visual img {
-  width: 100%;
-  filter: brightness(0.85) saturate(1.2);
-  border-radius: 2px;
-}
-
-.hero-visual::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to right, var(--void) 0%, transparent 30%);
-  pointer-events: none;
-}
-
-/* ─── DIVIDER ─── */
-.section-divider {
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(to right, transparent, rgba(123,127,196,0.15), transparent);
-  margin: 0;
-}
-
-/* ─── PROBLEM SECTION ─── */
-#problem {
-  padding: clamp(6rem, 12vw, 12rem) clamp(2rem, 6vw, 8rem);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6rem;
-  align-items: center;
-}
-
-.problem-label {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--lavender);
-  opacity: 0.6;
-  margin-bottom: 2rem;
-}
-
-.problem-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: var(--t-section);
-  font-weight: 300;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-}
-
-.problem-title strong {
-  font-weight: 400;
-  color: var(--lavender-bright);
-}
-
-.problem-body {
-  font-size: var(--t-body);
-  color: var(--ink-dim);
-  line-height: 1.8;
-  margin-top: 2rem;
-}
-
-.problem-body p + p { margin-top: 1.2rem; }
-
-.problem-list {
-  margin-top: 2.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.problem-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1.2rem 1.5rem;
-  background: var(--indigo-deep);
-  border-left: 1px solid rgba(123,127,196,0.2);
-}
-
-.problem-item-icon {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  color: var(--lavender);
-  opacity: 0.5;
-  padding-top: 0.1rem;
-  flex-shrink: 0;
-}
-
-.problem-item-text {
-  font-size: 0.9rem;
-  color: var(--ink-dim);
-  line-height: 1.5;
-}
-
-/* ─── CATEGORY SECTION ─── */
-#category {
-  padding: clamp(6rem, 12vw, 12rem) clamp(2rem, 6vw, 8rem);
-  text-align: center;
-  background: linear-gradient(to bottom, transparent, rgba(18,20,42,0.5), transparent);
-}
-
-.category-eyebrow {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--lavender);
-  opacity: 0.6;
-  margin-bottom: 3rem;
-}
-
-.category-statement {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(2rem, 4.5vw, 4.2rem);
-  font-weight: 300;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.category-statement em {
-  font-style: italic;
-  color: var(--lavender-bright);
-}
-
-.category-comparison {
-  margin-top: 5rem;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0;
-  border: 1px solid rgba(123,127,196,0.1);
-}
-
-.comparison-item {
-  padding: 2.5rem 2rem;
-  border-right: 1px solid rgba(123,127,196,0.1);
-  text-align: left;
-}
-.comparison-item:last-child { border-right: none; }
-
-.comparison-layer {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--lavender);
-  opacity: 0.5;
-  margin-bottom: 0.8rem;
-}
-
-.comparison-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.3rem;
-  font-weight: 400;
-  color: var(--ink-dim);
-  margin-bottom: 0.5rem;
-}
-
-.comparison-what {
-  font-size: 0.8rem;
-  color: var(--ink-ghost);
-  line-height: 1.5;
-}
-
-.comparison-item.heillon {
-  background: linear-gradient(135deg, rgba(30,32,72,0.6) 0%, rgba(18,20,42,0.4) 100%);
-  border-color: rgba(123,127,196,0.3);
-}
-
-.comparison-item.heillon .comparison-name {
-  color: var(--lavender-bright);
-}
-
-.comparison-item.heillon .comparison-layer {
-  color: var(--lavender);
-  opacity: 0.9;
-}
-
-/* ─── MECHANISM SECTION ─── */
-#mechanism {
-  padding: clamp(6rem, 12vw, 12rem) clamp(2rem, 6vw, 8rem);
-}
-
-.mechanism-header {
-  margin-bottom: 5rem;
-}
-
-.mechanism-label {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--lavender);
-  opacity: 0.6;
-  margin-bottom: 1.5rem;
-}
-
-.mechanism-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: var(--t-section);
-  font-weight: 300;
-  line-height: 1.1;
-  max-width: 600px;
-}
-
-.mechanism-visual {
-  position: relative;
-  margin-bottom: 5rem;
-  border: 1px solid rgba(123,127,196,0.08);
-  overflow: hidden;
-}
-
-.mechanism-visual img {
-  width: 100%;
-  display: block;
-  filter: brightness(0.9) saturate(1.1);
-}
-
-.mechanism-visual-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, transparent 60%, var(--void) 100%);
-  pointer-events: none;
-}
-
-.mechanism-flow {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
-  gap: 0;
-  align-items: center;
-  margin-bottom: 4rem;
-  padding: 2.5rem 3rem;
-  background: var(--indigo-deep);
-  border: 1px solid rgba(123,127,196,0.1);
-}
-
-.flow-node {
-  text-align: center;
-  padding: 1rem;
-}
-
-.flow-node-label {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--lavender);
-  opacity: 0.5;
-  margin-bottom: 0.5rem;
-}
-
-.flow-node-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.1rem;
-  font-weight: 400;
-  color: var(--ink-dim);
-}
-
-.flow-node.active .flow-node-name {
-  color: var(--lavender-bright);
-}
-
-.flow-node.active .flow-node-label { opacity: 0.9; }
-
-.flow-arrow {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.7rem;
-  color: var(--lavender);
-  opacity: 0.3;
-  padding: 0 0.5rem;
-}
-
-.gates-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: rgba(123,127,196,0.08);
-}
-
-.gate-item {
-  background: var(--void);
-  padding: 2rem 1.8rem;
-  transition: background 0.3s;
-}
-.gate-item:hover {
-  background: var(--indigo-deep);
-}
-
-.gate-number {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  color: var(--lavender);
-  opacity: 0.4;
-  margin-bottom: 1rem;
-  letter-spacing: 0.1em;
-}
-
-.gate-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.25rem;
-  font-weight: 400;
-  color: var(--lavender-bright);
-  margin-bottom: 0.7rem;
-}
-
-.gate-desc {
-  font-size: 0.85rem;
-  color: var(--ink-ghost);
-  line-height: 1.6;
-}
-
-/* ─── PROOF SECTION ─── */
-#proof {
-  padding: clamp(6rem, 12vw, 12rem) clamp(2rem, 6vw, 8rem);
-  background: linear-gradient(to bottom, transparent, rgba(15,16,32,0.6), transparent);
-}
-
-.proof-header {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6rem;
-  align-items: end;
-  margin-bottom: 5rem;
-}
-
-.proof-label {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--lavender);
-  opacity: 0.6;
-  margin-bottom: 1.5rem;
-}
-
-.proof-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: var(--t-section);
-  font-weight: 300;
-  line-height: 1.1;
-}
-
-.proof-body {
-  font-size: var(--t-body);
-  color: var(--ink-dim);
-  line-height: 1.8;
-}
-
-.proof-metrics {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: rgba(123,127,196,0.08);
-  margin-bottom: 3rem;
-}
-
-.metric {
-  background: var(--void);
-  padding: 2.5rem 2rem;
-}
-
-.metric-value {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(2.5rem, 4vw, 3.8rem);
-  font-weight: 300;
-  color: var(--lavender-bright);
-  line-height: 1;
-  margin-bottom: 0.5rem;
-}
-
-.metric-label {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--ink-ghost);
-}
-
-.proof-hash-block {
-  padding: 2rem 2.5rem;
-  background: var(--indigo-deep);
-  border-left: 2px solid rgba(123,127,196,0.3);
-  font-family: 'DM Mono', monospace;
-}
-
-.hash-label {
-  font-size: var(--t-micro);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--lavender);
-  opacity: 0.5;
-  margin-bottom: 0.8rem;
-}
-
-.hash-value {
-  font-size: 0.75rem;
-  color: var(--lavender-bright);
-  opacity: 0.7;
-  word-break: break-all;
-  line-height: 1.6;
-}
-
-.ccr-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: rgba(123,127,196,0.08);
-}
-
-.ccr-item {
-  background: var(--void);
-  padding: 2.5rem 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.ccr-id {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-small);
-  color: var(--lavender);
-  letter-spacing: 0.1em;
-}
-
-.ccr-desc {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.2rem;
-  color: var(--ink-dim);
-  font-style: italic;
-}
-
-.ccr-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--lavender-bright);
-}
-
-.ccr-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--lavender-bright);
-  animation: pulse 2s infinite;
-}
-
-/* ─── SECTORS SECTION ─── */
-#sectors {
-  padding: clamp(6rem, 12vw, 12rem) clamp(2rem, 6vw, 8rem);
-}
-
-.sectors-header {
-  margin-bottom: 4rem;
-}
-
-.sectors-label {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--lavender);
-  opacity: 0.6;
-  margin-bottom: 1.5rem;
-}
-
-.sectors-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: var(--t-section);
-  font-weight: 300;
-  line-height: 1.1;
-}
-
-.sectors-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: rgba(123,127,196,0.08);
-}
-
-.sector-item {
-  background: var(--void);
-  padding: 2.5rem 2rem;
-  transition: background 0.4s;
-  cursor: default;
-}
-
-.sector-item:hover {
-  background: rgba(15,16,32,0.8);
-}
-
-.sector-num {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  color: var(--lavender);
-  opacity: 0.3;
-  margin-bottom: 1.2rem;
-  letter-spacing: 0.1em;
-}
-
-.sector-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.4rem;
-  font-weight: 400;
-  color: var(--lavender-bright);
-  margin-bottom: 0.8rem;
-}
-
-.sector-desc {
-  font-size: 0.85rem;
-  color: var(--ink-ghost);
-  line-height: 1.6;
-}
-
-/* ─── MANIFESTO SECTION ─── */
-#manifesto {
-  padding: clamp(8rem, 15vw, 16rem) clamp(2rem, 6vw, 8rem);
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-#manifesto::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 800px;
-  height: 800px;
-  background: radial-gradient(circle, rgba(30,32,72,0.4) 0%, transparent 65%);
-  pointer-events: none;
-}
-
-.manifesto-line {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.6rem, 3.5vw, 3rem);
-  font-weight: 300;
-  line-height: 1.3;
-  color: var(--ink-dim);
-  max-width: 900px;
-  margin: 0 auto;
-  letter-spacing: -0.01em;
-}
-
-.manifesto-line strong {
-  font-weight: 400;
-  color: var(--lavender-glow);
-}
-
-.manifesto-line em {
-  font-style: italic;
-  color: var(--lavender-bright);
-}
-
-/* ─── CTA SECTION ─── */
-#cta {
-  padding: clamp(6rem, 12vw, 12rem) clamp(2rem, 6vw, 8rem);
-  border-top: 1px solid rgba(123,127,196,0.08);
-}
-
-.cta-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6rem;
-  align-items: start;
-}
-
-.cta-left {}
-
-.cta-label {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--lavender);
-  opacity: 0.6;
-  margin-bottom: 2rem;
-}
-
-.cta-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(2rem, 4vw, 3.5rem);
-  font-weight: 300;
-  line-height: 1.15;
-  margin-bottom: 2.5rem;
-}
-
-.cta-body {
-  font-size: var(--t-body);
-  color: var(--ink-dim);
-  line-height: 1.8;
-  margin-bottom: 3rem;
-}
-
-.cta-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.cta-actions .btn-primary, .cta-actions .btn-secondary {
-  text-align: center;
-}
-
-.cta-right {
-  padding-top: 1rem;
-}
-
-.cta-status {
-  padding: 2.5rem;
-  background: var(--indigo-deep);
-  border: 1px solid rgba(123,127,196,0.12);
-  margin-bottom: 2rem;
-}
-
-.status-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.8rem 0;
-  border-bottom: 1px solid rgba(123,127,196,0.06);
-}
-.status-row:last-child { border-bottom: none; }
-
-.status-key {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ink-ghost);
-}
-
-.status-val {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  color: var(--lavender-bright);
-  letter-spacing: 0.08em;
-}
-
-.status-val.active {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.status-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--lavender-bright);
-  animation: pulse 2s infinite;
-}
-
-.cta-contact-link {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-small);
-  letter-spacing: 0.1em;
-  color: var(--ink-ghost);
-  text-decoration: none;
-  display: block;
-  text-align: center;
-  padding: 0.5rem;
-  transition: color 0.3s;
-}
-.cta-contact-link:hover { color: var(--lavender-bright); }
-
-/* ─── FOOTER ─── */
-footer {
-  padding: 2.5rem clamp(2rem, 6vw, 8rem);
-  border-top: 1px solid rgba(123,127,196,0.06);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.footer-left {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  letter-spacing: 0.15em;
-  color: var(--ink-ghost);
-}
-
-.footer-right {
-  font-family: 'DM Mono', monospace;
-  font-size: var(--t-micro);
-  letter-spacing: 0.12em;
-  color: var(--lavender);
-  opacity: 0.4;
-}
-
-/* ─── ANIMATIONS ─── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-@keyframes expandLine {
-  0%, 100% { width: 30px; opacity: 0.2; }
-  50% { width: 50px; opacity: 0.5; }
-}
-
-/* ─── SCROLL REVEAL ─── */
-.reveal {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-}
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-.reveal-delay-1 { transition-delay: 0.1s; }
-.reveal-delay-2 { transition-delay: 0.2s; }
-.reveal-delay-3 { transition-delay: 0.35s; }
-.reveal-delay-4 { transition-delay: 0.5s; }
-
-/* ─── RESPONSIVE ─── */
-@media (max-width: 1024px) {
-  #problem { grid-template-columns: 1fr; gap: 3rem; }
-  #proof .proof-header { grid-template-columns: 1fr; gap: 2rem; }
-  .cta-grid { grid-template-columns: 1fr; gap: 3rem; }
-  .hero-visual { display: none; }
-  .category-comparison { grid-template-columns: repeat(2, 1fr); }
-  .mechanism-flow { display: none; }
-  .gates-grid { grid-template-columns: repeat(2, 1fr); }
-  .proof-metrics { grid-template-columns: repeat(3, 1fr); }
-  .ccr-grid { grid-template-columns: 1fr; }
-  .sectors-grid { grid-template-columns: repeat(2, 1fr); }
-  nav { padding: 1.2rem 1.5rem; }
-  .nav-links { display: none; }
-}
-
-@media (max-width: 640px) {
-  .category-comparison { grid-template-columns: 1fr; }
-  .gates-grid { grid-template-columns: 1fr; }
-  .proof-metrics { grid-template-columns: 1fr; }
-  .sectors-grid { grid-template-columns: 1fr; }
+:root{
+  --void:#05050a;--deep:#0c0e22;--indigo:#141740;--mid:#1e2155;
+  --lav:#7b7fc4;--lav-b:#a8abdf;--lav-g:#c4c6f0;--lilac:#d0b8f8;
+  --ink:#eceaf5;--ink-d:rgba(236,234,245,0.58);--ink-g:rgba(236,234,245,0.22);
+  --gls:rgba(12,14,34,0.55);--gls-h:rgba(18,21,48,0.75);
+  --gls-bdr:rgba(123,127,196,0.14);--gls-bdr-h:rgba(168,171,223,0.36);
+  --r:20px;--blur:26px;
+  --disp:clamp(3rem,6.8vw,6.6rem);--sec:clamp(2rem,3.4vw,3.2rem);
+  --body:clamp(0.92rem,1.3vw,1.06rem);--sm:0.78rem;--xs:0.67rem;
+  --pad:clamp(2rem,6vw,8rem);--spad:clamp(6rem,10vw,12rem);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--void);color:var(--ink);font-family:'Outfit',sans-serif;font-weight:300;overflow-x:hidden}
+::-webkit-scrollbar{width:2px}::-webkit-scrollbar-track{background:var(--void)}::-webkit-scrollbar-thumb{background:var(--mid)}
+
+#cur{position:fixed;pointer-events:none;z-index:9999;width:320px;height:320px;border-radius:50%;
+  background:radial-gradient(circle,rgba(123,127,196,0.06) 0%,transparent 68%);
+  transform:translate(-50%,-50%);mix-blend-mode:screen;left:-500px;top:-500px}
+
+#cv{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.038'/%3E%3C/svg%3E");opacity:.55}
+
+.orb{position:fixed;border-radius:50%;filter:blur(160px);pointer-events:none;z-index:0;will-change:transform}
+.o1{width:900px;height:900px;background:radial-gradient(circle,rgba(18,22,68,0.65) 0%,transparent 70%);top:-300px;left:-250px;animation:o1 16s ease-in-out infinite}
+.o2{width:600px;height:600px;background:radial-gradient(circle,rgba(123,127,196,0.11) 0%,transparent 70%);top:30vh;right:-150px;animation:o2 20s ease-in-out infinite}
+.o3{width:500px;height:500px;background:radial-gradient(circle,rgba(208,184,248,0.06) 0%,transparent 70%);bottom:5vh;left:15%;animation:o3 25s ease-in-out infinite}
+@keyframes o1{0%,100%{transform:translate(0,0) scale(1)}40%{transform:translate(70px,50px) scale(1.07)}75%{transform:translate(-40px,80px) scale(0.94)}}
+@keyframes o2{0%,100%{transform:translate(0,0) scale(1)}55%{transform:translate(-60px,-70px) scale(1.14)}}
+@keyframes o3{0%,100%{transform:translate(0,0)}45%{transform:translate(50px,-50px) scale(1.08)}}
+
+#rain{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.dr{position:absolute;font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(123,127,196,0.15);letter-spacing:.07em;white-space:nowrap;animation:drF linear infinite}
+@keyframes drF{0%{transform:translateY(0);opacity:0}8%{opacity:1}88%{opacity:.5}100%{transform:translateY(-115vh);opacity:0}}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:900;padding:1.4rem var(--pad);display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(5,5,10,0.92) 0%,transparent 100%);backdrop-filter:blur(14px)}
+.nl{font-family:'Cormorant Garamond',serif;font-size:1.22rem;font-weight:400;letter-spacing:.2em;color:var(--lav-g);text-decoration:none}
+.nm{display:flex;gap:2.5rem;list-style:none}
+.nm a{font-size:var(--xs);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-g);text-decoration:none;transition:color .3s}
+.nm a:hover{color:var(--lav-b)}
+.nc{font-size:var(--xs);letter-spacing:.12em;text-transform:uppercase;color:var(--lav);text-decoration:none;border:1px solid rgba(123,127,196,0.26);padding:.48rem 1.18rem;transition:all .3s}
+.nc:hover{background:rgba(123,127,196,0.08);color:var(--lav-g);border-color:rgba(123,127,196,0.52)}
+
+section{position:relative;z-index:10}
+
+.rv{opacity:0;transform:translateY(32px);transition:opacity 1s ease,transform 1s ease}
+.rv.on{opacity:1;transform:none}
+.rv.d1{transition-delay:.12s}.rv.d2{transition-delay:.26s}.rv.d3{transition-delay:.42s}
+
+.lbl{font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.28em;text-transform:uppercase;color:var(--lav);opacity:.65;margin-bottom:2rem}
+.stitle{font-family:'Cormorant Garamond',serif;font-size:var(--sec);font-weight:300;line-height:1.1}
+.stitle strong{font-weight:400;color:var(--lav-b)}
+.stitle em{font-style:italic;color:var(--lav-b)}
+.sdiv{width:100%;height:1px;background:linear-gradient(to right,transparent,rgba(123,127,196,0.09),transparent);position:relative;z-index:10}
+
+/* GLASS PANELS */
+.gstack{display:flex;flex-direction:column}
+.gpanel{position:relative;background:var(--gls);backdrop-filter:blur(var(--blur));-webkit-backdrop-filter:blur(var(--blur));border:1px solid var(--gls-bdr);border-radius:var(--r);overflow:hidden;margin-bottom:-4px;cursor:default;will-change:transform,box-shadow;
+  transition:background .4s,border-color .4s,transform .45s cubic-bezier(.23,1,.32,1),box-shadow .45s cubic-bezier(.23,1,.32,1),margin-bottom .45s cubic-bezier(.23,1,.32,1)}
+.gpanel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;z-index:3;background:linear-gradient(to right,transparent 6%,rgba(220,225,255,0.42) 50%,transparent 94%)}
+.gpanel::after{content:'';position:absolute;top:0;left:0;width:1px;height:100%;z-index:3;background:linear-gradient(to bottom,rgba(220,225,255,0.22) 0%,transparent 60%)}
+.gpanel:not(.open):hover{transform:translateY(-3px);box-shadow:0 20px 55px rgba(5,5,10,.55),0 0 30px rgba(123,127,196,.06);border-color:rgba(123,127,196,0.24);background:rgba(14,17,40,0.6)}
+.gpanel.open{background:var(--gls-h);border-color:var(--gls-bdr-h);margin-bottom:12px;box-shadow:0 0 0 1px rgba(168,171,223,0.08),0 28px 70px rgba(5,5,10,.7),0 0 50px rgba(123,127,196,.08),inset 0 1px 0 rgba(220,225,255,0.1)}
+.rlight{position:absolute;width:220px;height:220px;border-radius:50%;z-index:1;pointer-events:none;background:radial-gradient(circle,rgba(168,171,223,0.09) 0%,transparent 68%);transform:translate(-50%,-50%);transition:opacity .35s;opacity:0}
+.gpanel:hover .rlight{opacity:1}
+.ghd{display:flex;align-items:center;justify-content:space-between;padding:1.55rem 2rem;position:relative;z-index:4;cursor:pointer;user-select:none}
+.ghd-l{display:flex;align-items:center;gap:1.1rem}
+.gnum{font-family:'DM Mono',monospace;font-size:var(--xs);color:var(--lav);opacity:.4;letter-spacing:.12em;min-width:28px}
+.gtitle{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:var(--lav-b);transition:color .3s}
+.garrow{width:24px;height:24px;border:1px solid rgba(123,127,196,0.22);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .45s cubic-bezier(.23,1,.32,1)}
+.garrow svg{width:10px;height:10px;stroke:var(--lav);fill:none;stroke-width:1.6;transition:transform .45s cubic-bezier(.23,1,.32,1)}
+.gdiv{height:1px;background:linear-gradient(to right,transparent,rgba(123,127,196,0.13),transparent);margin:0 2rem;opacity:0;transition:opacity .3s}
+.gbody{max-height:0;overflow:hidden;opacity:0;padding:0 2rem;transition:max-height .58s cubic-bezier(.23,1,.32,1),opacity .42s ease .08s,padding .42s cubic-bezier(.23,1,.32,1)}
+.gbody-t{font-size:var(--body);color:var(--ink-d);line-height:1.8}
+.gbody-t p+p{margin-top:.9rem}
+.gtags{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:1.2rem}
+.gtag{font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.1em;text-transform:uppercase;color:var(--lav);border:1px solid rgba(123,127,196,0.16);padding:.26rem .62rem;border-radius:30px;background:rgba(123,127,196,0.05)}
+.gmeta{display:flex;align-items:center;gap:.5rem;margin-top:1.2rem;font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.12em;text-transform:uppercase;color:var(--lav-b);opacity:.7}
+.gmd{width:4px;height:4px;border-radius:50%;background:var(--lav-b);animation:pulse 2s infinite}
+.gpanel.open .gtitle{color:var(--lav-g)}
+.gpanel.open .garrow{border-color:rgba(168,171,223,0.38);background:rgba(123,127,196,0.1)}
+.gpanel.open .garrow svg{transform:rotate(180deg);stroke:var(--lav-g)}
+.gpanel.open .gdiv{opacity:1}
+.gpanel.open .gbody{max-height:700px;opacity:1;padding:1.5rem 2rem 2.2rem}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:0 var(--pad);padding-top:6rem;overflow:hidden}
+.hero-bgw{position:absolute;right:-2vw;top:50%;transform:translateY(-48%);font-family:'Cormorant Garamond',serif;font-size:clamp(8rem,18vw,22rem);font-weight:300;letter-spacing:-.04em;color:transparent;-webkit-text-stroke:1px rgba(123,127,196,0.07);pointer-events:none;z-index:1;white-space:nowrap;animation:bgwB 12s ease-in-out infinite}
+@keyframes bgwB{0%,100%{opacity:.9}50%{opacity:1}}
+.hero-ey{font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.3em;text-transform:uppercase;color:var(--lav);margin-bottom:2.2rem;position:relative;z-index:5;opacity:0;animation:fadeUp .9s ease forwards .4s}
+.hero-t{font-family:'Cormorant Garamond',serif;font-size:var(--disp);font-weight:300;line-height:.98;letter-spacing:-.025em;max-width:820px;position:relative;z-index:5}
+.hero-t em{font-style:italic;color:var(--lav-b)}
+.hero-t .word{display:inline-block;opacity:0;animation:wordIn .75s cubic-bezier(.16,1,.3,1) forwards}
+.hero-sub{margin-top:2.4rem;font-size:var(--body);color:var(--ink-d);max-width:480px;line-height:1.78;position:relative;z-index:5;opacity:0;animation:fadeUp 1s ease forwards 1.7s}
+.hero-cta{margin-top:3.2rem;display:flex;gap:1.4rem;align-items:center;position:relative;z-index:5;opacity:0;animation:fadeUp 1s ease forwards 2s}
+.btn-p{font-family:'DM Mono',monospace;font-size:var(--sm);letter-spacing:.1em;text-transform:uppercase;color:var(--void);background:var(--lav-b);text-decoration:none;padding:.9rem 2rem;transition:all .3s;display:inline-block}
+.btn-p:hover{background:var(--lav-g);transform:translateY(-2px);box-shadow:0 14px 35px rgba(168,171,223,0.22)}
+.btn-s{font-family:'DM Mono',monospace;font-size:var(--sm);letter-spacing:.1em;text-transform:uppercase;color:var(--lav);text-decoration:none;padding:.9rem 2rem;border:1px solid rgba(123,127,196,0.24);transition:all .3s;display:inline-block}
+.btn-s:hover{border-color:rgba(123,127,196,0.58);color:var(--lav-b)}
+
+.hero-vis{position:absolute;right:var(--pad);top:50%;transform:translateY(-50%);width:min(46%,600px);z-index:4;opacity:0;animation:fadeIn 2s ease forwards 1.2s}
+.hero-vis canvas{width:100%;display:block}
+.hero-vis::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,var(--void) 0%,transparent 18%);pointer-events:none;z-index:2}
+
+.beam{position:absolute;top:0;width:2px;height:100%;pointer-events:none;z-index:6;background:linear-gradient(to bottom,transparent,rgba(168,171,223,0.18) 30%,rgba(168,171,223,0.35) 50%,rgba(168,171,223,0.18) 70%,transparent);animation:beamGo 10s ease-in-out infinite 3.5s;left:-5%}
+@keyframes beamGo{0%{left:-5%}100%{left:110%}}
+
+.hero-sc{position:absolute;bottom:2.5rem;left:var(--pad);display:flex;align-items:center;gap:.9rem;opacity:0;animation:fadeUp 1s ease forwards 2.5s;z-index:5}
+.sc-line{width:36px;height:1px;background:var(--lav);opacity:.3;animation:scP 2.8s ease-in-out infinite}
+.sc-t{font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.22em;text-transform:uppercase;color:var(--ink-g)}
+
+/* PROBLEM */
+#problem{padding:var(--spad) var(--pad);display:grid;grid-template-columns:1fr 1.1fr;gap:5rem;align-items:start}
+.prob-body{font-size:var(--body);color:var(--ink-d);line-height:1.82;margin-top:2rem}
+.prob-body p+p{margin-top:1.1rem}
+
+/* CATEGORY */
+#category{padding:var(--spad) var(--pad);text-align:center;overflow:hidden}
+.cat-bg{position:absolute;left:50%;top:50%;transform:translate(-50%,-48%);font-family:'Cormorant Garamond',serif;font-size:clamp(7rem,16vw,20rem);font-weight:300;color:transparent;-webkit-text-stroke:1px rgba(123,127,196,0.055);pointer-events:none;white-space:nowrap;letter-spacing:-.03em;animation:catB 14s ease-in-out infinite}
+@keyframes catB{0%,100%{opacity:.8;transform:translate(-50%,-48%) scale(1)}50%{opacity:1;transform:translate(-50%,-48%) scale(1.01)}}
+.cat-stmt{font-family:'Cormorant Garamond',serif;font-size:clamp(1.9rem,4vw,3.7rem);font-weight:300;line-height:1.22;max-width:800px;margin:0 auto 4.5rem;position:relative;z-index:5}
+.cat-stmt em{font-style:italic;color:var(--lav-b)}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(123,127,196,0.06);border-radius:14px;overflow:hidden;position:relative;z-index:5}
+.cl{background:var(--void);padding:2.2rem 1.8rem;text-align:left;transition:background .4s;position:relative;overflow:hidden}
+.cl::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(200,205,255,0.09),transparent)}
+.cl:hover{background:rgba(12,14,34,0.92)}
+.cl.hl{background:linear-gradient(135deg,rgba(26,29,74,0.65) 0%,rgba(14,17,40,0.45) 100%)}
+.cl-l{font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.18em;text-transform:uppercase;color:var(--lav);opacity:.4;margin-bottom:.65rem}
+.cl.hl .cl-l{opacity:.95}
+.cl-n{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--ink-d);margin-bottom:.4rem}
+.cl.hl .cl-n{color:var(--lav-b)}
+.cl-w{font-size:.8rem;color:var(--ink-g);line-height:1.5}
+
+/* MECHANISM */
+#mechanism{padding:var(--spad) var(--pad)}
+.mech-hd{margin-bottom:3.5rem}
+
+.pipe-wrap{position:relative;margin-bottom:3.5rem;background:var(--gls);backdrop-filter:blur(20px);border:1px solid var(--gls-bdr);border-radius:16px;padding:2.4rem 2.8rem;overflow:hidden}
+.pipe-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent 8%,rgba(220,225,255,0.28) 50%,transparent 92%)}
+.pipe-svg{width:100%;height:auto;display:block}
+
+.mech-canvas-wrap{position:relative;border:1px solid rgba(123,127,196,0.07);border-radius:12px;overflow:hidden;margin-bottom:3.2rem;background:#05050a}
+.mech-canvas-wrap canvas{width:100%;display:block}
+
+/* PROOF */
+#proof{padding:var(--spad) var(--pad)}
+.proof-top{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:end;margin-bottom:4rem}
+.proof-body{font-size:var(--body);color:var(--ink-d);line-height:1.8}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(123,127,196,0.06);border-radius:14px;overflow:hidden;margin-bottom:2.5rem}
+.metric{background:var(--void);padding:2.2rem 2rem}
+.mv{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,3.8vw,3.6rem);font-weight:300;color:var(--lav-b);line-height:1;margin-bottom:.4rem}
+.ml{font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-g)}
+.hash-blk{padding:1.8rem 2rem 1.8rem 2.2rem;background:var(--deep);border-left:2px solid rgba(123,127,196,0.26);border-radius:0 8px 8px 0;font-family:'DM Mono',monospace;margin-bottom:2.8rem}
+.hl-lbl{font-size:var(--xs);letter-spacing:.2em;text-transform:uppercase;color:var(--lav);opacity:.5;margin-bottom:.6rem}
+.hv{font-size:.7rem;color:var(--lav-b);opacity:.72;word-break:break-all;line-height:1.7}
+
+/* SECTORS */
+#sectors{padding:var(--spad) var(--pad)}
+.sec-hd{margin-bottom:3.5rem}
+.s2c{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.s2c .gstack{padding-right:6px}
+.s2c .gstack:last-child{padding-right:0;padding-left:6px}
+
+/* MANIFESTO */
+#manifesto{padding:clamp(9rem,14vw,15rem) var(--pad);text-align:center;overflow:hidden}
+.mani-bg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:'Cormorant Garamond',serif;font-size:clamp(9rem,20vw,26rem);font-weight:600;letter-spacing:-.05em;color:transparent;-webkit-text-stroke:1px rgba(123,127,196,0.04);pointer-events:none;white-space:nowrap;animation:maniB 16s ease-in-out infinite}
+@keyframes maniB{0%,100%{opacity:.6}50%{opacity:1}}
+.mani-inner{position:relative;z-index:5;max-width:860px;margin:0 auto}
+.mani-line{font-family:'Cormorant Garamond',serif;font-size:clamp(1.55rem,3vw,2.7rem);font-weight:300;line-height:1.42;color:var(--ink-d);display:block;margin-bottom:.15em}
+.mani-line.ac{color:var(--lav-b)}
+.mani-line.st{color:var(--lav-g);font-weight:400}
+.mani-line.it{font-style:italic;color:var(--lav-b)}
+.mw{display:inline-block;opacity:0;transform:translateY(12px);transition:opacity .55s ease,transform .55s ease}
+.mw.on{opacity:1;transform:none}
+
+/* CTA */
+#cta{padding:var(--spad) var(--pad);border-top:1px solid rgba(123,127,196,0.05)}
+.cta-grid{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:start}
+.cta-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3.8vw,3.4rem);font-weight:300;line-height:1.15;margin-bottom:2rem}
+.cta-body{font-size:var(--body);color:var(--ink-d);line-height:1.8;margin-bottom:2.8rem}
+.cta-btns{display:flex;flex-direction:column;gap:1rem}
+.cta-btns .btn-p,.cta-btns .btn-s{text-align:center}
+.stat-gls{background:var(--gls);backdrop-filter:blur(var(--blur));border:1px solid var(--gls-bdr);border-radius:var(--r);padding:2rem 2.2rem;position:relative;overflow:hidden;margin-bottom:1.5rem;animation:stP 7s ease-in-out infinite}
+@keyframes stP{0%,100%{box-shadow:0 0 0 rgba(123,127,196,0)}50%{box-shadow:0 0 35px rgba(123,127,196,0.05)}}
+.stat-gls::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent 10%,rgba(200,205,255,0.26) 50%,transparent 90%)}
+.sr{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0;border-bottom:1px solid rgba(123,127,196,0.055)}
+.sr:last-child{border-bottom:none}
+.sk{font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-g)}
+.sv{font-family:'DM Mono',monospace;font-size:var(--xs);color:var(--lav-b);letter-spacing:.08em}
+.sv.live{display:flex;align-items:center;gap:.4rem}
+.ldot{width:4px;height:4px;border-radius:50%;background:var(--lav-b);animation:pulse 2s infinite}
+.clink{font-family:'DM Mono',monospace;font-size:var(--sm);letter-spacing:.1em;color:var(--ink-g);text-decoration:none;display:block;text-align:center;padding:.5rem;transition:color .3s}
+.clink:hover{color:var(--lav-b)}
+
+footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);display:flex;justify-content:space-between;align-items:center;position:relative;z-index:10}
+.fl{font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.14em;color:var(--ink-g)}
+.fr{font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.1em;color:var(--lav);opacity:.32}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes wordIn{from{opacity:0;transform:translateY(20px) skewY(2.5deg)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.28}}
+@keyframes scP{0%,100%{width:26px;opacity:.18}50%{width:48px;opacity:.52}}
+
+@media(max-width:1024px){
+  #problem{grid-template-columns:1fr;gap:3rem}
+  .proof-top{grid-template-columns:1fr;gap:2rem}
+  .cta-grid{grid-template-columns:1fr;gap:3rem}
+  .hero-vis{display:none}
+  .cat-grid{grid-template-columns:repeat(2,1fr)}
+  .metrics{grid-template-columns:1fr}
+  .s2c{grid-template-columns:1fr}
+  .s2c .gstack,.s2c .gstack:last-child{padding:0}
+}
+@media(max-width:640px){
+  nav{padding:1.2rem 1.5rem}.nm{display:none}
+  .cat-grid{grid-template-columns:1fr}
+  .hero-cta{flex-direction:column}
 }
 </style>
 </head>
 <body>
 
-<!-- Ambient glow layers -->
-<div class="ambient ambient-1"></div>
-<div class="ambient ambient-2"></div>
-<div class="ambient ambient-3"></div>
+<canvas id="cv"></canvas>
+<div id="cur"></div>
+<div id="rain"></div>
+<div class="orb o1"></div>
+<div class="orb o2"></div>
+<div class="orb o3"></div>
 
-<!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo">HEILLON</a>
-  <ul class="nav-links">
+  <a href="#" class="nl">HEILLON</a>
+  <ul class="nm">
     <li><a href="#mechanism">Protocol</a></li>
     <li><a href="#proof">Proof</a></li>
     <li><a href="#sectors">Applications</a></li>
     <li><a href="https://hdr.heillon.com">HDR</a></li>
   </ul>
-  <a href="#cta" class="nav-cta">Contact</a>
+  <a href="#cta" class="nc">Contact</a>
 </nav>
 
-<!-- ═══ HERO ═══ -->
+<!-- HERO -->
 <section id="hero">
-
-  <div class="hero-visual">
-    <img src="1000512843.png" alt="HEILLON Decision Verification Protocol — Intent to Execution through validation gates">
+  <div class="beam"></div>
+  <div class="hero-bgw" aria-hidden="true">HEILLON</div>
+  <div class="hero-vis">
+    <canvas id="cvHero"></canvas>
   </div>
-
-  <p class="hero-eyebrow">Computational Legitimacy Infrastructure</p>
-
-  <h1 class="hero-title">
+  <p class="hero-ey">Computational Legitimacy Infrastructure</p>
+  <h1 class="hero-t" id="heroTitle">
     Sistemas podem agir.<br>
     Mas podem <em>provar</em><br>
     que deveriam?
   </h1>
-
-  <p class="hero-subtitle">
-    A HEILLON é a camada de infraestrutura que torna decisões computacionais verificáveis — antes da execução, não depois.
-  </p>
-
-  <div class="hero-actions">
-    <a href="https://hdr.heillon.com" class="btn-primary">Explorar o Protocolo</a>
-    <a href="#cta" class="btn-secondary">Falar com a HEILLON</a>
+  <p class="hero-sub">A HEILLON é a camada de infraestrutura que torna decisões computacionais verificáveis — antes da execução, não depois.</p>
+  <div class="hero-cta">
+    <a href="https://hdr.heillon.com" class="btn-p">Explorar o Protocolo</a>
+    <a href="#cta" class="btn-s">Falar com a HEILLON</a>
   </div>
-
-  <div class="hero-scroll-indicator">
-    <div class="scroll-line"></div>
-    <span class="scroll-text">Scroll</span>
-  </div>
-
+  <div class="hero-sc"><div class="sc-line"></div><span class="sc-t">Scroll</span></div>
 </section>
+<div class="sdiv"></div>
 
-<div class="section-divider"></div>
-
-<!-- ═══ PROBLEM ═══ -->
+<!-- PROBLEM -->
 <section id="problem">
-
-  <div class="reveal">
-    <p class="problem-label">01 — O Problema</p>
-    <h2 class="problem-title">
-      O mundo digital opera sobre<br>
-      <strong>suposição de verdade</strong>
-    </h2>
-    <p class="problem-body">
+  <div class="rv">
+    <p class="lbl">01 — O Problema</p>
+    <h2 class="stitle">O mundo digital opera sobre<br><strong>suposição de verdade</strong></h2>
+    <div class="prob-body">
       <p>Logs registram que algo aconteceu. Auditorias reconstroem narrativas depois do fato. Políticas definem intenções que ninguém pode verificar.</p>
       <p>Isso foi suficiente quando sistemas apenas armazenavam informação. Não é suficiente quando sistemas decidem e executam autonomamente.</p>
-    </p>
-  </div>
-
-  <div class="reveal reveal-delay-2">
-    <div class="problem-list">
-      <div class="problem-item">
-        <span class="problem-item-icon">—</span>
-        <span class="problem-item-text">Logs podem ser alterados. Eventos podem ser reordenados. Dados podem ser sobrescritos.</span>
-      </div>
-      <div class="problem-item">
-        <span class="problem-item-icon">—</span>
-        <span class="problem-item-text">Auditorias são sempre posteriores ao fato. Não provam — apenas reconstroem.</span>
-      </div>
-      <div class="problem-item">
-        <span class="problem-item-icon">—</span>
-        <span class="problem-item-text">Agentes de IA executam sem mandato verificável. Responsabilidade se torna difusa.</span>
-      </div>
-      <div class="problem-item">
-        <span class="problem-item-icon">—</span>
-        <span class="problem-item-text">Reguladores exigem prova. Sistemas entregam narrativa.</span>
-      </div>
     </div>
   </div>
-
+  <div class="gstack rv d2">
+    <div class="gpanel"><div class="rlight"></div><div class="ghd"><div class="ghd-l"><span class="gnum">—</span><span class="gtitle">Logs não são prova</span></div><div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div></div><div class="gdiv"></div><div class="gbody"><div class="gbody-t"><p>Logs podem ser alterados, eventos podem ser reordenados, dados podem ser sobrescritos. Um log registra que algo aconteceu — não que deveria ter acontecido.</p><div class="gtags"><span class="gtag">Mutabilidade</span><span class="gtag">Post-hoc</span><span class="gtag">Sem mandato</span></div></div></div></div>
+    <div class="gpanel"><div class="rlight"></div><div class="ghd"><div class="ghd-l"><span class="gnum">—</span><span class="gtitle">Auditorias são reconstrução</span></div><div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div></div><div class="gdiv"></div><div class="gbody"><div class="gbody-t"><p>Auditorias são sempre posteriores ao fato. Não provam legitimidade — apenas reconstroem uma narrativa plausível. A narrativa pode ser certa. Ou não.</p><div class="gtags"><span class="gtag">Reativa</span><span class="gtag">Narrativa</span><span class="gtag">Sem certeza</span></div></div></div></div>
+    <div class="gpanel"><div class="rlight"></div><div class="ghd"><div class="ghd-l"><span class="gnum">—</span><span class="gtitle">Agentes executam sem mandato</span></div><div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div></div><div class="gdiv"></div><div class="gbody"><div class="gbody-t"><p>Sistemas de IA e agentes autônomos executam ações com consequência real sem que nenhuma autoridade verificável tenha autorizado aquela ação naquele momento.</p><div class="gtags"><span class="gtag">IA Autônoma</span><span class="gtag">Sem autoridade</span><span class="gtag">Responsabilidade difusa</span></div></div></div></div>
+    <div class="gpanel"><div class="rlight"></div><div class="ghd"><div class="ghd-l"><span class="gnum">—</span><span class="gtitle">Reguladores exigem prova</span></div><div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div></div><div class="gdiv"></div><div class="gbody"><div class="gbody-t"><p>EU AI Act, DIFC Reg.10, NIST AI RMF — reguladores ao redor do mundo estão exigindo prova de conformidade. Sistemas entregam narrativa. A HEILLON entrega prova.</p><div class="gtags"><span class="gtag">EU AI Act</span><span class="gtag">DIFC Reg.10</span><span class="gtag">NIST AI RMF</span></div></div></div></div>
+  </div>
 </section>
+<div class="sdiv"></div>
 
-<div class="section-divider"></div>
-
-<!-- ═══ CATEGORY ═══ -->
+<!-- CATEGORY -->
 <section id="category">
-
-  <p class="category-eyebrow reveal">02 — Nova Categoria</p>
-
-  <h2 class="category-statement reveal reveal-delay-1">
-    Assim como a computação precisou de criptografia<br>
-    para proteger dados —<br>
-    a era dos sistemas autônomos exige<br>
-    <em>infraestrutura para legitimar decisões.</em>
-  </h2>
-
-  <div class="category-comparison reveal reveal-delay-2">
-    <div class="comparison-item">
-      <p class="comparison-layer">Camada</p>
-      <p class="comparison-name">Bancos de Dados</p>
-      <p class="comparison-what">Organizam informação</p>
-    </div>
-    <div class="comparison-item">
-      <p class="comparison-layer">Camada</p>
-      <p class="comparison-name">Cloud</p>
-      <p class="comparison-what">Organizam computação</p>
-    </div>
-    <div class="comparison-item">
-      <p class="comparison-layer">Camada</p>
-      <p class="comparison-name">Criptografia</p>
-      <p class="comparison-what">Organizam segurança</p>
-    </div>
-    <div class="comparison-item heillon">
-      <p class="comparison-layer">Nova Camada</p>
-      <p class="comparison-name">HEILLON</p>
-      <p class="comparison-what">Organiza legitimidade computacional</p>
-    </div>
+  <div class="cat-bg" aria-hidden="true">LEGITIMIDADE</div>
+  <p class="lbl rv">02 — Nova Categoria</p>
+  <h2 class="cat-stmt rv d1">Assim como a computação precisou de criptografia<br>para proteger dados —<br>a era dos sistemas autônomos exige<br><em>infraestrutura para legitimar decisões.</em></h2>
+  <div class="cat-grid rv d2">
+    <div class="cl"><p class="cl-l">Camada</p><p class="cl-n">Bancos de Dados</p><p class="cl-w">Organizam informação</p></div>
+    <div class="cl"><p class="cl-l">Camada</p><p class="cl-n">Cloud</p><p class="cl-w">Organizam computação</p></div>
+    <div class="cl"><p class="cl-l">Camada</p><p class="cl-n">Criptografia</p><p class="cl-w">Organizam segurança</p></div>
+    <div class="cl hl"><p class="cl-l">Nova Camada</p><p class="cl-n">HEILLON</p><p class="cl-w">Organiza legitimidade computacional</p></div>
   </div>
-
 </section>
+<div class="sdiv"></div>
 
-<div class="section-divider"></div>
-
-<!-- ═══ MECHANISM ═══ -->
+<!-- MECHANISM -->
 <section id="mechanism">
-
-  <div class="mechanism-header reveal">
-    <p class="mechanism-label">03 — O Mecanismo</p>
-    <h2 class="mechanism-title">O Portão Quádruplo de Legitimidade</h2>
+  <div class="mech-hd rv">
+    <p class="lbl">03 — O Mecanismo</p>
+    <h2 class="stitle">O Portão Quádruplo<br>de Legitimidade</h2>
   </div>
-
-  <div class="mechanism-visual reveal reveal-delay-1">
-    <img src="1000512842.png" alt="HEILLON — Intent through four verification gates to Execution and HDR artifact">
-    <div class="mechanism-visual-overlay"></div>
+  <div class="pipe-wrap rv d1">
+    <svg class="pipe-svg" viewBox="0 0 900 140" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <line x1="60" y1="70" x2="840" y2="70" stroke="rgba(123,127,196,0.1)" stroke-width="1.5"/>
+      <circle r="5" fill="rgba(196,198,240,0.88)" filter="url(#glow)"><animate attributeName="cx" values="60;840" dur="2.8s" repeatCount="indefinite" calcMode="ease-in-out"/><animate attributeName="cy" values="70;70" dur="2.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.3;1;1;0.3;0" dur="2.8s" repeatCount="indefinite"/></circle>
+      <circle r="3" fill="rgba(168,171,223,0.55)" filter="url(#glow)"><animate attributeName="cx" values="60;840" dur="2.8s" begin="1.4s" repeatCount="indefinite" calcMode="ease-in-out"/><animate attributeName="cy" values="70;70" dur="2.8s" begin="1.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.1;0.6;0.6;0.1;0" dur="2.8s" begin="1.4s" repeatCount="indefinite"/></circle>
+      <g transform="translate(60,70)"><circle r="22" fill="rgba(12,14,34,0.9)" stroke="rgba(123,127,196,0.22)" stroke-width="1"/><text x="0" y="-32" text-anchor="middle" fill="rgba(123,127,196,0.5)" font-family="DM Mono,monospace" font-size="8" letter-spacing="1">ORIGEM</text><text x="0" y="5" text-anchor="middle" fill="rgba(196,198,240,0.9)" font-family="Cormorant Garamond,serif" font-size="11">Intent</text></g>
+      <g transform="translate(240,70)"><rect x="-34" y="-28" width="68" height="56" rx="8" fill="rgba(18,21,64,0.85)" stroke="rgba(123,127,196,0.28)" stroke-width="1"><animate attributeName="stroke-opacity" values="0.28;0.75;0.28" dur="2.8s" begin="0.55s" repeatCount="indefinite"/></rect><text x="0" y="-38" text-anchor="middle" fill="rgba(123,127,196,0.45)" font-family="DM Mono,monospace" font-size="7" letter-spacing="1">AUTHORITY</text><text x="0" y="5" text-anchor="middle" fill="rgba(168,171,223,0.88)" font-family="DM Mono,monospace" font-size="8">Gate 01</text></g>
+      <g transform="translate(390,70)"><rect x="-34" y="-28" width="68" height="56" rx="8" fill="rgba(18,21,64,0.85)" stroke="rgba(123,127,196,0.28)" stroke-width="1"><animate attributeName="stroke-opacity" values="0.28;0.75;0.28" dur="2.8s" begin="0.95s" repeatCount="indefinite"/></rect><text x="0" y="-38" text-anchor="middle" fill="rgba(123,127,196,0.45)" font-family="DM Mono,monospace" font-size="7" letter-spacing="1">POLICY</text><text x="0" y="5" text-anchor="middle" fill="rgba(168,171,223,0.88)" font-family="DM Mono,monospace" font-size="8">Gate 02</text></g>
+      <g transform="translate(540,70)"><rect x="-34" y="-28" width="68" height="56" rx="8" fill="rgba(18,21,64,0.85)" stroke="rgba(123,127,196,0.28)" stroke-width="1"><animate attributeName="stroke-opacity" values="0.28;0.75;0.28" dur="2.8s" begin="1.35s" repeatCount="indefinite"/></rect><text x="0" y="-38" text-anchor="middle" fill="rgba(123,127,196,0.45)" font-family="DM Mono,monospace" font-size="7" letter-spacing="1">RISK</text><text x="0" y="5" text-anchor="middle" fill="rgba(168,171,223,0.88)" font-family="DM Mono,monospace" font-size="8">Gate 03</text></g>
+      <g transform="translate(690,70)"><rect x="-34" y="-28" width="68" height="56" rx="8" fill="rgba(18,21,64,0.85)" stroke="rgba(123,127,196,0.28)" stroke-width="1"><animate attributeName="stroke-opacity" values="0.28;0.75;0.28" dur="2.8s" begin="1.75s" repeatCount="indefinite"/></rect><text x="0" y="-38" text-anchor="middle" fill="rgba(123,127,196,0.45)" font-family="DM Mono,monospace" font-size="7" letter-spacing="1">GOVERNANCE</text><text x="0" y="5" text-anchor="middle" fill="rgba(168,171,223,0.88)" font-family="DM Mono,monospace" font-size="8">Gate 04</text></g>
+      <g transform="translate(840,70)"><circle r="26" fill="rgba(14,17,40,0.95)" stroke="rgba(168,171,223,0.35)" stroke-width="1.5"><animate attributeName="stroke-opacity" values="0.35;0.92;0.35" dur="4s" repeatCount="indefinite"/></circle><text x="0" y="-38" text-anchor="middle" fill="rgba(168,171,223,0.65)" font-family="DM Mono,monospace" font-size="7" letter-spacing="1">ARTEFATO</text><text x="0" y="4" text-anchor="middle" fill="rgba(196,198,240,0.95)" font-family="DM Mono,monospace" font-size="10" font-weight="bold">HDR</text></g>
+      <text x="450" y="128" text-anchor="middle" fill="rgba(123,127,196,0.28)" font-family="DM Mono,monospace" font-size="7" letter-spacing="2">INTENT → AUTHORITY GATE → POLICY GATE → RISK GATE → GOVERNANCE GATE → HDR PROOF</text>
+    </svg>
   </div>
-
-  <div class="mechanism-flow reveal reveal-delay-2">
-    <div class="flow-node">
-      <p class="flow-node-label">Origem</p>
-      <p class="flow-node-name">Intent</p>
-    </div>
-    <span class="flow-arrow">→</span>
-    <div class="flow-node active">
-      <p class="flow-node-label">Validação</p>
-      <p class="flow-node-name">4 Portões</p>
-    </div>
-    <span class="flow-arrow">→</span>
-    <div class="flow-node">
-      <p class="flow-node-label">Resultado</p>
-      <p class="flow-node-name">Execution</p>
-    </div>
-    <span class="flow-arrow">→</span>
-    <div class="flow-node active">
-      <p class="flow-node-label">Artefato</p>
-      <p class="flow-node-name">HDR Proof</p>
-    </div>
+  <div class="mech-canvas-wrap rv d2">
+    <canvas id="cvPortal"></canvas>
   </div>
-
-  <div class="gates-grid reveal reveal-delay-3">
-    <div class="gate-item">
-      <p class="gate-number">01</p>
-      <p class="gate-name">Authority Gate</p>
-      <p class="gate-desc">Quem tem autoridade para esta ação? O kernel valida a cadeia de autoridade antes de qualquer execução.</p>
-    </div>
-    <div class="gate-item">
-      <p class="gate-number">02</p>
-      <p class="gate-name">Policy Gate</p>
-      <p class="gate-desc">A ação está dentro dos limites definidos? Políticas institucionais são verificadas estruturalmente.</p>
-    </div>
-    <div class="gate-item">
-      <p class="gate-number">03</p>
-      <p class="gate-name">Risk Gate</p>
-      <p class="gate-desc">Qual o nível de risco desta execução? Avaliação automática contra parâmetros institucionais.</p>
-    </div>
-    <div class="gate-item">
-      <p class="gate-number">04</p>
-      <p class="gate-name">Governance Gate</p>
-      <p class="gate-desc">A governança foi satisfeita? Validação final antes da execução e geração do HDR artifact.</p>
-    </div>
+  <div class="gstack rv d3">
+    <div class="gpanel"><div class="rlight"></div><div class="ghd"><div class="ghd-l"><span class="gnum">01</span><span class="gtitle">Authority Gate</span></div><div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div></div><div class="gdiv"></div><div class="gbody"><div class="gbody-t"><p>Quem tem autoridade para esta ação? O kernel valida a cadeia de autoridade estruturalmente antes de qualquer execução. Sem autoridade verificável — sem execução.</p><div class="gmeta"><span class="gmd"></span>Pilar K — Absolute Authority</div></div></div></div>
+    <div class="gpanel"><div class="rlight"></div><div class="ghd"><div class="ghd-l"><span class="gnum">02</span><span class="gtitle">Policy Gate</span></div><div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div></div><div class="gdiv"></div><div class="gbody"><div class="gbody-t"><p>A ação está dentro dos limites definidos institucionalmente? Políticas são verificadas estruturalmente — não como texto, mas como código executável e auditável.</p><div class="gmeta"><span class="gmd"></span>Pilar Z — Structural Truth</div></div></div></div>
+    <div class="gpanel"><div class="rlight"></div><div class="ghd"><div class="ghd-l"><span class="gnum">03</span><span class="gtitle">Risk Gate</span></div><div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div></div><div class="gdiv"></div><div class="gbody"><div class="gbody-t"><p>Qual o nível de legitimidade exigido para esta execução? NLO Levels definem o grau de validação necessário de acordo com o impacto da ação.</p><div class="gmeta"><span class="gmd"></span>Pilar H — NLO Levels</div></div></div></div>
+    <div class="gpanel"><div class="rlight"></div><div class="ghd"><div class="ghd-l"><span class="gnum">04</span><span class="gtitle">Governance Gate</span></div><div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div></div><div class="gdiv"></div><div class="gbody"><div class="gbody-t"><p>Validação final antes da execução. A passagem pelos portões gera automaticamente o HDR artifact — prova criptográfica independente, verificável por qualquer parte.</p><div class="gmeta"><span class="gmd"></span>Pilar M — Preserved Causality → HDR</div></div></div></div>
   </div>
-
 </section>
+<div class="sdiv"></div>
 
-<div class="section-divider"></div>
-
-<!-- ═══ PROOF ═══ -->
+<!-- PROOF -->
 <section id="proof">
-
-  <div class="proof-header reveal">
+  <div class="proof-top rv">
     <div>
-      <p class="proof-label">04 — Prova Verificável</p>
-      <h2 class="proof-title">Não é teoria.<br>O sistema opera.</h2>
+      <p class="lbl">04 — Prova Verificável</p>
+      <h2 class="stitle">Não é teoria.<br>O sistema opera.</h2>
     </div>
-    <div>
-      <p class="proof-body">Foram executados três ciclos constitucionais completos, cada um gerando provas auditáveis por qualquer parte independente — sem acesso ao sistema, sem dependência de confiança.</p>
-    </div>
+    <p class="proof-body">Foram executados três ciclos constitucionais completos, cada um gerando provas auditáveis por qualquer parte independente — sem acesso ao sistema, sem dependência de confiança.</p>
   </div>
-
-  <div class="proof-metrics reveal reveal-delay-1">
-    <div class="metric">
-      <p class="metric-value">1182+</p>
-      <p class="metric-label">Eventos no ledger</p>
-    </div>
-    <div class="metric">
-      <p class="metric-value">27/27</p>
-      <p class="metric-label">Provas CCR válidas</p>
-    </div>
-    <div class="metric">
-      <p class="metric-value">v4.5.1</p>
-      <p class="metric-label">Estado constitucional</p>
-    </div>
+  <div class="metrics rv d1">
+    <div class="metric"><p class="mv" data-target="1182" data-suffix="+">0+</p><p class="ml">Eventos no ledger</p></div>
+    <div class="metric"><p class="mv" data-target="27" data-denom="/27">0/27</p><p class="ml">Provas CCR válidas</p></div>
+    <div class="metric"><p class="mv">v4.5.1</p><p class="ml">Estado constitucional</p></div>
   </div>
-
-  <div class="proof-hash-block reveal reveal-delay-2">
-    <p class="hash-label">CCR-03 · SHA-256 Public Hash</p>
-    <p class="hash-value">a3f9e2c1b8d46f501c27e3b9a84d72f156e038c9d2b17a4e8f3c690d1b25a7e4</p>
+  <div class="hash-blk rv d2">
+    <p class="hl-lbl">CCR-03 · SHA-256 Public Hash</p>
+    <p class="hv" id="hashEl">a3f9e2c1b8d46f501c27e3b9a84d72f156e038c9d2b17a4e8f3c690d1b25a7e4</p>
   </div>
-
-  <br>
-
-  <div class="ccr-grid reveal reveal-delay-3">
-    <div class="ccr-item">
-      <p class="ccr-id">CCR-01</p>
-      <p class="ccr-desc">Prova de execução legítima sob mandato verificável</p>
-      <span class="ccr-status"><span class="ccr-dot"></span>9/9 CANONICAL_VALID</span>
-    </div>
-    <div class="ccr-item">
-      <p class="ccr-id">CCR-02</p>
-      <p class="ccr-desc">Prova de delegação e isolamento de autoridade</p>
-      <span class="ccr-status"><span class="ccr-dot"></span>9/9 CANONICAL_VALID</span>
-    </div>
-    <div class="ccr-item">
-      <p class="ccr-id">CCR-03</p>
-      <p class="ccr-desc">Prova de operação concorrente e resistência sistêmica</p>
-      <span class="ccr-status"><span class="ccr-dot"></span>9/9 CANONICAL_VALID</span>
-    </div>
+  <div class="gstack rv d3">
+    <div class="gpanel"><div class="rlight"></div><div class="ghd"><div class="ghd-l"><span class="gnum">CCR-01</span><span class="gtitle">Execução sob mandato verificável</span></div><div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div></div><div class="gdiv"></div><div class="gbody"><div class="gbody-t"><p>Prova de que uma ação foi executada exclusivamente porque uma autoridade legítima declarou intenção verificável. 9 testes, 9 validações CANONICAL_VALID.</p><div class="gmeta"><span class="gmd"></span>9/9 CANONICAL_VALID</div></div></div></div>
+    <div class="gpanel"><div class="rlight"></div><div class="ghd"><div class="ghd-l"><span class="gnum">CCR-02</span><span class="gtitle">Delegação e isolamento de autoridade</span></div><div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div></div><div class="gdiv"></div><div class="gbody"><div class="gbody-t"><p>Prova de que delegação de autoridade é estruturalmente isolada — uma autoridade delegada não pode exceder o escopo do mandato que recebeu.</p><div class="gmeta"><span class="gmd"></span>9/9 CANONICAL_VALID</div></div></div></div>
+    <div class="gpanel"><div class="rlight"></div><div class="ghd"><div class="ghd-l"><span class="gnum">CCR-03</span><span class="gtitle">Operação concorrente e resistência</span></div><div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div></div><div class="gdiv"></div><div class="gbody"><div class="gbody-t"><p>Prova de operação simultânea sob pressão sistêmica — o kernel mantém integridade constitucional mesmo sob carga máxima. Hash público verificável.</p><div class="gmeta"><span class="gmd"></span>9/9 CANONICAL_VALID · Hash público</div></div></div></div>
   </div>
-
 </section>
+<div class="sdiv"></div>
 
-<div class="section-divider"></div>
-
-<!-- ═══ SECTORS ═══ -->
+<!-- SECTORS -->
 <section id="sectors">
-
-  <div class="sectors-header reveal">
-    <p class="sectors-label">05 — Aplicações</p>
-    <h2 class="sectors-title">Onde sistemas executam,<br>a HEILLON governa</h2>
+  <div class="sec-hd rv">
+    <p class="lbl">05 — Aplicações</p>
+    <h2 class="stitle">Onde sistemas executam,<br>a HEILLON governa</h2>
   </div>
-
-  <div class="sectors-grid reveal reveal-delay-1">
-    <div class="sector-item">
-      <p class="sector-num">01</p>
-      <p class="sector-name">Sistemas Financeiros</p>
-      <p class="sector-desc">Decisões de crédito, transferências e liquidação com prova de autoridade verificável e audit trail soberano.</p>
+  <div class="s2c rv d1">
+    <div class="gstack">
+      <div class="gpanel"><div class="rlight"></div><div class="ghd"><div class="ghd-l"><span class="gnum">01</span><span class="gtitle">Sistemas Financeiros</span></div><div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div></div><div class="gdiv"></div><div class="gbody"><div class="gbody-t"><p>Decisões de crédito, transferências e liquidação com prova de autoridade verificável e audit trail soberano. Conformidade com Basel IV e DORA.</p></div></div></div>
+      <div class="gpanel"><div class="rlight"></div><div class="ghd"><div class="ghd-l"><span class="gnum">02</span><span class="gtitle">Agentes de IA</span></div><div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div></div><div class="gdiv"></div><div class="gbody"><div class="gbody-t"><p>Operações autônomas que precisam provar que tinham mandato legítimo para agir — antes de executar. A camada que faltava para IA responsável.</p></div></div></div>
+      <div class="gpanel"><div class="rlight"></div><div class="ghd"><div class="ghd-l"><span class="gnum">03</span><span class="gtitle">Governança Corporativa</span></div><div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div></div><div class="gdiv"></div><div class="gbody"><div class="gbody-t"><p>Delegação de autoridade e decisões institucionais com cadeia causal criptograficamente preservada e verificável por auditores externos.</p></div></div></div>
     </div>
-    <div class="sector-item">
-      <p class="sector-num">02</p>
-      <p class="sector-name">Agentes de IA</p>
-      <p class="sector-desc">Operações autônomas que precisam provar que tinham mandato legítimo para agir antes de executar.</p>
-    </div>
-    <div class="sector-item">
-      <p class="sector-num">03</p>
-      <p class="sector-name">Governança Corporativa</p>
-      <p class="sector-desc">Delegação de autoridade e decisões institucionais com cadeia causal criptograficamente preservada.</p>
-    </div>
-    <div class="sector-item">
-      <p class="sector-num">04</p>
-      <p class="sector-name">Infraestrutura Crítica</p>
-      <p class="sector-desc">Operações em energia, telecomunicações e saúde com legitimidade estrutural antes de cada execução.</p>
-    </div>
-    <div class="sector-item">
-      <p class="sector-num">05</p>
-      <p class="sector-name">Compliance & Regulação</p>
-      <p class="sector-desc">Prova independente de conformidade — verificável por auditores externos sem acesso ao sistema interno.</p>
-    </div>
-    <div class="sector-item">
-      <p class="sector-num">06</p>
-      <p class="sector-name">Governos & Setor Público</p>
-      <p class="sector-desc">Atos administrativos e decisões automatizadas com auditabilidade soberana e prova irrevogável.</p>
+    <div class="gstack">
+      <div class="gpanel"><div class="rlight"></div><div class="ghd"><div class="ghd-l"><span class="gnum">04</span><span class="gtitle">Infraestrutura Crítica</span></div><div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div></div><div class="gdiv"></div><div class="gbody"><div class="gbody-t"><p>Operações em energia, telecomunicações e saúde com legitimidade estrutural antes de cada execução — e prova auditável de cada decisão tomada.</p></div></div></div>
+      <div class="gpanel"><div class="rlight"></div><div class="ghd"><div class="ghd-l"><span class="gnum">05</span><span class="gtitle">Compliance & Regulação</span></div><div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div></div><div class="gdiv"></div><div class="gbody"><div class="gbody-t"><p>Prova independente de conformidade — verificável por auditores externos sem acesso ao sistema interno. EU AI Act, DIFC Reg.10, ISO 27001.</p></div></div></div>
+      <div class="gpanel"><div class="rlight"></div><div class="ghd"><div class="ghd-l"><span class="gnum">06</span><span class="gtitle">Governos & Setor Público</span></div><div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div></div><div class="gdiv"></div><div class="gbody"><div class="gbody-t"><p>Atos administrativos e decisões automatizadas com auditabilidade soberana — o estado que pode provar suas próprias decisões.</p></div></div></div>
     </div>
   </div>
-
 </section>
+<div class="sdiv"></div>
 
-<div class="section-divider"></div>
-
-<!-- ═══ MANIFESTO ═══ -->
+<!-- MANIFESTO -->
 <section id="manifesto">
-  <p class="manifesto-line reveal">
-    Capacidade não implica legitimidade.<br>
-    Um sistema pode ser <em>tecnicamente capaz</em> de executar algo.<br>
-    Isso não significa que <strong>deveria executá-lo.</strong><br><br>
-    A HEILLON define quando execução é válida.
-  </p>
+  <div class="mani-bg" aria-hidden="true">PROVA</div>
+  <div class="mani-inner" id="maniInner">
+    <span class="mani-line" id="ml0">Capacidade não implica legitimidade.</span>
+    <span class="mani-line ac" id="ml1">Um sistema pode ser tecnicamente capaz de executar algo.</span>
+    <span class="mani-line" id="ml2">Isso não significa que</span>
+    <span class="mani-line st" id="ml3">deveria executá-lo.</span>
+    <br>
+    <span class="mani-line it" id="ml4">A HEILLON define quando execução é válida.</span>
+  </div>
 </section>
+<div class="sdiv"></div>
 
-<div class="section-divider"></div>
-
-<!-- ═══ CTA ═══ -->
+<!-- CTA -->
 <section id="cta">
   <div class="cta-grid">
-
-    <div class="cta-left reveal">
-      <p class="cta-label">06 — Próximo Passo</p>
+    <div class="rv">
+      <p class="lbl">06 — Próximo Passo</p>
       <h2 class="cta-title">A legitimidade computacional está se tornando inevitável</h2>
-      <p class="cta-body">
-        Reguladores estão exigindo. Auditores estão perguntando. Sistemas estão falhando em responder.
-        A HEILLON existe para tornar essa transição possível — com infraestrutura que funciona hoje.
-      </p>
-      <div class="cta-actions">
-        <a href="mailto:contact@heillon.com" class="btn-primary">Falar com a HEILLON</a>
-        <a href="https://hdr.heillon.com" class="btn-secondary">Explorar o Protocolo HDR</a>
+      <p class="cta-body">Reguladores estão exigindo. Auditores estão perguntando. Sistemas estão falhando em responder. A HEILLON existe para tornar essa transição possível.</p>
+      <div class="cta-btns">
+        <a href="mailto:contact@heillon.com" class="btn-p">Falar com a HEILLON</a>
+        <a href="https://hdr.heillon.com" class="btn-s">Explorar o Protocolo HDR</a>
       </div>
     </div>
-
-    <div class="cta-right reveal reveal-delay-2">
-      <div class="cta-status">
-        <div class="status-row">
-          <span class="status-key">Status</span>
-          <span class="status-val active"><span class="status-dot"></span>CONSTITUTIONAL_ACTIVE</span>
-        </div>
-        <div class="status-row">
-          <span class="status-key">Version</span>
-          <span class="status-val">v4.5.1</span>
-        </div>
-        <div class="status-row">
-          <span class="status-key">Protocol</span>
-          <span class="status-val">HDR · Open</span>
-        </div>
-        <div class="status-row">
-          <span class="status-key">CCR Cycles</span>
-          <span class="status-val">3 · 27/27 Valid</span>
-        </div>
-        <div class="status-row">
-          <span class="status-key">Ledger Events</span>
-          <span class="status-val">1,182+</span>
-        </div>
-        <div class="status-row">
-          <span class="status-key">Supply Chain</span>
-          <span class="status-val">Sigstore · Rekor</span>
-        </div>
+    <div class="rv d2">
+      <div class="stat-gls">
+        <div class="sr"><span class="sk">Status</span><span class="sv live"><span class="ldot"></span>CONSTITUTIONAL_ACTIVE</span></div>
+        <div class="sr"><span class="sk">Version</span><span class="sv">v4.5.1</span></div>
+        <div class="sr"><span class="sk">Protocol</span><span class="sv">HDR · Open</span></div>
+        <div class="sr"><span class="sk">CCR Cycles</span><span class="sv">3 · 27/27 Valid</span></div>
+        <div class="sr"><span class="sk">Ledger Events</span><span class="sv">1,182+</span></div>
+        <div class="sr"><span class="sk">Supply Chain</span><span class="sv">Sigstore · Rekor</span></div>
       </div>
-      <a href="mailto:contact@heillon.com" class="cta-contact-link">contact@heillon.com</a>
+      <a href="mailto:contact@heillon.com" class="clink">contact@heillon.com</a>
     </div>
-
   </div>
 </section>
 
-<!-- ═══ FOOTER ═══ -->
 <footer>
-  <p class="footer-left">HEILLON · Infraestrutura de Legitimidade Computacional · Joinville, BR</p>
-  <p class="footer-right">© 2026 HEILLON. All rights reserved.</p>
+  <p class="fl">HEILLON · Infraestrutura de Legitimidade Computacional · Joinville, BR</p>
+  <p class="fr">© 2026 HEILLON</p>
 </footer>
 
 <script>
-// ─── SCROLL REVEAL ───
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
-  });
-}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+window.addEventListener('load', function() {
 
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+/* 1. BG PARTICLES */
+(function(){
+  var cv=document.getElementById('cv');
+  if(!cv)return;
+  var ctx=cv.getContext('2d'),W,H,pts=[];
+  function rsz(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
+  function Pt(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.2;this.vy=(Math.random()-.5)*.14;this.r=Math.random()*1.3+.3;this.a=Math.random()*.32+.06;this.da=(Math.random()-.5)*.0018;var t=Math.random();this.rc=Math.round(123+t*80);this.gc=Math.round(127+t*55);this.bc=Math.round(196+t*48);}
+  Pt.prototype.tick=function(){this.x+=this.vx;this.y+=this.vy;this.a+=this.da;if(this.a<=.04||this.a>=.4)this.da*=-1;if(this.x<-8)this.x=W+8;if(this.x>W+8)this.x=-8;if(this.y<-8)this.y=H+8;if(this.y>H+8)this.y=-8;};
+  var D=110;
+  function init(){rsz();pts=[];var n=Math.min(Math.floor(W*H/8000),100);for(var i=0;i<n;i++)pts.push(new Pt());}
+  function loop(){ctx.clearRect(0,0,W,H);for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<D){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle='rgba(123,127,196,'+(1-d/D)*.1+')';ctx.lineWidth=.5;ctx.stroke();}}
+  for(var k=0;k<pts.length;k++){pts[k].tick();ctx.beginPath();ctx.arc(pts[k].x,pts[k].y,pts[k].r,0,Math.PI*2);ctx.fillStyle='rgba('+pts[k].rc+','+pts[k].gc+','+pts[k].bc+','+pts[k].a+')';ctx.fill();}requestAnimationFrame(loop);}
+  window.addEventListener('resize',init);init();loop();
+})();
 
-// ─── PARALLAX AMBIENT ───
-document.addEventListener('mousemove', (e) => {
-  const x = (e.clientX / window.innerWidth - 0.5) * 20;
-  const y = (e.clientY / window.innerHeight - 0.5) * 20;
-  document.querySelector('.ambient-1').style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
-  document.querySelector('.ambient-2').style.transform = `translate(${-x * 0.2}px, ${-y * 0.2}px)`;
-});
+/* 2. CURSOR */
+(function(){var g=document.getElementById('cur');if(!g)return;var cx=0,cy=0,tx=0,ty=0;document.addEventListener('mousemove',function(e){tx=e.clientX;ty=e.clientY;});function t(){cx+=(tx-cx)*.07;cy+=(ty-cy)*.07;g.style.left=cx+'px';g.style.top=cy+'px';requestAnimationFrame(t);}t();})();
 
-// ─── HASH TYPEWRITER ───
-const hashEl = document.querySelector('.hash-value');
-if (hashEl) {
-  const fullHash = hashEl.textContent;
-  hashEl.textContent = '';
-  let i = 0;
-  const typeHash = () => {
-    if (i < fullHash.length) {
-      hashEl.textContent += fullHash[i++];
-      setTimeout(typeHash, 18);
+/* 3. DATA RAIN */
+(function(){var L=document.getElementById('rain');if(!L)return;var S=['INTENT:SIGNED','AUTH:VERIFIED','POLICY:VALID','RISK:LOW','GATE:OPEN','HDR:ISSUED','CCR-03:VALID','LEGITIMACY:CONFIRMED','MANDATE:ACTIVE','KERNEL:SOVEREIGN','NLO:3','PROOF:VERIFIABLE'],n=0;
+function spawn(){if(n>=4)return;n++;var e=document.createElement('div');e.className='dr';e.textContent=S[Math.floor(Math.random()*S.length)];e.style.left=(Math.random()*92)+'%';e.style.bottom='-28px';var d=22+Math.random()*18;e.style.animationDuration=d+'s';L.appendChild(e);setTimeout(function(){e.remove();n--;},d*1000);}
+for(var i=0;i<3;i++)setTimeout(spawn,i*1800);setInterval(spawn,3500);})();
+
+/* 4. SCROLL REVEAL */
+function rv(){document.querySelectorAll('.rv:not(.on)').forEach(function(e){if(e.getBoundingClientRect().top<window.innerHeight-60)e.classList.add('on');});}
+rv();window.addEventListener('scroll',rv,{passive:true});[200,600,1200].forEach(function(t){setTimeout(rv,t);});
+
+/* 5. HERO WORD SPLIT */
+(function(){var title=document.getElementById('heroTitle');if(!title)return;
+function wrapNode(node){if(node.nodeType===3){var frag=document.createDocumentFragment();node.textContent.split(/(\s+)/).forEach(function(tok){if(/^\s+$/.test(tok)){frag.appendChild(document.createTextNode(tok));return;}if(!tok)return;var sp=document.createElement('span');sp.className='word';sp.textContent=tok;frag.appendChild(sp);});node.replaceWith(frag);}else if(node.nodeType===1&&node.nodeName!=='BR'){Array.from(node.childNodes).forEach(wrapNode);}}
+Array.from(title.childNodes).forEach(wrapNode);title.querySelectorAll('.word').forEach(function(w,i){w.style.animationDelay=(.65+i*.075)+'s';});})();
+
+/* 6. COUNTERS */
+var cObs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(!e.isIntersecting)return;var el=e.target,tgt=parseInt(el.dataset.target),suf=el.dataset.suffix||'',den=el.dataset.denom||'',dur=1800,st=performance.now();function step(now){var p=Math.min((now-st)/dur,1),ease=1-Math.pow(1-p,3);el.textContent=Math.round(ease*tgt).toLocaleString('pt-BR')+suf+den;if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);cObs.unobserve(el);});},{threshold:0.5});
+document.querySelectorAll('[data-target]').forEach(function(el){cObs.observe(el);});
+
+/* 7. MANIFESTO */
+(function(){['ml0','ml1','ml2','ml3','ml4'].forEach(function(id){var el=document.getElementById(id);if(!el)return;var words=el.textContent.trim().split(/\s+/);el.textContent='';words.forEach(function(w,i){var sp=document.createElement('span');sp.className='mw';sp.textContent=w;el.appendChild(sp);if(i<words.length-1)el.appendChild(document.createTextNode(' '));});});
+var done=false,obs=new IntersectionObserver(function(entries){if(entries[0].isIntersecting&&!done){done=true;var all=document.querySelectorAll('.mw');all.forEach(function(w,i){setTimeout(function(){w.classList.add('on');},i*55);});}},{threshold:0.25});obs.observe(document.getElementById('manifesto'));})();
+
+/* 8. HASH TYPEWRITER */
+(function(){var el=document.getElementById('hashEl');if(!el)return;var full=el.textContent;el.textContent='';var i=0;function type(){if(i<full.length){el.textContent+=full[i++];setTimeout(type,14);}}var obs=new IntersectionObserver(function(e){if(e[0].isIntersecting){type();obs.disconnect();}});obs.observe(el);})();
+
+/* 9. GLASS PANELS */
+document.querySelectorAll('.gpanel').forEach(function(p){var hd=p.querySelector('.ghd');if(!hd)return;hd.addEventListener('click',function(){var open=p.classList.contains('open');var st=p.closest('.gstack');if(st)st.querySelectorAll('.gpanel.open').forEach(function(x){if(x!==p)x.classList.remove('open');});p.classList.toggle('open',!open);if(!open)setTimeout(function(){p.scrollIntoView({behavior:'smooth',block:'nearest'});},300);});p.addEventListener('mousemove',function(e){var r=p.getBoundingClientRect(),rl=p.querySelector('.rlight');if(rl){var cx=110;rl.style.left=((e.clientX-r.left)-cx)+'px';rl.style.top=((e.clientY-r.top)-cx)+'px';}});});
+
+/* ═══════════════════════════════════════════════════════════════════
+   CANVAS A — HERO: TÚNEL DE VERIFICAÇÃO
+   Perspectiva cónica real. Partículas entram pela boca do túnel,
+   percorrem o eixo Z, são validadas em cada ring (flash branco),
+   e chegam ao cubo HDR. ~20% são REJEITADAS (vermelho) e saem pela lateral.
+═══════════════════════════════════════════════════════════════════ */
+(function(){
+  var el=document.getElementById('cvHero');
+  if(!el)return;
+  var par=el.parentElement;
+  var W,H,T=0;
+  var ctx=el.getContext('2d');
+
+  function resize(){
+    W=el.width=par.offsetWidth||580;
+    H=el.height=Math.round(W*0.72);
+    if(H<320)H=el.height=320;
+  }
+  resize();
+  window.addEventListener('resize',function(){resize();});
+
+  // Rings do túnel — 5 anéis em perspectiva, do maior (entrada) ao menor (fundo)
+  // O túnel aponta da esquerda (boca, grande) para a direita (fundo, pequeno)
+  var RINGS=[
+    {t:0.08, rxFrac:0.46, ryFrac:0.44},  // boca do túnel (maior, à esquerda)
+    {t:0.25, rxFrac:0.36, ryFrac:0.34},
+    {t:0.44, rxFrac:0.26, ryFrac:0.24},  // gate 1
+    {t:0.60, rxFrac:0.17, ryFrac:0.16},  // gate 2
+    {t:0.76, rxFrac:0.10, ryFrac:0.095}  // fundo (menor, à direita)
+  ];
+  var GATE_RINGS=[2,3,4]; // índices dos rings que são "gates" de validação
+  var GATE_LABELS=['AUTHORITY','POLICY','RISK·GOV'];
+
+  // Flash state para cada gate ring
+  var gFlash=[0,0,0]; // 0..1 decaying
+
+  // Partículas
+  var TOTAL=80;
+  var parts=[];
+
+  function spawnPart(p){
+    // Nasce na boca do túnel (t≈0, x≈esquerda)
+    var cy_=H*0.5;
+    p.t=Math.random()*0.04; // posição no eixo do túnel (0=boca, 1=fundo)
+    p.vy=(Math.random()-0.5)*0.003; // pequena deriva vertical
+    p.speed=0.0015+Math.random()*0.002; // velocidade ao longo do túnel
+    // rejected: ~18% das partículas
+    p.rejected=Math.random()<0.18;
+    p.rejectAt=p.rejected?(0.30+Math.random()*0.28):2; // em qual t rejeitar
+    p.rejecting=false;
+    p.rejVx=0; p.rejVy=0;
+    p.hue=220+Math.random()*30;
+    p.r=1.0+Math.random()*1.4;
+    p.a=0.5+Math.random()*0.5;
+    p.done=false;
+    p.gatesPassed=0;
+    p.ty=cy_+(Math.random()-0.5)*H*0.08; // posição Y inicial (perto do centro)
+    p.rx=0; p.ry=0; // coords tela, calculadas no render
+  }
+
+  for(var i=0;i<TOTAL;i++){
+    var p={};spawnPart(p);
+    p.t=Math.random(); // distribuir inicialmente pelo túnel todo
+    parts.push(p);
+  }
+
+  function tunnelCoord(t){
+    // Mapeia t=[0..1] para coordenada X da tela (0=boca/esq, 1=fundo/dir)
+    // e raio do anel naquela posição
+    var cx=W*0.5;
+    var x=W*0.07+t*(W*0.72); // boca em 7% W, fundo em 79% W
+    // Raio por perspectiva: interpola entre rings
+    var rxMax=W*0.44,ryMax=H*0.44;
+    var rxMin=W*0.06,ryMin=H*0.06;
+    var frac=t;
+    var rx=rxMax*(1-frac)+rxMin*frac;
+    var ry=ryMax*(1-frac)+ryMin*frac;
+    return {x:x, cx:cx, cy:H*0.5, rx:rx, ry:ry};
+  }
+
+  function drawTunnel(){
+    // Desenhar silhueta do túnel: linhas guia superiores e inferiores
+    var p0=tunnelCoord(0),p1=tunnelCoord(1);
+    ctx.beginPath();
+    ctx.moveTo(p0.x, p0.cy-p0.ry);
+    ctx.lineTo(p1.x, p1.cy-p1.ry);
+    ctx.strokeStyle='rgba(123,127,196,0.12)';ctx.lineWidth=1;ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(p0.x, p0.cy+p0.ry);
+    ctx.lineTo(p1.x, p1.cy+p1.ry);
+    ctx.strokeStyle='rgba(123,127,196,0.12)';ctx.lineWidth=1;ctx.stroke();
+
+    // Preencher interior do túnel com gradiente escuro
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(p0.x, p0.cy-p0.ry);
+    ctx.lineTo(p1.x, p1.cy-p1.ry);
+    ctx.lineTo(p1.x, p1.cy+p1.ry);
+    ctx.lineTo(p0.x, p0.cy+p0.ry);
+    ctx.closePath();
+    var grd=ctx.createLinearGradient(p0.x,0,p1.x,0);
+    grd.addColorStop(0,'rgba(8,10,28,0.55)');
+    grd.addColorStop(1,'rgba(3,3,10,0.85)');
+    ctx.fillStyle=grd;
+    ctx.fill();
+    ctx.restore();
+
+    // Rings dos portões
+    RINGS.forEach(function(ring,idx){
+      var tc=tunnelCoord(ring.t);
+      var isGate=GATE_RINGS.indexOf(idx)!==-1;
+      var gi=GATE_RINGS.indexOf(idx);
+      var flash=(isGate&&gFlash[gi]>0)?gFlash[gi]:0;
+      var pulse=0.5+0.5*Math.sin(T*2.2+idx*1.3);
+
+      // Glow de fundo do anel
+      if(flash>0){
+        var grd2=ctx.createRadialGradient(tc.x,tc.cy,tc.ry*0.1,tc.x,tc.cy,tc.rx*1.8);
+        grd2.addColorStop(0,'rgba(255,255,255,'+(flash*0.18)+')');
+        grd2.addColorStop(1,'rgba(168,171,223,0)');
+        ctx.beginPath();ctx.ellipse(tc.x,tc.cy,tc.rx*1.8,tc.ry*1.8,0,0,Math.PI*2);
+        ctx.fillStyle=grd2;ctx.fill();
+      }
+
+      // Anel principal
+      var alpha=isGate?(0.35+0.45*pulse+flash*0.5):(0.15+0.1*pulse);
+      var col=isGate?('rgba(196,198,240,'+alpha+')'):'rgba(123,127,196,'+alpha+')';
+      ctx.beginPath();ctx.ellipse(tc.x,tc.cy,tc.rx,tc.ry,0,0,Math.PI*2);
+      ctx.strokeStyle=col;
+      ctx.lineWidth=isGate?(1.8+flash*2):1;
+      ctx.stroke();
+
+      // Anel interno (perspectiva de espessura)
+      if(isGate){
+        ctx.beginPath();ctx.ellipse(tc.x,tc.cy,tc.rx*0.88,tc.ry*0.88,0,0,Math.PI*2);
+        ctx.strokeStyle='rgba(123,127,196,'+(0.12+0.18*pulse)+')';ctx.lineWidth=1;ctx.stroke();
+      }
+
+      // Label dos gates
+      if(isGate&&gi<3){
+        ctx.font="7px 'DM Mono',monospace";
+        ctx.fillStyle='rgba(168,171,223,'+(0.38+flash*0.5)+')';
+        ctx.textAlign='center';
+        ctx.fillText(GATE_LABELS[gi],tc.x,tc.cy-tc.ry-8);
+      }
+    });
+  }
+
+  function frameHero(){
+    T+=0.016;
+    ctx.clearRect(0,0,W,H);
+
+    // Background
+    var bg=ctx.createRadialGradient(W*0.4,H*0.5,0,W*0.4,H*0.5,W*0.8);
+    bg.addColorStop(0,'rgba(10,12,38,0.98)');bg.addColorStop(1,'rgba(3,3,10,1)');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+
+    // Linha de eixo central
+    var p0=tunnelCoord(0),p1=tunnelCoord(1);
+    ctx.beginPath();ctx.moveTo(p0.x,H*0.5);ctx.lineTo(p1.x,H*0.5);
+    ctx.strokeStyle='rgba(123,127,196,0.05)';ctx.lineWidth=1;ctx.stroke();
+
+    drawTunnel();
+
+    // Atualizar e desenhar partículas (ordenadas por t decrescente = fundo primeiro)
+    parts.sort(function(a,b){return b.t-a.t;});
+
+    parts.forEach(function(p){
+      if(p.done)return;
+
+      if(p.rejecting){
+        // Partícula rejeitada — voa para cima/baixo saindo da tela
+        p.rx+=p.rejVx;p.ry+=p.rejVy;p.a-=0.025;
+        if(p.a<=0){p.done=true;return;}
+        var tail=4;
+        ctx.beginPath();ctx.arc(p.rx,p.ry,p.r*1.2,0,Math.PI*2);
+        ctx.fillStyle='rgba(220,80,80,'+p.a+')';ctx.fill();
+        ctx.beginPath();ctx.moveTo(p.rx,p.ry);ctx.lineTo(p.rx-p.rejVx*tail,p.ry-p.rejVy*tail);
+        ctx.strokeStyle='rgba(200,60,60,'+(p.a*0.4)+')';ctx.lineWidth=p.r*0.7;ctx.stroke();
+        // Sinal × de rejeição (pequeno)
+        ctx.font='bold 9px sans-serif';ctx.fillStyle='rgba(255,100,100,'+(p.a*1.2)+')';
+        ctx.textAlign='center';ctx.fillText('×',p.rx+6,p.ry-6);
+        return;
+      }
+
+      // Avançar no túnel
+      p.t+=p.speed;
+
+      // Verificar se chegou num gate e deve ser rejeitada
+      if(p.rejected&&p.t>=p.rejectAt){
+        var tc=tunnelCoord(p.t);
+        p.rejecting=true;
+        p.rx=tc.x;p.ry=p.ty;
+        var side=Math.random()<0.5?-1:1;
+        p.rejVx=(Math.random()*1.5+0.8)*(Math.random()<0.3?-1:1);
+        p.rejVy=side*(Math.random()*2.2+1.2);
+        p.a=0.9;
+        // Flash vermelho no gate mais próximo
+        var nearGi=-1,minDt=1;
+        GATE_RINGS.forEach(function(ri,gi){
+          var dt=Math.abs(p.t-RINGS[ri].t);
+          if(dt<minDt){minDt=dt;nearGi=gi;}
+        });
+        return;
+      }
+
+      // Flash de validação ao cruzar um gate ring
+      GATE_RINGS.forEach(function(ri,gi){
+        var ringT=RINGS[ri].t;
+        if(Math.abs(p.t-ringT)<p.speed*2.5&&!p.rejected){
+          gFlash[gi]=Math.min(gFlash[gi]+0.6,1.0);
+          p.gatesPassed++;
+        }
+      });
+
+      // Calc posição tela
+      var tc=tunnelCoord(p.t);
+      // A partícula fica confinada ao interior do anel atual
+      var maxOffset=tc.ry*0.75;
+      p.ty+=(H*0.5-p.ty)*0.008; // convergir para o centro lentamente
+      p.ty+=p.vy*tc.ry*12;
+      var yOff=Math.max(-maxOffset,Math.min(maxOffset,p.ty-H*0.5));
+      p.rx=tc.x;p.ry=H*0.5+yOff;
+
+      if(p.t>1.02){
+        // Chegou ao HDR
+        spawnPart(p);
+        return;
+      }
+
+      // Opacidade: fade in na entrada, fade out na chegada
+      var fa=p.a*Math.min(p.t*15,1)*Math.min((1.02-p.t)*20,1);
+      var sz=p.r*(0.6+0.4*(1-p.t)); // menor no fundo (perspectiva)
+
+      // Cor: azul-lavanda normal, mais brilhante perto de gates
+      var glow=0;
+      GATE_RINGS.forEach(function(ri){var dt=Math.abs(p.t-RINGS[ri].t);if(dt<0.07)glow=Math.max(glow,1-dt/0.07);});
+      var h=p.hue,s=50+glow*25,l=70+glow*20;
+      ctx.beginPath();ctx.arc(p.rx,p.ry,sz,0,Math.PI*2);
+      ctx.fillStyle='hsla('+h+','+s+'%,'+l+'%,'+fa+')';ctx.fill();
+      // Trail
+      ctx.beginPath();ctx.moveTo(p.rx,p.ry);ctx.lineTo(p.rx-p.speed*W*5,p.ry);
+      ctx.strokeStyle='hsla('+h+','+s+'%,'+l+'%,'+(fa*0.25)+')';ctx.lineWidth=sz*0.6;ctx.stroke();
+    });
+
+    // Decay dos flashes
+    for(var gi=0;gi<3;gi++) gFlash[gi]=Math.max(0,gFlash[gi]-0.04);
+
+    // HDR node à direita
+    var hx=W*0.86, hp=0.5+0.5*Math.sin(T*1.4);
+    var hg=ctx.createRadialGradient(hx,H*0.5,0,hx,H*0.5,H*0.12);
+    hg.addColorStop(0,'rgba(168,171,223,'+(0.14+0.1*hp)+')');hg.addColorStop(1,'rgba(168,171,223,0)');
+    ctx.beginPath();ctx.arc(hx,H*0.5,H*0.12,0,Math.PI*2);ctx.fillStyle=hg;ctx.fill();
+    ctx.beginPath();ctx.arc(hx,H*0.5,H*0.085,0,Math.PI*2);
+    ctx.strokeStyle='rgba(196,198,240,'+(0.5+0.4*hp)+')';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.beginPath();ctx.arc(hx,H*0.5,H*0.05,0,Math.PI*2);
+    ctx.strokeStyle='rgba(168,171,223,'+(0.3+0.25*hp)+')';ctx.lineWidth=1;ctx.stroke();
+    ctx.font="bold 11px 'DM Mono',monospace";ctx.fillStyle='rgba(196,198,240,'+(0.8+0.2*hp)+')';
+    ctx.textAlign='center';ctx.fillText('HDR',hx,H*0.5+4);
+    ctx.font="7px 'DM Mono',monospace";ctx.fillStyle='rgba(123,127,196,0.45)';
+    ctx.fillText('PROOF',hx,H*0.5+H*0.085+15);
+
+    // INTENT label na boca do túnel
+    ctx.font="7px 'DM Mono',monospace";ctx.fillStyle='rgba(123,127,196,0.42)';
+    ctx.textAlign='center';ctx.fillText('INTENT',W*0.065,H*0.5+tunnelCoord(0).ry+16);
+
+    // Título
+    ctx.font="6px 'DM Mono',monospace";ctx.fillStyle='rgba(123,127,196,0.22)';
+    ctx.textAlign='left';ctx.fillText('HEILLON VERIFICATION PROTOCOL',10,16);
+
+    requestAnimationFrame(frameHero);
+  }
+  frameHero();
+})();
+
+/* ═══════════════════════════════════════════════════════════════════
+   CANVAS B — MECHANISM: PORTÃO QUÁDRUPLO — INTERCEPTAÇÃO REAL
+   Perspectiva cônica com vanishing point central.
+   Partículas são DETIDAS em cada gate: param, pulsam com flash ✓,
+   e só continuam após validação. Velocidade variável.
+═══════════════════════════════════════════════════════════════════ */
+(function(){
+  var el=document.getElementById('cvPortal');
+  if(!el)return;
+  var W,H=380,T=0;
+  var ctx=el.getContext('2d');
+
+  function resize(){W=el.width=el.parentElement.offsetWidth||900;el.height=H;}
+  resize();
+  window.addEventListener('resize',resize);
+
+  // Os 4 gates em perspectiva cônica — convergem para um ponto central
+  // x: posição horizontal, hw/hh: meia-largura/altura do frame
+  // O vanishing point está no centro (W*0.5, H*0.5)
+  // Gate positions como fração de W
+  var GDEF=[
+    {id:'AUTHORITY', xf:0.15, hwf:0.13, hhf:0.44, col:[196,198,240]},
+    {id:'POLICY',    xf:0.33, hwf:0.10, hhf:0.35, col:[168,171,223]},
+    {id:'RISK',      xf:0.50, hwf:0.075,hhf:0.26, col:[148,152,208]},
+    {id:'GOVERNANCE',xf:0.66, hwf:0.055,hhf:0.18, col:[123,127,196]}
+  ];
+
+  // Flash state dos gates [0..1]
+  var gFlash=[0,0,0,0];
+
+  // Label ✓ VALID flutuante por gate
+  var gValid=[{a:0,y:0},{a:0,y:0},{a:0,y:0},{a:0,y:0}];
+
+  // Partículas
+  var TOTAL=55;
+  var parts=[];
+
+  // Estados da partícula:
+  // traveling: movendo normalmente
+  // halted: parada num gate, aguardando validação
+  // validating: flash/pulso de validação
+  // passing: passou, acelerando
+  // done: chegou ao HDR ou saiu
+
+  function spawnPart(p){
+    p.x=-8+Math.random()*12;
+    p.y=H*0.5+(Math.random()-0.5)*H*0.18;
+    p.vx=0.6+Math.random()*0.9;
+    p.vy=(Math.random()-0.5)*0.3;
+    p.state='traveling';
+    p.haltGate=-1;
+    p.haltTimer=0;
+    p.haltDur=18+Math.floor(Math.random()*22); // frames que fica preso
+    p.r=0.8+Math.random()*1.4;
+    p.a=0.4+Math.random()*0.5;
+    p.hue=218+Math.random()*32;
+    p.gateIdx=0; // próximo gate a cruzar
+    p.done=false;
+    p.speed=0.7+Math.random()*0.9;
+    p.pulsePhase=Math.random()*Math.PI*2;
+  }
+
+  // Distribui as partículas inicialmente por posições variadas
+  for(var i=0;i<TOTAL;i++){
+    var p={};spawnPart(p);
+    p.x=Math.random()*W*0.9;
+    // Descobrir em qual segmento estamos
+    var gateIdx=0;
+    for(var g=0;g<GDEF.length;g++){if(p.x>GDEF[g].xf*1000)gateIdx=g+1;} // rough
+    p.gateIdx=gateIdx;
+    parts.push(p);
+  }
+
+  function getGateCoords(gi){
+    var g=GDEF[gi];
+    return {
+      x: W*g.xf,
+      hw: W*g.hwf,
+      hh: H*g.hhf,
+      cy: H*0.5
+    };
+  }
+
+  function drawGates(){
+    var cy=H*0.5;
+    // Linhas de perspectiva conectando os frames (superior e inferior)
+    for(var i=0;i<GDEF.length-1;i++){
+      var a=getGateCoords(i),b=getGateCoords(i+1);
+      var al=0.06+0.04*Math.sin(T*1.4+i);
+      ctx.strokeStyle='rgba(123,127,196,'+al+')';ctx.lineWidth=0.8;
+      ctx.beginPath();ctx.moveTo(a.x,a.cy-a.hh);ctx.lineTo(b.x,b.cy-b.hh);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(a.x,a.cy+a.hh);ctx.lineTo(b.x,b.cy+b.hh);ctx.stroke();
     }
-  };
-  const hashObserver = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting) {
-      typeHash();
-      hashObserver.disconnect();
-    }
-  });
-  hashObserver.observe(hashEl);
-}
+    // Estender linhas de perspectiva para o vanishing point (HDR)
+    var last=getGateCoords(GDEF.length-1);
+    var vx=W*0.84,vy=cy;
+    var al2=0.04;
+    ctx.strokeStyle='rgba(123,127,196,'+al2+')';ctx.lineWidth=0.6;
+    ctx.beginPath();ctx.moveTo(last.x,last.cy-last.hh);ctx.lineTo(vx,vy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(last.x,last.cy+last.hh);ctx.lineTo(vx,vy);ctx.stroke();
+
+    // Desenhar os 4 frames
+    GDEF.forEach(function(gd,gi){
+      var gc=getGateCoords(gi);
+      var flash=gFlash[gi];
+      var pulse=0.5+0.5*Math.sin(T*2.0+gi*0.9);
+      var col=gd.col;
+
+      // Glow de fundo quando flash
+      if(flash>0.02){
+        var grd=ctx.createRadialGradient(gc.x,gc.cy,gc.hh*0.1,gc.x,gc.cy,gc.hw*3);
+        grd.addColorStop(0,'rgba('+col[0]+','+col[1]+','+col[2]+','+(flash*0.22)+')');
+        grd.addColorStop(1,'rgba('+col[0]+','+col[1]+','+col[2]+',0)');
+        ctx.beginPath();ctx.rect(gc.x-gc.hw*2.5,gc.cy-gc.hh*1.3,gc.hw*5,gc.hh*2.6);
+        ctx.fillStyle=grd;ctx.fill();
+      }
+
+      // Frame retangular
+      var baseA=0.18+0.22*pulse;
+      ctx.strokeStyle='rgba('+col[0]+','+col[1]+','+col[2]+','+(baseA+flash*0.5)+')';
+      ctx.lineWidth=1.2+flash*1.5;
+      ctx.strokeRect(gc.x-gc.hw,gc.cy-gc.hh,gc.hw*2,gc.hh*2);
+
+      // Corner accents
+      var cs=Math.min(gc.hw,gc.hh)*0.28;
+      var ca=0.55+0.4*pulse+flash*0.4;
+      ctx.strokeStyle='rgba('+col[0]+','+col[1]+','+col[2]+','+ca+')';
+      ctx.lineWidth=2;
+      var corners=[[gc.x-gc.hw,gc.cy-gc.hh,1,1],[gc.x+gc.hw,gc.cy-gc.hh,-1,1],[gc.x-gc.hw,gc.cy+gc.hh,1,-1],[gc.x+gc.hw,gc.cy+gc.hh,-1,-1]];
+      corners.forEach(function(c){ctx.beginPath();ctx.moveTo(c[0],c[1]+c[3]*cs);ctx.lineTo(c[0],c[1]);ctx.lineTo(c[0]+c[2]*cs,c[1]);ctx.stroke();});
+
+      // Label do gate
+      ctx.font="7px 'DM Mono',monospace";
+      ctx.fillStyle='rgba('+col[0]+','+col[1]+','+col[2]+','+(0.42+flash*0.38)+')';
+      ctx.textAlign='center';
+      ctx.fillText(gd.id,gc.x,gc.cy-gc.hh-9);
+
+      // Label ✓ VALID flutuando
+      var gv=gValid[gi];
+      if(gv.a>0){
+        ctx.font="bold 8px 'DM Mono',monospace";
+        ctx.fillStyle='rgba(120,220,130,'+gv.a+')';
+        ctx.textAlign='center';
+        ctx.fillText('✓ VALID',gc.x,gv.y);
+        gv.y-=0.35;gv.a-=0.018;
+      }
+    });
+  }
+
+  function framePortal(){
+    T+=0.016;
+    ctx.clearRect(0,0,W,H);
+
+    // Background
+    var bg=ctx.createLinearGradient(0,0,W,0);
+    bg.addColorStop(0,'rgba(5,5,10,0.99)');bg.addColorStop(0.5,'rgba(8,10,28,0.97)');bg.addColorStop(1,'rgba(5,5,10,0.99)');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+
+    // Linha de eixo
+    ctx.beginPath();ctx.moveTo(0,H*0.5);ctx.lineTo(W,H*0.5);
+    ctx.strokeStyle='rgba(123,127,196,0.04)';ctx.lineWidth=1;ctx.stroke();
+
+    drawGates();
+
+    // Atualizar e desenhar partículas
+    parts.forEach(function(p){
+      if(p.done)return;
+
+      if(p.state==='traveling'){
+        p.x+=p.vx*p.speed;p.y+=p.vy;
+        // Verificar se chegou ao próximo gate
+        if(p.gateIdx<GDEF.length){
+          var gc=getGateCoords(p.gateIdx);
+          // Dentro do frame verticalmente?
+          var inFrame=Math.abs(p.y-gc.cy)<gc.hh*1.1;
+          if(p.x>=gc.x-gc.hw*0.5&&p.x<=gc.x+gc.hw*0.5&&inFrame){
+            // HALTED no gate
+            p.state='halted';
+            p.haltGate=p.gateIdx;
+            p.haltTimer=0;
+            p.x=gc.x; // snapa para o centro do gate
+          }
+        } else {
+          // Passou todos os gates — vai para o HDR
+          if(p.x>W*0.88){spawnPart(p);}
+        }
+      } else if(p.state==='halted'){
+        // Partícula vibra/pulsa no gate
+        p.haltTimer++;
+        var gc2=getGateCoords(p.haltGate);
+        // Vibração leve
+        p.x=gc2.x+(Math.sin(T*18+p.pulsePhase)*2.5);
+        p.y+=p.vy*0.15;
+
+        // Flash do gate enquanto está preso
+        gFlash[p.haltGate]=Math.min(gFlash[p.haltGate]+0.12,0.9);
+
+        if(p.haltTimer>=p.haltDur){
+          // VALIDADO — passa
+          p.state='passing';
+          p.gateIdx++;
+          // Mostrar ✓ VALID
+          gValid[p.haltGate]={a:1.0,y:gc2.cy-gc2.hh-22};
+          // Acelerar após validação
+          p.speed=1.4+Math.random()*0.8;
+        }
+      } else if(p.state==='passing'){
+        // Aceleração pós-validação
+        p.x+=p.vx*p.speed;p.y+=p.vy;
+        p.speed=Math.max(0.7,p.speed-0.04); // desacelera gradualmente
+        if(p.gateIdx<GDEF.length){
+          var gc3=getGateCoords(p.gateIdx);
+          var inFrame3=Math.abs(p.y-gc3.cy)<gc3.hh*1.1;
+          if(p.x>=gc3.x-gc3.hw*0.5&&p.x<=gc3.x+gc3.hw*0.5&&inFrame3){
+            p.state='halted';p.haltGate=p.gateIdx;p.haltTimer=0;p.x=gc3.x;
+          }
+        } else {if(p.x>W*0.88)spawnPart(p);}
+      }
+
+      if(p.y<-20||p.y>H+20)spawnPart(p);
+
+      // Renderizar partícula
+      var fa=p.a*Math.min(p.x/(W*0.04),1)*Math.min((W*0.99-p.x)/(W*0.04),1);
+      var halted=(p.state==='halted');
+      var hpulse=halted?(0.5+0.5*Math.sin(T*14+p.pulsePhase)):0;
+      var sz=p.r*(halted?(1.3+0.4*hpulse):1.0);
+      var col2=halted?'255,220,100':''+p.hue+',55%,76%';
+
+      if(halted){
+        // Halo de espera
+        var hgrd=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,sz*4);
+        hgrd.addColorStop(0,'rgba(255,200,80,'+(fa*0.18*(1+hpulse))+')');
+        hgrd.addColorStop(1,'rgba(255,200,80,0)');
+        ctx.beginPath();ctx.arc(p.x,p.y,sz*4,0,Math.PI*2);ctx.fillStyle=hgrd;ctx.fill();
+        ctx.beginPath();ctx.arc(p.x,p.y,sz,0,Math.PI*2);
+        ctx.fillStyle='rgba(255,200,80,'+(fa*(0.7+0.3*hpulse))+')';ctx.fill();
+      } else {
+        ctx.beginPath();ctx.arc(p.x,p.y,sz,0,Math.PI*2);
+        ctx.fillStyle='hsla('+p.hue+',55%,76%,'+fa+')';ctx.fill();
+        // Trail
+        ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-p.vx*p.speed*3.5,p.y);
+        ctx.strokeStyle='hsla('+p.hue+',55%,76%,'+(fa*0.22)+')';ctx.lineWidth=sz*0.55;ctx.stroke();
+      }
+    });
+
+    // Decay dos flashes
+    for(var gi=0;gi<4;gi++) gFlash[gi]=Math.max(0,gFlash[gi]-0.03);
+
+    // INTENT node (esquerda)
+    var ix=W*0.04,ip=0.5+0.5*Math.sin(T*1.2);
+    ctx.beginPath();ctx.arc(ix,H*0.5,H*0.075,0,Math.PI*2);
+    ctx.strokeStyle='rgba(123,127,196,'+(0.25+0.15*ip)+')';ctx.lineWidth=1;ctx.stroke();
+    var ig=ctx.createRadialGradient(ix,H*0.5,0,ix,H*0.5,H*0.075);
+    ig.addColorStop(0,'rgba(123,127,196,'+(0.06+0.04*ip)+')');ig.addColorStop(1,'rgba(123,127,196,0)');
+    ctx.beginPath();ctx.arc(ix,H*0.5,H*0.075,0,Math.PI*2);ctx.fillStyle=ig;ctx.fill();
+    ctx.font="7px 'DM Mono',monospace";ctx.fillStyle='rgba(123,127,196,0.4)';
+    ctx.textAlign='center';ctx.fillText('INTENT',ix,H*0.5+H*0.075+14);
+
+    // HDR node (direita)
+    var hx=W*0.87,hp2=0.5+0.5*Math.sin(T*1.5);
+    var hg2=ctx.createRadialGradient(hx,H*0.5,0,hx,H*0.5,H*0.11);
+    hg2.addColorStop(0,'rgba(168,171,223,'+(0.12+0.08*hp2)+')');hg2.addColorStop(1,'rgba(168,171,223,0)');
+    ctx.beginPath();ctx.arc(hx,H*0.5,H*0.11,0,Math.PI*2);ctx.fillStyle=hg2;ctx.fill();
+    ctx.beginPath();ctx.arc(hx,H*0.5,H*0.08,0,Math.PI*2);
+    ctx.strokeStyle='rgba(196,198,240,'+(0.42+0.4*hp2)+')';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.beginPath();ctx.arc(hx,H*0.5,H*0.048,0,Math.PI*2);
+    ctx.strokeStyle='rgba(168,171,223,'+(0.28+0.22*hp2)+')';ctx.lineWidth=1;ctx.stroke();
+    ctx.font="bold 10px 'DM Mono',monospace";ctx.fillStyle='rgba(196,198,240,'+(0.75+0.25*hp2)+')';
+    ctx.textAlign='center';ctx.fillText('HDR',hx,H*0.5+4);
+    ctx.font="7px 'DM Mono',monospace";ctx.fillStyle='rgba(123,127,196,0.42)';
+    ctx.fillText('PROOF',hx,H*0.5+H*0.08+14);
+
+    // Footer label
+    ctx.font="6px 'DM Mono',monospace";ctx.fillStyle='rgba(123,127,196,0.18)';ctx.textAlign='center';
+    ctx.fillText('HEILLON — QUADRUPLE GATE LEGITIMACY PROTOCOL',W*0.5,H-10);
+
+    requestAnimationFrame(framePortal);
+  }
+  framePortal();
+})();
+
+}); // end window.load
 </script>
-
 </body>
 </html>
