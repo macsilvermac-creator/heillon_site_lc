@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="en" translate="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEILLON — Computational Legitimacy Infrastructure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Outfit:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void: #060608;
+  --depth: #0a0b12;
+  --surface: #0f1020;
+  --indigo-deep: #12142a;
+  --indigo: #1e2048;
+  --indigo-mid: #2a2d6e;
+  --lavender: #7b7fc4;
+  --lavender-bright: #a8abdf;
+  --lavender-glow: #c4c6f0;
+  --lilac: #d0b8f8;
+  --proof: #5b8fff;
+  --proof-dim: rgba(91,143,255,0.15);
+  --gold: #b89c6a;
+  --gold-dim: rgba(184,156,106,0.12);
+  --ink: #e8e6f0;
+  --ink-dim: rgba(232,230,240,0.55);
+  --ink-ghost: rgba(232,230,240,0.25);
+  --ink-faint: rgba(232,230,240,0.08);
+
+  --t-display: clamp(3rem, 7vw, 6.5rem);
+  --t-hero: clamp(2.2rem, 5vw, 4.8rem);
+  --t-section: clamp(1.8rem, 3.5vw, 3.2rem);
+  --t-body: clamp(1rem, 1.5vw, 1.15rem);
+  --t-small: 0.8rem;
+  --t-micro: 0.7rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--void);
+  color: var(--ink);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-track { background: var(--void); }
+::-webkit-scrollbar-thumb { background: var(--indigo-mid); }
+
+/* ─── NOISE OVERLAY ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.6;
+}
+
+/* ─── AMBIENT GLOW ─── */
+.ambient {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+}
+.ambient-1 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(30,32,72,0.5) 0%, transparent 70%);
+  top: -200px; left: -100px;
+}
+.ambient-2 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(123,127,196,0.08) 0%, transparent 70%);
+  top: 30vh; right: -150px;
+}
+.ambient-3 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(208,184,248,0.05) 0%, transparent 70%);
+  bottom: 20vh; left: 30%;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 900;
+  padding: 1.5rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(6,6,8,0.9) 0%, transparent 100%);
+  backdrop-filter: blur(8px);
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  color: var(--lavender-glow);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: var(--t-small);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-ghost);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--lavender-bright); }
+
+.nav-cta {
+  font-size: var(--t-small);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lavender);
+  text-decoration: none;
+  border: 1px solid rgba(123,127,196,0.3);
+  padding: 0.5rem 1.2rem;
+  transition: all 0.3s;
+}
+.nav-cta:hover {
+  background: rgba(123,127,196,0.08);
+  color: var(--lavender-glow);
+  border-color: rgba(123,127,196,0.6);
+}
+
+/* ─── SECTIONS BASE ─── */
+section {
+  position: relative;
+  z-index: 10;
+}
+
+/* ─── HERO ─── */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 clamp(2rem, 6vw, 8rem);
+  padding-top: 8rem;
+}
+
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--lavender);
+  opacity: 0.7;
+  margin-bottom: 2.5rem;
+  animation: fadeUp 1.2s ease forwards;
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: var(--t-display);
+  font-weight: 300;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  max-width: 900px;
+  animation: fadeUp 1.2s ease forwards;
+  animation-delay: 0.5s;
+  opacity: 0;
+}
+
+.hero-title em {
+  font-style: italic;
+  color: var(--lavender-bright);
+}
+
+.hero-subtitle {
+  margin-top: 2.5rem;
+  font-size: var(--t-body);
+  color: var(--ink-dim);
+  max-width: 520px;
+  line-height: 1.7;
+  font-weight: 300;
+  animation: fadeUp 1.2s ease forwards;
+  animation-delay: 0.8s;
+  opacity: 0;
+}
+
+.hero-actions {
+  margin-top: 3.5rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  animation: fadeUp 1.2s ease forwards;
+  animation-delay: 1.1s;
+  opacity: 0;
+}
+
+.btn-primary {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-small);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--void);
+  background: var(--lavender-bright);
+  text-decoration: none;
+  padding: 0.85rem 2rem;
+  transition: all 0.3s;
+  display: inline-block;
+}
+.btn-primary:hover {
+  background: var(--lavender-glow);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-small);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lavender);
+  text-decoration: none;
+  padding: 0.85rem 2rem;
+  border: 1px solid rgba(123,127,196,0.25);
+  transition: all 0.3s;
+}
+.btn-secondary:hover {
+  border-color: rgba(123,127,196,0.6);
+  color: var(--lavender-bright);
+}
+
+.hero-scroll-indicator {
+  position: absolute;
+  bottom: 3rem;
+  left: clamp(2rem, 6vw, 8rem);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: fadeUp 1s ease forwards;
+  animation-delay: 1.5s;
+  opacity: 0;
+}
+
+.scroll-line {
+  width: 40px;
+  height: 1px;
+  background: var(--lavender);
+  opacity: 0.3;
+  animation: expandLine 2s ease-in-out infinite;
+}
+
+.scroll-text {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-ghost);
+}
+
+/* ─── HERO VISUAL ─── */
+.hero-visual {
+  position: absolute;
+  right: clamp(2rem, 5vw, 6rem);
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(45%, 600px);
+  opacity: 0;
+  animation: fadeIn 1.5s ease forwards;
+  animation-delay: 1s;
+}
+
+.hero-visual img {
+  width: 100%;
+  filter: brightness(0.85) saturate(1.2);
+  border-radius: 2px;
+}
+
+.hero-visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, var(--void) 0%, transparent 30%);
+  pointer-events: none;
+}
+
+/* ─── DIVIDER ─── */
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(123,127,196,0.15), transparent);
+  margin: 0;
+}
+
+/* ─── PROBLEM SECTION ─── */
+#problem {
+  padding: clamp(6rem, 12vw, 12rem) clamp(2rem, 6vw, 8rem);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+}
+
+.problem-label {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--lavender);
+  opacity: 0.6;
+  margin-bottom: 2rem;
+}
+
+.problem-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: var(--t-section);
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.problem-title strong {
+  font-weight: 400;
+  color: var(--lavender-bright);
+}
+
+.problem-body {
+  font-size: var(--t-body);
+  color: var(--ink-dim);
+  line-height: 1.8;
+  margin-top: 2rem;
+}
+
+.problem-body p + p { margin-top: 1.2rem; }
+
+.problem-list {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.problem-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.2rem 1.5rem;
+  background: var(--indigo-deep);
+  border-left: 1px solid rgba(123,127,196,0.2);
+}
+
+.problem-item-icon {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  color: var(--lavender);
+  opacity: 0.5;
+  padding-top: 0.1rem;
+  flex-shrink: 0;
+}
+
+.problem-item-text {
+  font-size: 0.9rem;
+  color: var(--ink-dim);
+  line-height: 1.5;
+}
+
+/* ─── CATEGORY SECTION ─── */
+#category {
+  padding: clamp(6rem, 12vw, 12rem) clamp(2rem, 6vw, 8rem);
+  text-align: center;
+  background: linear-gradient(to bottom, transparent, rgba(18,20,42,0.5), transparent);
+}
+
+.category-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--lavender);
+  opacity: 0.6;
+  margin-bottom: 3rem;
+}
+
+.category-statement {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4.5vw, 4.2rem);
+  font-weight: 300;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.category-statement em {
+  font-style: italic;
+  color: var(--lavender-bright);
+}
+
+.category-comparison {
+  margin-top: 5rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border: 1px solid rgba(123,127,196,0.1);
+}
+
+.comparison-item {
+  padding: 2.5rem 2rem;
+  border-right: 1px solid rgba(123,127,196,0.1);
+  text-align: left;
+}
+.comparison-item:last-child { border-right: none; }
+
+.comparison-layer {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--lavender);
+  opacity: 0.5;
+  margin-bottom: 0.8rem;
+}
+
+.comparison-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: var(--ink-dim);
+  margin-bottom: 0.5rem;
+}
+
+.comparison-what {
+  font-size: 0.8rem;
+  color: var(--ink-ghost);
+  line-height: 1.5;
+}
+
+.comparison-item.heillon {
+  background: linear-gradient(135deg, rgba(30,32,72,0.6) 0%, rgba(18,20,42,0.4) 100%);
+  border-color: rgba(123,127,196,0.3);
+}
+
+.comparison-item.heillon .comparison-name {
+  color: var(--lavender-bright);
+}
+
+.comparison-item.heillon .comparison-layer {
+  color: var(--lavender);
+  opacity: 0.9;
+}
+
+/* ─── MECHANISM SECTION ─── */
+#mechanism {
+  padding: clamp(6rem, 12vw, 12rem) clamp(2rem, 6vw, 8rem);
+}
+
+.mechanism-header {
+  margin-bottom: 5rem;
+}
+
+.mechanism-label {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--lavender);
+  opacity: 0.6;
+  margin-bottom: 1.5rem;
+}
+
+.mechanism-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: var(--t-section);
+  font-weight: 300;
+  line-height: 1.1;
+  max-width: 600px;
+}
+
+.mechanism-visual {
+  position: relative;
+  margin-bottom: 5rem;
+  border: 1px solid rgba(123,127,196,0.08);
+  overflow: hidden;
+}
+
+.mechanism-visual img {
+  width: 100%;
+  display: block;
+  filter: brightness(0.9) saturate(1.1);
+}
+
+.mechanism-visual-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 60%, var(--void) 100%);
+  pointer-events: none;
+}
+
+.mechanism-flow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  gap: 0;
+  align-items: center;
+  margin-bottom: 4rem;
+  padding: 2.5rem 3rem;
+  background: var(--indigo-deep);
+  border: 1px solid rgba(123,127,196,0.1);
+}
+
+.flow-node {
+  text-align: center;
+  padding: 1rem;
+}
+
+.flow-node-label {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--lavender);
+  opacity: 0.5;
+  margin-bottom: 0.5rem;
+}
+
+.flow-node-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--ink-dim);
+}
+
+.flow-node.active .flow-node-name {
+  color: var(--lavender-bright);
+}
+
+.flow-node.active .flow-node-label { opacity: 0.9; }
+
+.flow-arrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--lavender);
+  opacity: 0.3;
+  padding: 0 0.5rem;
+}
+
+.gates-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: rgba(123,127,196,0.08);
+}
+
+.gate-item {
+  background: var(--void);
+  padding: 2rem 1.8rem;
+  transition: background 0.3s;
+}
+.gate-item:hover {
+  background: var(--indigo-deep);
+}
+
+.gate-number {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  color: var(--lavender);
+  opacity: 0.4;
+  margin-bottom: 1rem;
+  letter-spacing: 0.1em;
+}
+
+.gate-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--lavender-bright);
+  margin-bottom: 0.7rem;
+}
+
+.gate-desc {
+  font-size: 0.85rem;
+  color: var(--ink-ghost);
+  line-height: 1.6;
+}
+
+/* ─── PROOF SECTION ─── */
+#proof {
+  padding: clamp(6rem, 12vw, 12rem) clamp(2rem, 6vw, 8rem);
+  background: linear-gradient(to bottom, transparent, rgba(15,16,32,0.6), transparent);
+}
+
+.proof-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: end;
+  margin-bottom: 5rem;
+}
+
+.proof-label {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--lavender);
+  opacity: 0.6;
+  margin-bottom: 1.5rem;
+}
+
+.proof-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: var(--t-section);
+  font-weight: 300;
+  line-height: 1.1;
+}
+
+.proof-body {
+  font-size: var(--t-body);
+  color: var(--ink-dim);
+  line-height: 1.8;
+}
+
+.proof-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(123,127,196,0.08);
+  margin-bottom: 3rem;
+}
+
+.metric {
+  background: var(--void);
+  padding: 2.5rem 2rem;
+}
+
+.metric-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.5rem, 4vw, 3.8rem);
+  font-weight: 300;
+  color: var(--lavender-bright);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.metric-label {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-ghost);
+}
+
+.proof-hash-block {
+  padding: 2rem 2.5rem;
+  background: var(--indigo-deep);
+  border-left: 2px solid rgba(123,127,196,0.3);
+  font-family: 'DM Mono', monospace;
+}
+
+.hash-label {
+  font-size: var(--t-micro);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--lavender);
+  opacity: 0.5;
+  margin-bottom: 0.8rem;
+}
+
+.hash-value {
+  font-size: 0.75rem;
+  color: var(--lavender-bright);
+  opacity: 0.7;
+  word-break: break-all;
+  line-height: 1.6;
+}
+
+.ccr-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(123,127,196,0.08);
+}
+
+.ccr-item {
+  background: var(--void);
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ccr-id {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-small);
+  color: var(--lavender);
+  letter-spacing: 0.1em;
+}
+
+.ccr-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  color: var(--ink-dim);
+  font-style: italic;
+}
+
+.ccr-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--lavender-bright);
+}
+
+.ccr-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--lavender-bright);
+  animation: pulse 2s infinite;
+}
+
+/* ─── SECTORS SECTION ─── */
+#sectors {
+  padding: clamp(6rem, 12vw, 12rem) clamp(2rem, 6vw, 8rem);
+}
+
+.sectors-header {
+  margin-bottom: 4rem;
+}
+
+.sectors-label {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--lavender);
+  opacity: 0.6;
+  margin-bottom: 1.5rem;
+}
+
+.sectors-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: var(--t-section);
+  font-weight: 300;
+  line-height: 1.1;
+}
+
+.sectors-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(123,127,196,0.08);
+}
+
+.sector-item {
+  background: var(--void);
+  padding: 2.5rem 2rem;
+  transition: background 0.4s;
+  cursor: default;
+}
+
+.sector-item:hover {
+  background: rgba(15,16,32,0.8);
+}
+
+.sector-num {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  color: var(--lavender);
+  opacity: 0.3;
+  margin-bottom: 1.2rem;
+  letter-spacing: 0.1em;
+}
+
+.sector-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--lavender-bright);
+  margin-bottom: 0.8rem;
+}
+
+.sector-desc {
+  font-size: 0.85rem;
+  color: var(--ink-ghost);
+  line-height: 1.6;
+}
+
+/* ─── MANIFESTO SECTION ─── */
+#manifesto {
+  padding: clamp(8rem, 15vw, 16rem) clamp(2rem, 6vw, 8rem);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+#manifesto::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(30,32,72,0.4) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.manifesto-line {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 3.5vw, 3rem);
+  font-weight: 300;
+  line-height: 1.3;
+  color: var(--ink-dim);
+  max-width: 900px;
+  margin: 0 auto;
+  letter-spacing: -0.01em;
+}
+
+.manifesto-line strong {
+  font-weight: 400;
+  color: var(--lavender-glow);
+}
+
+.manifesto-line em {
+  font-style: italic;
+  color: var(--lavender-bright);
+}
+
+/* ─── CTA SECTION ─── */
+#cta {
+  padding: clamp(6rem, 12vw, 12rem) clamp(2rem, 6vw, 8rem);
+  border-top: 1px solid rgba(123,127,196,0.08);
+}
+
+.cta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: start;
+}
+
+.cta-left {}
+
+.cta-label {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--lavender);
+  opacity: 0.6;
+  margin-bottom: 2rem;
+}
+
+.cta-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 300;
+  line-height: 1.15;
+  margin-bottom: 2.5rem;
+}
+
+.cta-body {
+  font-size: var(--t-body);
+  color: var(--ink-dim);
+  line-height: 1.8;
+  margin-bottom: 3rem;
+}
+
+.cta-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cta-actions .btn-primary, .cta-actions .btn-secondary {
+  text-align: center;
+}
+
+.cta-right {
+  padding-top: 1rem;
+}
+
+.cta-status {
+  padding: 2.5rem;
+  background: var(--indigo-deep);
+  border: 1px solid rgba(123,127,196,0.12);
+  margin-bottom: 2rem;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid rgba(123,127,196,0.06);
+}
+.status-row:last-child { border-bottom: none; }
+
+.status-key {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-ghost);
+}
+
+.status-val {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  color: var(--lavender-bright);
+  letter-spacing: 0.08em;
+}
+
+.status-val.active {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.status-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--lavender-bright);
+  animation: pulse 2s infinite;
+}
+
+.cta-contact-link {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-small);
+  letter-spacing: 0.1em;
+  color: var(--ink-ghost);
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  padding: 0.5rem;
+  transition: color 0.3s;
+}
+.cta-contact-link:hover { color: var(--lavender-bright); }
+
+/* ─── FOOTER ─── */
+footer {
+  padding: 2.5rem clamp(2rem, 6vw, 8rem);
+  border-top: 1px solid rgba(123,127,196,0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-left {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  letter-spacing: 0.15em;
+  color: var(--ink-ghost);
+}
+
+.footer-right {
+  font-family: 'DM Mono', monospace;
+  font-size: var(--t-micro);
+  letter-spacing: 0.12em;
+  color: var(--lavender);
+  opacity: 0.4;
+}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes expandLine {
+  0%, 100% { width: 30px; opacity: 0.2; }
+  50% { width: 50px; opacity: 0.5; }
+}
+
+/* ─── SCROLL REVEAL ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.35s; }
+.reveal-delay-4 { transition-delay: 0.5s; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1024px) {
+  #problem { grid-template-columns: 1fr; gap: 3rem; }
+  #proof .proof-header { grid-template-columns: 1fr; gap: 2rem; }
+  .cta-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .hero-visual { display: none; }
+  .category-comparison { grid-template-columns: repeat(2, 1fr); }
+  .mechanism-flow { display: none; }
+  .gates-grid { grid-template-columns: repeat(2, 1fr); }
+  .proof-metrics { grid-template-columns: repeat(3, 1fr); }
+  .ccr-grid { grid-template-columns: 1fr; }
+  .sectors-grid { grid-template-columns: repeat(2, 1fr); }
+  nav { padding: 1.2rem 1.5rem; }
+  .nav-links { display: none; }
+}
+
+@media (max-width: 640px) {
+  .category-comparison { grid-template-columns: 1fr; }
+  .gates-grid { grid-template-columns: 1fr; }
+  .proof-metrics { grid-template-columns: 1fr; }
+  .sectors-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Ambient glow layers -->
+<div class="ambient ambient-1"></div>
+<div class="ambient ambient-2"></div>
+<div class="ambient ambient-3"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">HEILLON</a>
+  <ul class="nav-links">
+    <li><a href="#mechanism">Protocol</a></li>
+    <li><a href="#proof">Proof</a></li>
+    <li><a href="#sectors">Applications</a></li>
+    <li><a href="https://hdr.heillon.com">HDR</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Contact</a>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+
+  <div class="hero-visual">
+    <img src="1000512843.png" alt="HEILLON Decision Verification Protocol — Intent to Execution through validation gates">
+  </div>
+
+  <p class="hero-eyebrow">Computational Legitimacy Infrastructure</p>
+
+  <h1 class="hero-title">
+    Sistemas podem agir.<br>
+    Mas podem <em>provar</em><br>
+    que deveriam?
+  </h1>
+
+  <p class="hero-subtitle">
+    A HEILLON é a camada de infraestrutura que torna decisões computacionais verificáveis — antes da execução, não depois.
+  </p>
+
+  <div class="hero-actions">
+    <a href="https://hdr.heillon.com" class="btn-primary">Explorar o Protocolo</a>
+    <a href="#cta" class="btn-secondary">Falar com a HEILLON</a>
+  </div>
+
+  <div class="hero-scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll</span>
+  </div>
+
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══ PROBLEM ═══ -->
+<section id="problem">
+
+  <div class="reveal">
+    <p class="problem-label">01 — O Problema</p>
+    <h2 class="problem-title">
+      O mundo digital opera sobre<br>
+      <strong>suposição de verdade</strong>
+    </h2>
+    <p class="problem-body">
+      <p>Logs registram que algo aconteceu. Auditorias reconstroem narrativas depois do fato. Políticas definem intenções que ninguém pode verificar.</p>
+      <p>Isso foi suficiente quando sistemas apenas armazenavam informação. Não é suficiente quando sistemas decidem e executam autonomamente.</p>
+    </p>
+  </div>
+
+  <div class="reveal reveal-delay-2">
+    <div class="problem-list">
+      <div class="problem-item">
+        <span class="problem-item-icon">—</span>
+        <span class="problem-item-text">Logs podem ser alterados. Eventos podem ser reordenados. Dados podem ser sobrescritos.</span>
+      </div>
+      <div class="problem-item">
+        <span class="problem-item-icon">—</span>
+        <span class="problem-item-text">Auditorias são sempre posteriores ao fato. Não provam — apenas reconstroem.</span>
+      </div>
+      <div class="problem-item">
+        <span class="problem-item-icon">—</span>
+        <span class="problem-item-text">Agentes de IA executam sem mandato verificável. Responsabilidade se torna difusa.</span>
+      </div>
+      <div class="problem-item">
+        <span class="problem-item-icon">—</span>
+        <span class="problem-item-text">Reguladores exigem prova. Sistemas entregam narrativa.</span>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══ CATEGORY ═══ -->
+<section id="category">
+
+  <p class="category-eyebrow reveal">02 — Nova Categoria</p>
+
+  <h2 class="category-statement reveal reveal-delay-1">
+    Assim como a computação precisou de criptografia<br>
+    para proteger dados —<br>
+    a era dos sistemas autônomos exige<br>
+    <em>infraestrutura para legitimar decisões.</em>
+  </h2>
+
+  <div class="category-comparison reveal reveal-delay-2">
+    <div class="comparison-item">
+      <p class="comparison-layer">Camada</p>
+      <p class="comparison-name">Bancos de Dados</p>
+      <p class="comparison-what">Organizam informação</p>
+    </div>
+    <div class="comparison-item">
+      <p class="comparison-layer">Camada</p>
+      <p class="comparison-name">Cloud</p>
+      <p class="comparison-what">Organizam computação</p>
+    </div>
+    <div class="comparison-item">
+      <p class="comparison-layer">Camada</p>
+      <p class="comparison-name">Criptografia</p>
+      <p class="comparison-what">Organizam segurança</p>
+    </div>
+    <div class="comparison-item heillon">
+      <p class="comparison-layer">Nova Camada</p>
+      <p class="comparison-name">HEILLON</p>
+      <p class="comparison-what">Organiza legitimidade computacional</p>
+    </div>
+  </div>
+
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══ MECHANISM ═══ -->
+<section id="mechanism">
+
+  <div class="mechanism-header reveal">
+    <p class="mechanism-label">03 — O Mecanismo</p>
+    <h2 class="mechanism-title">O Portão Quádruplo de Legitimidade</h2>
+  </div>
+
+  <div class="mechanism-visual reveal reveal-delay-1">
+    <img src="1000512842.png" alt="HEILLON — Intent through four verification gates to Execution and HDR artifact">
+    <div class="mechanism-visual-overlay"></div>
+  </div>
+
+  <div class="mechanism-flow reveal reveal-delay-2">
+    <div class="flow-node">
+      <p class="flow-node-label">Origem</p>
+      <p class="flow-node-name">Intent</p>
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node active">
+      <p class="flow-node-label">Validação</p>
+      <p class="flow-node-name">4 Portões</p>
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node">
+      <p class="flow-node-label">Resultado</p>
+      <p class="flow-node-name">Execution</p>
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node active">
+      <p class="flow-node-label">Artefato</p>
+      <p class="flow-node-name">HDR Proof</p>
+    </div>
+  </div>
+
+  <div class="gates-grid reveal reveal-delay-3">
+    <div class="gate-item">
+      <p class="gate-number">01</p>
+      <p class="gate-name">Authority Gate</p>
+      <p class="gate-desc">Quem tem autoridade para esta ação? O kernel valida a cadeia de autoridade antes de qualquer execução.</p>
+    </div>
+    <div class="gate-item">
+      <p class="gate-number">02</p>
+      <p class="gate-name">Policy Gate</p>
+      <p class="gate-desc">A ação está dentro dos limites definidos? Políticas institucionais são verificadas estruturalmente.</p>
+    </div>
+    <div class="gate-item">
+      <p class="gate-number">03</p>
+      <p class="gate-name">Risk Gate</p>
+      <p class="gate-desc">Qual o nível de risco desta execução? Avaliação automática contra parâmetros institucionais.</p>
+    </div>
+    <div class="gate-item">
+      <p class="gate-number">04</p>
+      <p class="gate-name">Governance Gate</p>
+      <p class="gate-desc">A governança foi satisfeita? Validação final antes da execução e geração do HDR artifact.</p>
+    </div>
+  </div>
+
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══ PROOF ═══ -->
+<section id="proof">
+
+  <div class="proof-header reveal">
+    <div>
+      <p class="proof-label">04 — Prova Verificável</p>
+      <h2 class="proof-title">Não é teoria.<br>O sistema opera.</h2>
+    </div>
+    <div>
+      <p class="proof-body">Foram executados três ciclos constitucionais completos, cada um gerando provas auditáveis por qualquer parte independente — sem acesso ao sistema, sem dependência de confiança.</p>
+    </div>
+  </div>
+
+  <div class="proof-metrics reveal reveal-delay-1">
+    <div class="metric">
+      <p class="metric-value">1182+</p>
+      <p class="metric-label">Eventos no ledger</p>
+    </div>
+    <div class="metric">
+      <p class="metric-value">27/27</p>
+      <p class="metric-label">Provas CCR válidas</p>
+    </div>
+    <div class="metric">
+      <p class="metric-value">v4.5.1</p>
+      <p class="metric-label">Estado constitucional</p>
+    </div>
+  </div>
+
+  <div class="proof-hash-block reveal reveal-delay-2">
+    <p class="hash-label">CCR-03 · SHA-256 Public Hash</p>
+    <p class="hash-value">a3f9e2c1b8d46f501c27e3b9a84d72f156e038c9d2b17a4e8f3c690d1b25a7e4</p>
+  </div>
+
+  <br>
+
+  <div class="ccr-grid reveal reveal-delay-3">
+    <div class="ccr-item">
+      <p class="ccr-id">CCR-01</p>
+      <p class="ccr-desc">Prova de execução legítima sob mandato verificável</p>
+      <span class="ccr-status"><span class="ccr-dot"></span>9/9 CANONICAL_VALID</span>
+    </div>
+    <div class="ccr-item">
+      <p class="ccr-id">CCR-02</p>
+      <p class="ccr-desc">Prova de delegação e isolamento de autoridade</p>
+      <span class="ccr-status"><span class="ccr-dot"></span>9/9 CANONICAL_VALID</span>
+    </div>
+    <div class="ccr-item">
+      <p class="ccr-id">CCR-03</p>
+      <p class="ccr-desc">Prova de operação concorrente e resistência sistêmica</p>
+      <span class="ccr-status"><span class="ccr-dot"></span>9/9 CANONICAL_VALID</span>
+    </div>
+  </div>
+
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══ SECTORS ═══ -->
+<section id="sectors">
+
+  <div class="sectors-header reveal">
+    <p class="sectors-label">05 — Aplicações</p>
+    <h2 class="sectors-title">Onde sistemas executam,<br>a HEILLON governa</h2>
+  </div>
+
+  <div class="sectors-grid reveal reveal-delay-1">
+    <div class="sector-item">
+      <p class="sector-num">01</p>
+      <p class="sector-name">Sistemas Financeiros</p>
+      <p class="sector-desc">Decisões de crédito, transferências e liquidação com prova de autoridade verificável e audit trail soberano.</p>
+    </div>
+    <div class="sector-item">
+      <p class="sector-num">02</p>
+      <p class="sector-name">Agentes de IA</p>
+      <p class="sector-desc">Operações autônomas que precisam provar que tinham mandato legítimo para agir antes de executar.</p>
+    </div>
+    <div class="sector-item">
+      <p class="sector-num">03</p>
+      <p class="sector-name">Governança Corporativa</p>
+      <p class="sector-desc">Delegação de autoridade e decisões institucionais com cadeia causal criptograficamente preservada.</p>
+    </div>
+    <div class="sector-item">
+      <p class="sector-num">04</p>
+      <p class="sector-name">Infraestrutura Crítica</p>
+      <p class="sector-desc">Operações em energia, telecomunicações e saúde com legitimidade estrutural antes de cada execução.</p>
+    </div>
+    <div class="sector-item">
+      <p class="sector-num">05</p>
+      <p class="sector-name">Compliance & Regulação</p>
+      <p class="sector-desc">Prova independente de conformidade — verificável por auditores externos sem acesso ao sistema interno.</p>
+    </div>
+    <div class="sector-item">
+      <p class="sector-num">06</p>
+      <p class="sector-name">Governos & Setor Público</p>
+      <p class="sector-desc">Atos administrativos e decisões automatizadas com auditabilidade soberana e prova irrevogável.</p>
+    </div>
+  </div>
+
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══ MANIFESTO ═══ -->
+<section id="manifesto">
+  <p class="manifesto-line reveal">
+    Capacidade não implica legitimidade.<br>
+    Um sistema pode ser <em>tecnicamente capaz</em> de executar algo.<br>
+    Isso não significa que <strong>deveria executá-lo.</strong><br><br>
+    A HEILLON define quando execução é válida.
+  </p>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══ CTA ═══ -->
+<section id="cta">
+  <div class="cta-grid">
+
+    <div class="cta-left reveal">
+      <p class="cta-label">06 — Próximo Passo</p>
+      <h2 class="cta-title">A legitimidade computacional está se tornando inevitável</h2>
+      <p class="cta-body">
+        Reguladores estão exigindo. Auditores estão perguntando. Sistemas estão falhando em responder.
+        A HEILLON existe para tornar essa transição possível — com infraestrutura que funciona hoje.
+      </p>
+      <div class="cta-actions">
+        <a href="mailto:contact@heillon.com" class="btn-primary">Falar com a HEILLON</a>
+        <a href="https://hdr.heillon.com" class="btn-secondary">Explorar o Protocolo HDR</a>
+      </div>
+    </div>
+
+    <div class="cta-right reveal reveal-delay-2">
+      <div class="cta-status">
+        <div class="status-row">
+          <span class="status-key">Status</span>
+          <span class="status-val active"><span class="status-dot"></span>CONSTITUTIONAL_ACTIVE</span>
+        </div>
+        <div class="status-row">
+          <span class="status-key">Version</span>
+          <span class="status-val">v4.5.1</span>
+        </div>
+        <div class="status-row">
+          <span class="status-key">Protocol</span>
+          <span class="status-val">HDR · Open</span>
+        </div>
+        <div class="status-row">
+          <span class="status-key">CCR Cycles</span>
+          <span class="status-val">3 · 27/27 Valid</span>
+        </div>
+        <div class="status-row">
+          <span class="status-key">Ledger Events</span>
+          <span class="status-val">1,182+</span>
+        </div>
+        <div class="status-row">
+          <span class="status-key">Supply Chain</span>
+          <span class="status-val">Sigstore · Rekor</span>
+        </div>
+      </div>
+      <a href="mailto:contact@heillon.com" class="cta-contact-link">contact@heillon.com</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <p class="footer-left">HEILLON · Infraestrutura de Legitimidade Computacional · Joinville, BR</p>
+  <p class="footer-right">© 2026 HEILLON. All rights reserved.</p>
+</footer>
+
+<script>
+// ─── SCROLL REVEAL ───
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ─── PARALLAX AMBIENT ───
+document.addEventListener('mousemove', (e) => {
+  const x = (e.clientX / window.innerWidth - 0.5) * 20;
+  const y = (e.clientY / window.innerHeight - 0.5) * 20;
+  document.querySelector('.ambient-1').style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+  document.querySelector('.ambient-2').style.transform = `translate(${-x * 0.2}px, ${-y * 0.2}px)`;
+});
+
+// ─── HASH TYPEWRITER ───
+const hashEl = document.querySelector('.hash-value');
+if (hashEl) {
+  const fullHash = hashEl.textContent;
+  hashEl.textContent = '';
+  let i = 0;
+  const typeHash = () => {
+    if (i < fullHash.length) {
+      hashEl.textContent += fullHash[i++];
+      setTimeout(typeHash, 18);
+    }
+  };
+  const hashObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      typeHash();
+      hashObserver.disconnect();
+    }
+  });
+  hashObserver.observe(hashEl);
+}
+</script>
+
+</body>
+</html>
