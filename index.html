@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR" translate="no">
 <head>
 <meta charset="UTF-8">
@@ -349,9 +349,9 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
     <p class="proof-body">Foram executados três ciclos constitucionais completos, cada um gerando provas auditáveis por qualquer parte independente — sem acesso ao sistema, sem dependência de confiança.</p>
   </div>
   <div class="metrics rv d1">
-    <div class="metric"><p class="mv" data-target="1182" data-suffix="+">0+</p><p class="ml">Eventos no ledger</p></div>
+    <div class="metric"><p class="mv" data-target="0" data-suffix="+" id="live-events-count">0+</p><p class="ml">Eventos no ledger</p></div>
     <div class="metric"><p class="mv" data-target="27" data-denom="/27">0/27</p><p class="ml">Provas CCR válidas</p></div>
-    <div class="metric"><p class="mv">v4.5.1</p><p class="ml">Estado constitucional</p></div>
+    <div class="metric"><p class="mv">v3.5.0</p><p class="ml">Estado constitucional</p></div>
   </div>
   <div class="hash-blk rv d2">
     <p class="hl-lbl">CCR-03 · SHA-256 Public Hash</p>
@@ -415,7 +415,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
     <div class="rv d2">
       <div class="stat-gls">
         <div class="sr"><span class="sk">Status</span><span class="sv live"><span class="ldot"></span>CONSTITUTIONAL_ACTIVE</span></div>
-        <div class="sr"><span class="sk">Version</span><span class="sv">v4.5.1</span></div>
+        <div class="sr"><span class="sk">Version</span><span class="sv">v3.5.0</span></div>
         <div class="sr"><span class="sk">Protocol</span><span class="sv">HDR · Open</span></div>
         <div class="sr"><span class="sk">CCR Cycles</span><span class="sv">3 · 27/27 Valid</span></div>
         <div class="sr"><span class="sk">Ledger Events</span><span class="sv">1,182+</span></div>
@@ -1037,6 +1037,22 @@ document.querySelectorAll('.gpanel').forEach(function(p){var hd=p.querySelector(
 })();
 
 }); // end window.load
+</script>
+<script>
+(function(){
+  var el = document.getElementById('live-events-count');
+  if(!el) return;
+  fetch('https://heilloncommandcenter-production.up.railway.app/health')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var n = (d.statistics && d.statistics.total_events) ? d.statistics.total_events : null;
+      if(n !== null && el){
+        el.setAttribute('data-target', n);
+        el.textContent = n.toLocaleString('pt-BR') + '+';
+      }
+    })
+    .catch(function(){});
+})();
 </script>
 </body>
 </html>
