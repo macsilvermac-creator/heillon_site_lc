@@ -248,6 +248,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
     <li><a href="#sectors">Applications</a></li>
     <li><a href="https://hdr.heillon.com">HDR</a></li>
   </ul>
+  <a href="#hpg-section" class="nm-item" style="font-size:var(--xs);letter-spacing:.14em;text-transform:uppercase;color:var(--lav);text-decoration:none;opacity:0.85;transition:opacity .3s;">HPG</a>
   <a href="#cta" class="nc">Contact</a>
 </nav>
 
@@ -269,6 +270,9 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
     <a href="https://hdr.heillon.com" class="btn-p">Explorar o Protocolo</a>
     <a href="#cta" class="btn-s">Falar com a HEILLON</a>
   </div>
+  <p class="hero-anc" style="font-family:'Cormorant Garamond',serif;font-size:1.02rem;font-style:italic;color:var(--lav);opacity:0.72;letter-spacing:0.04em;margin-top:1.75rem;">
+    Invisível na instalação. Inevitável na prova.
+  </p>
   <div class="hero-sc"><div class="sc-line"></div><span class="sc-t">Scroll</span></div>
 </section>
 <div class="sdiv"></div>
@@ -400,11 +404,130 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
 </section>
 <div class="sdiv"></div>
 
+
+<!-- HPG — HEILLON PULSE GRAVITY -->
+<section id="hpg-section" style="padding:var(--spad) var(--pad);">
+  <div class="rv">
+    <p class="lbl">06 — HPG · Heillon Pulse Gravity</p>
+    <h2 class="stitle">A camada invisível.<br>Inevitável como gravidade.</h2>
+    <p style="font-size:var(--body);color:var(--ink-d);line-height:1.8;max-width:640px;margin-top:1.5rem;">
+      O HPG opera dentro da sua infraestrutura sem modificá-la. Um endpoint. Cada decisão se torna um artefato institucional verificável criptograficamente.
+    </p>
+  </div>
+
+  <!-- Fricção zero + 3 HEILLONs -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:3rem;align-items:start;" class="rv d1">
+
+    <!-- Esquerda: fricção zero -->
+    <div>
+      <p class="lbl" style="margin-bottom:1rem;">INTEGRAÇÃO SEM FRICÇÃO</p>
+      <div class="gpanel" style="cursor:default;padding:2rem;">
+        <div class="rlight"></div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:.14em;color:var(--lav);opacity:.55;margin-bottom:1.2rem;text-transform:uppercase;">Passo 1 — registre sua empresa</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--lav-g);margin-bottom:0.3rem;"><span style="color:var(--lav-b);">POST</span> /pulse/onboard</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--ink-g);margin-bottom:1.4rem;">→ retorna client_id + URLs de integração</div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:.14em;color:var(--lav);opacity:.55;margin-bottom:1.2rem;text-transform:uppercase;">Passo 2 — declare cada decisão</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--lav-g);margin-bottom:0.3rem;"><span style="color:var(--lav-b);">POST</span> /pulse/declare</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--ink-g);margin-left:1rem;margin-bottom:0.2rem;">{ actor_id, action, subject_id }</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--ink-g);margin-bottom:1.4rem;">→ retorna signal_id + nível de confiança</div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:.14em;color:var(--lav);opacity:.55;margin-bottom:1.2rem;text-transform:uppercase;">Passo 3 — obtenha a prova</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--lav-g);margin-bottom:0.3rem;"><span style="color:var(--lilac);">GET</span>&nbsp; /pulse/signal/{id}/certificate</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--ink-g);">→ PDF criptográfico · verificável offline</div>
+      </div>
+      <div class="gpanel" style="cursor:default;padding:1.2rem 2rem;margin-top:1px;border-color:rgba(168,171,223,0.22);">
+        <div class="rlight"></div>
+        <p style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--lav-b);letter-spacing:.06em;">✓ Seu sistema não muda. Ele apenas passa a gerar prova.</p>
+      </div>
+    </div>
+
+    <!-- Direita: 3 HEILLONs -->
+    <div>
+      <p class="lbl" style="margin-bottom:1rem;">TRÊS INSTITUIÇÕES SOBERANAS</p>
+      <div class="gstack">
+        <div class="gpanel">
+          <div class="rlight"></div>
+          <div class="ghd">
+            <div class="ghd-l">
+              <span class="gnum">01</span>
+              <span class="gtitle">HEILLON Institucional</span>
+            </div>
+            <div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div>
+          </div>
+          <div class="gdiv"></div>
+          <div class="gbody">
+            <div class="gbody-t">
+              <p>A instituição mãe. Governa a si mesma. 50+ módulos federados, ledger constitucional, estado soberano. O núcleo que nunca para.</p>
+              <div class="gtags"><span class="gtag">50+ módulos</span><span class="gtag">Ledger soberano</span><span class="gtag">Constituição</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="gpanel">
+          <div class="rlight"></div>
+          <div class="ghd">
+            <div class="ghd-l">
+              <span class="gnum">02</span>
+              <span class="gtitle">HPG · Heillon Pulse Gravity</span>
+            </div>
+            <div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div>
+          </div>
+          <div class="gdiv"></div>
+          <div class="gbody">
+            <div class="gbody-t">
+              <p>A instituição espelho. Observa tudo. Audita a HEILLON. Audita seus sistemas. Gera prova. Nunca bloqueia — informa. Invisível como gravidade.</p>
+              <div class="gtags"><span class="gtag">Vigia</span><span class="gtag">Trust Engine P(D|S)</span><span class="gtag">Zero fricção</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="gpanel">
+          <div class="rlight"></div>
+          <div class="ghd">
+            <div class="ghd-l">
+              <span class="gnum">03</span>
+              <span class="gtitle">HEILLON Cliente</span>
+            </div>
+            <div class="garrow"><svg viewBox="0 0 10 10"><path d="M2 3.5L5 6.5L8 3.5"/></svg></div>
+          </div>
+          <div class="gdiv"></div>
+          <div class="gbody">
+            <div class="gbody-t">
+              <p>Opera no seu ambiente. Nós leves de 128MB. Sensor + executor. Reporta ao HPG. Aplica políticas localmente. É a HEILLON que vai até você.</p>
+              <div class="gtags"><span class="gtag">Edge nodes</span><span class="gtag">128MB RAM</span><span class="gtag">Sensor + executor</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trust Engine -->
+  <div class="gpanel rv d2" style="cursor:default;padding:2rem;margin-top:2rem;">
+    <div class="rlight"></div>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:center;">
+      <div>
+        <p style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--lav);opacity:.65;margin-bottom:.6rem;">Trust Engine · P(D|S)</p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--lav-b);margin-bottom:.6rem;">Confiança é calculada, não assumida.</p>
+        <p style="font-size:var(--sm);color:var(--ink-d);line-height:1.7;">Cada sinal é pontuado por fontes independentes. Uma única declaração é UNTRUSTED. Corroborada por webhook ela sobe. Ancorada por WAL chega a SOVEREIGN ≥ 0.99.</p>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.72rem;text-align:right;white-space:nowrap;line-height:2;">
+        <div style="color:var(--lav-b);">SOVEREIGN  ≥ 0.99</div>
+        <div style="color:var(--lav);">VERIFIED   ≥ 0.85</div>
+        <div style="color:var(--lav);opacity:.7;">ANCHORED   ≥ 0.70</div>
+        <div style="color:var(--ink-g);">INFERRED   ≥ 0.50</div>
+        <div style="color:var(--ink-g);opacity:.4;">UNTRUSTED  &lt; 0.50</div>
+      </div>
+    </div>
+  </div>
+
+</section>
+<div class="sdiv"></div>
+
 <!-- CTA -->
 <section id="cta">
   <div class="cta-grid">
     <div class="rv">
-      <p class="lbl">06 — Próximo Passo</p>
+      <p class="lbl">07 — Próximo Passo</p>
       <h2 class="cta-title">A legitimidade computacional está se tornando inevitável</h2>
       <p class="cta-body">Reguladores estão exigindo. Auditores estão perguntando. Sistemas estão falhando em responder. A HEILLON existe para tornar essa transição possível.</p>
       <div class="cta-btns">
@@ -418,7 +541,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
         <div class="sr"><span class="sk">Version</span><span class="sv">v3.5.0</span></div>
         <div class="sr"><span class="sk">Protocol</span><span class="sv">HDR · Open</span></div>
         <div class="sr"><span class="sk">CCR Cycles</span><span class="sv">3 · 27/27 Valid</span></div>
-        <div class="sr"><span class="sk">Ledger Events</span><span class="sv">1,182+</span></div>
+        <div class="sr"><span class="sk">Ledger Events</span><span class="sv" id="cta-events">—</span></div>
         <div class="sr"><span class="sk">Supply Chain</span><span class="sv">Sigstore · Rekor</span></div>
       </div>
       <a href="mailto:contact@heillon.com" class="clink">contact@heillon.com</a>
@@ -1046,6 +1169,9 @@ document.querySelectorAll('.gpanel').forEach(function(p){var hd=p.querySelector(
     .then(function(r){ return r.json(); })
     .then(function(d){
       var n = (d.statistics && d.statistics.total_events) ? d.statistics.total_events : null;
+      // Também atualizar o CTA events
+      var ctaEl = document.getElementById('cta-events');
+      if(ctaEl && n !== null) ctaEl.textContent = n + '+';
       if(n !== null && el){
         el.setAttribute('data-target', n);
         el.textContent = n.toLocaleString('pt-BR') + '+';
