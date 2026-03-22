@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR" translate="no">
 <head>
 <meta charset="UTF-8">
@@ -229,6 +229,68 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
   .cat-grid{grid-template-columns:1fr}
   .hero-cta{flex-direction:column}
 }
+
+/* ── PORTAL MODAL ──────────────────────────────────────────── */
+.portal-overlay{position:fixed;inset:0;z-index:9999;background:rgba(5,5,10,.92);backdrop-filter:blur(18px);display:none;align-items:center;justify-content:center;padding:1.5rem}
+.portal-overlay.open{display:flex}
+.portal-box{background:#0c0e22;border:1px solid rgba(123,127,196,.28);width:100%;max-width:480px;position:relative;animation:portalIn .35s cubic-bezier(.16,1,.3,1)}
+@keyframes portalIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.portal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(123,127,196,.5);font-size:1.4rem;cursor:pointer;line-height:1;padding:.25rem .5rem;transition:color .2s}
+.portal-close:hover{color:var(--lav-b)}
+.portal-header{padding:2rem 2rem 0}
+.portal-eyebrow{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--lav);opacity:.65;margin-bottom:.75rem}
+.portal-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--ink);line-height:1.2;margin-bottom:.5rem}
+.portal-subtitle{font-size:.85rem;color:var(--ink-d);margin-bottom:1.5rem}
+.portal-body{padding:0 2rem 2rem}
+.portal-input-wrap{position:relative;margin-bottom:1rem}
+.portal-input{width:100%;background:#05050a;border:1px solid rgba(123,127,196,.18);color:var(--ink);font-family:'DM Mono',monospace;font-size:.95rem;letter-spacing:.08em;padding:1rem 1.25rem;outline:none;transition:border-color .2s;text-transform:uppercase}
+.portal-input:focus{border-color:rgba(123,127,196,.5)}
+.portal-input::placeholder{color:rgba(123,127,196,.3);text-transform:uppercase;font-size:.8rem;letter-spacing:.12em}
+.portal-btn{width:100%;padding:1rem;background:var(--lav-b);color:var(--void);font-family:'DM Mono',monospace;font-size:.8rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s;margin-bottom:1rem}
+.portal-btn:hover{background:var(--lav-g)}
+.portal-btn:disabled{opacity:.4;cursor:not-allowed}
+.portal-error{font-family:'DM Mono',monospace;font-size:.72rem;color:#e05555;padding:.5rem .75rem;background:rgba(224,85,85,.07);border:1px solid rgba(224,85,85,.2);display:none;margin-bottom:.75rem}
+.portal-error.show{display:block}
+.portal-note{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--ink-g);text-align:center;letter-spacing:.08em}
+
+/* ── PORTAL DASHBOARD ──────────────────────────────────────── */
+.portal-dash{position:fixed;inset:0;z-index:9998;background:#07080f;display:none;flex-direction:column;overflow-y:auto}
+.portal-dash.open{display:flex}
+.dash-nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;border-bottom:1px solid rgba(123,127,196,.1);background:rgba(7,8,15,.95);position:sticky;top:0;z-index:10}
+.dash-nav-logo{font-family:'DM Mono',monospace;font-size:.85rem;letter-spacing:.25em;color:var(--lav);text-transform:uppercase}
+.dash-nav-user{display:flex;align-items:center;gap:1rem;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--ink-d)}
+.dash-nav-role{padding:.2rem .65rem;background:rgba(123,127,196,.12);border:1px solid rgba(123,127,196,.22);color:var(--lav-b);font-size:.65rem;letter-spacing:.14em;text-transform:uppercase}
+.dash-nav-btn{background:none;border:1px solid rgba(123,127,196,.2);color:var(--ink-g);font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;padding:.3rem .75rem;cursor:pointer;transition:all .2s}
+.dash-nav-btn:hover{border-color:rgba(123,127,196,.5);color:var(--lav-b)}
+.dash-body{flex:1;padding:2rem;max-width:1200px;margin:0 auto;width:100%}
+.dash-welcome{margin-bottom:2.5rem}
+.dash-welcome h2{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--ink);margin-bottom:.4rem}
+.dash-welcome p{font-size:.9rem;color:var(--ink-d)}
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;margin-bottom:2.5rem}
+.dash-card{background:#0c0e22;border:1px solid rgba(123,127,196,.14);padding:1.5rem;transition:border-color .25s;cursor:pointer}
+.dash-card:hover{border-color:rgba(123,127,196,.35)}
+.dash-card-icon{font-size:1.5rem;margin-bottom:.75rem}
+.dash-card-title{font-family:'DM Mono',monospace;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--lav-b);margin-bottom:.4rem}
+.dash-card-desc{font-size:.82rem;color:var(--ink-d);line-height:1.55}
+.dash-card-count{font-family:'DM Mono',monospace;font-size:1.5rem;color:var(--lav-g);margin-top:.75rem}
+.dash-section{margin-bottom:2.5rem}
+.dash-section-title{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.28em;text-transform:uppercase;color:var(--lav);opacity:.6;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid rgba(123,127,196,.08)}
+.dash-table{width:100%;border-collapse:collapse}
+.dash-table th{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-g);padding:.6rem 1rem;text-align:left;border-bottom:1px solid rgba(123,127,196,.08)}
+.dash-table td{font-size:.82rem;color:var(--ink-d);padding:.75rem 1rem;border-bottom:1px solid rgba(123,127,196,.05)}
+.dash-table tr:hover td{background:rgba(123,127,196,.03)}
+.dash-badge{display:inline-block;font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;padding:.15rem .5rem;border-radius:2px}
+.dash-badge.ok{background:rgba(63,185,80,.1);color:#3fb950;border:1px solid rgba(63,185,80,.2)}
+.dash-badge.warn{background:rgba(240,136,62,.1);color:var(--signal);border:1px solid rgba(240,136,62,.2)}
+.dash-badge.info{background:rgba(88,166,255,.1);color:#58a6ff;border:1px solid rgba(88,166,255,.2)}
+.dash-live{display:flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;font-size:.65rem;color:#3fb950}
+.dash-live-dot{width:5px;height:5px;background:#3fb950;border-radius:50%;animation:pulse 2s infinite}
+.dash-empty{text-align:center;padding:3rem;font-family:'DM Mono',monospace;font-size:.75rem;color:var(--ink-g)}
+.dash-btn{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;padding:.4rem 1rem;background:transparent;border:1px solid rgba(123,127,196,.22);color:var(--lav);cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
+.dash-btn:hover{border-color:rgba(123,127,196,.5);color:var(--lav-b)}
+.dash-btn-primary{background:var(--lav-b);color:var(--void);border-color:var(--lav-b)}
+.dash-btn-primary:hover{background:var(--lav-g);color:var(--void)}
+
 </style>
 </head>
 <body>
@@ -251,6 +313,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
   <a href="#hpg-section" class="nm-item" style="font-size:var(--xs);letter-spacing:.14em;text-transform:uppercase;color:var(--lav);text-decoration:none;opacity:0.85;transition:opacity .3s;">HPG</a>
   <div style="display:flex;align-items:center;gap:1rem;">
     <button id="lang-toggle" onclick="toggleLang()" style="font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.14em;text-transform:uppercase;color:var(--lav);background:transparent;border:1px solid rgba(123,127,196,0.22);padding:.3rem .75rem;cursor:pointer;transition:all .3s;">EN</button>
+    <button onclick="openPortal()" class="nc" style="background:var(--lav);color:var(--void);border:none;cursor:pointer;"><span class="lang-pt">Entrar</span><span class="lang-en" style="display:none">Sign In</span></button>
     <a href="#cta" class="nc">Contact</a>
   </div>
 </nav>
@@ -1243,5 +1306,230 @@ document.querySelectorAll('.gpanel').forEach(function(p){var hd=p.querySelector(
     .catch(function(){});
 })();
 </script>
+
+<!-- ── PORTAL MODAL DE LOGIN ──────────────────────────────── -->
+<div class="portal-overlay" id="portal-overlay" onclick="handleOverlayClick(event)">
+  <div class="portal-box">
+    <button class="portal-close" onclick="closePortal()">×</button>
+    <div class="portal-header">
+      <div class="portal-eyebrow">HEILLON · ACESSO SOBERANO</div>
+      <h2 class="portal-title"><span class="lang-pt">Acesse seu portal</span><span class="lang-en" style="display:none">Access your portal</span></h2>
+      <p class="portal-subtitle"><span class="lang-pt">Use seu código soberano HEILLON-XXXX-XXXX para entrar.</span><span class="lang-en" style="display:none">Use your sovereign code HEILLON-XXXX-XXXX to sign in.</span></p>
+    </div>
+    <div class="portal-body">
+      <div class="portal-error" id="portal-error"></div>
+      <div class="portal-input-wrap">
+        <input type="text" class="portal-input" id="portal-code" placeholder="HEILLON-XXXX-XXXX" maxlength="18" autocomplete="off" oninput="formatCode(this)" onkeydown="if(event.key==='Enter')submitCode()">
+      </div>
+      <button class="portal-btn" id="portal-btn" onclick="submitCode()">
+        <span class="lang-pt">Entrar →</span><span class="lang-en" style="display:none">Sign In →</span>
+      </button>
+      <p class="portal-note"><span class="lang-pt">Código fornecido pela HEILLON. Sem senha. Sem formulário.</span><span class="lang-en" style="display:none">Code provided by HEILLON. No password. No form.</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- ── PORTAL DASHBOARD ──────────────────────────────────── -->
+<div class="portal-dash" id="portal-dash">
+  <nav class="dash-nav">
+    <div style="display:flex;align-items:center;gap:1.5rem">
+      <span class="dash-nav-logo">HEILLON</span>
+      <span class="dash-nav-role" id="dash-role">—</span>
+      <div class="dash-live"><span class="dash-live-dot"></span><span id="dash-live-txt">backend live</span></div>
+    </div>
+    <div class="dash-nav-user">
+      <span id="dash-operator">—</span>
+      <button class="dash-nav-btn" onclick="openCommandCenter()"><span class="lang-pt">Command Center ↗</span><span class="lang-en" style="display:none">Command Center ↗</span></button>
+      <button class="dash-nav-btn" onclick="logoutPortal()"><span class="lang-pt">Sair</span><span class="lang-en" style="display:none">Sign Out</span></button>
+    </div>
+  </nav>
+  <div class="dash-body" id="dash-body">
+    <!-- Conteúdo dinâmico por role -->
+  </div>
+</div>
+
+
+<script>
+const BACKEND = 'https://heilloncommandcenter-production.up.railway.app';
+const CC_URL   = 'https://heillon-command-center.vercel.app/cc';
+
+// ── Roles que ficam no portal do site ──────────────────────
+const PORTAL_ROLES = ['HEILLON_COMMERCIAL','CLIENT_ANALYST','HEILLON_STAFF','HEILLON_CEO'];
+// Roles que vão direto para o Command Center
+const CC_ROLES = ['HEILLON_OPERATOR','CLIENT_OPERATOR','HEILLON_INFRA'];
+
+let _session = null;
+
+// ── Modal ───────────────────────────────────────────────────
+function openPortal(){
+  const saved = localStorage.getItem('heillon-session');
+  if(saved){try{_session=JSON.parse(saved);renderDash();return;}catch(e){}}
+  document.getElementById('portal-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('portal-code').focus(),100);
+}
+function closePortal(){ document.getElementById('portal-overlay').classList.remove('open'); }
+function handleOverlayClick(e){ if(e.target.id==='portal-overlay')closePortal(); }
+
+function formatCode(el){
+  let v = el.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(v.length>7) v = 'HEILLON-'+v.slice(7,11)+'-'+v.slice(11,15);
+  else v = 'HEILLON'+v.slice(7);
+  if(!el.value.startsWith('HEILLON')) el.value = 'HEILLON-';
+  else el.value = el.value.toUpperCase();
+}
+
+async function submitCode(){
+  const code = document.getElementById('portal-code').value.trim().toUpperCase();
+  const errEl = document.getElementById('portal-error');
+  const btn = document.getElementById('portal-btn');
+  if(code.length < 14){ showErr('Código inválido — formato HEILLON-XXXX-XXXX'); return; }
+  errEl.classList.remove('show');
+  btn.disabled = true;
+  btn.textContent = '...';
+  try {
+    const r = await fetch(BACKEND+'/auth/sovereign/access',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({code})
+    });
+    const d = await r.json();
+    if(!r.ok || !d.access_token){ showErr(d.detail||'Código inválido ou expirado'); btn.disabled=false; btn.innerHTML='<span class="lang-pt">Entrar →</span><span class="lang-en" style="display:none">Sign In →</span>'; return; }
+    _session = d;
+    localStorage.setItem('heillon-session', JSON.stringify(d));
+    closePortal();
+    const role = d.persona_code || '';
+    // Redireciona para Command Center se role operacional
+    if(CC_ROLES.some(r=>role.includes(r))){ window.open(CC_URL+'?token='+d.access_token,'_blank'); return; }
+    // Portal roles ficam no site
+    renderDash();
+  } catch(e){ showErr('Erro de conexão. Tente novamente.'); btn.disabled=false; btn.innerHTML='<span class="lang-pt">Entrar →</span><span class="lang-en" style="display:none">Sign In →</span>'; }
+}
+
+function showErr(msg){ const el=document.getElementById('portal-error'); el.textContent=msg; el.classList.add('show'); }
+
+function logoutPortal(){
+  _session=null;
+  localStorage.removeItem('heillon-session');
+  document.getElementById('portal-dash').classList.remove('open');
+}
+
+function openCommandCenter(){
+  const t = _session?.access_token||'';
+  window.open(CC_URL+(t?'?token='+t:''),'_blank');
+}
+
+// ── Dashboard ───────────────────────────────────────────────
+function renderDash(){
+  if(!_session) return;
+  const dash = document.getElementById('portal-dash');
+  const role = _session.persona_code || 'UNKNOWN';
+  const op   = _session.operator_name || '—';
+  const view = _session.cabinet_view || '—';
+  document.getElementById('dash-role').textContent = role;
+  document.getElementById('dash-operator').textContent = op;
+  dash.classList.add('open');
+  // Fetch live stats
+  fetch(BACKEND+'/health').then(r=>r.json()).then(d=>{
+    const events = d.statistics?.total_events??'—';
+    const clients= d.statistics?.active_clients??'—';
+    document.getElementById('dash-live-txt').textContent='backend live · '+events+' events';
+    renderDashContent(role, view, {events, clients, d});
+  }).catch(()=>renderDashContent(role, view, {}));
+}
+
+function renderDashContent(role, view, stats){
+  const body = document.getElementById('dash-body');
+  const isHeillon = role.startsWith('HEILLON');
+  const pt = document.documentElement.lang==='pt-BR';
+
+  // Determina o conteúdo por role
+  if(role==='HEILLON_STAFF'||role==='HEILLON_CEO'||role==='HEILLON_COMMERCIAL'){
+    body.innerHTML = heilllonStaffDash(stats, pt);
+  } else if(role==='CLIENT_ANALYST'||view==='CLIENT'){
+    body.innerHTML = clientAnalystDash(stats, pt);
+  } else {
+    body.innerHTML = `<div class="dash-empty"><p style="font-size:1.5rem;margin-bottom:.5rem">⚑</p><p>${pt?'Acesso ativo. Role: '+role:'Access active. Role: '+role}</p><a href="${CC_URL}" target="_blank" class="dash-btn dash-btn-primary" style="margin-top:1rem;display:inline-block">Command Center ↗</a></div>`;
+  }
+}
+
+function heilllonStaffDash(s, pt){
+  const events = s.events||'—'; const clients = s.clients||'—';
+  return `
+  <div class="dash-welcome">
+    <h2>${pt?'Gabinete Operacional':'Operational Cabinet'}</h2>
+    <p>${pt?'Visão HEILLON Staff — relacionamento, clientes e infraestrutura.':'HEILLON Staff view — relationships, clients and infrastructure.'}</p>
+  </div>
+  <div class="dash-grid">
+    <div class="dash-card" onclick="openCommandCenter()">
+      <div class="dash-card-icon">⚙️</div>
+      <div class="dash-card-title">${pt?'Command Center':'Command Center'}</div>
+      <div class="dash-card-desc">${pt?'Acesso completo ao gabinete INFRA com ledger, instâncias e corpus.':'Full access to INFRA cabinet with ledger, instances and corpus.'}</div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-card-icon">🏢</div>
+      <div class="dash-card-title">${pt?'Clientes Ativos':'Active Clients'}</div>
+      <div class="dash-card-desc">${pt?'Gestão de relacionamento e contas de clientes.':'Client relationship management and accounts.'}</div>
+      <div class="dash-card-count">${clients}</div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-card-icon">📊</div>
+      <div class="dash-card-title">${pt?'Eventos no Ledger':'Ledger Events'}</div>
+      <div class="dash-card-desc">${pt?'Total de decisões seladas em produção.':'Total sealed decisions in production.'}</div>
+      <div class="dash-card-count">${events}</div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-card-icon">🌍</div>
+      <div class="dash-card-title">${pt?'Corpus Normativo':'Normative Corpus'}</div>
+      <div class="dash-card-desc">${pt?'13 normas ativas — BR, UAE, EU.':'13 active norms — BR, UAE, EU.'}</div>
+      <div class="dash-card-count">13</div>
+    </div>
+  </div>
+  <div class="dash-section">
+    <div class="dash-section-title">${pt?'AÇÕES RÁPIDAS':'QUICK ACTIONS'}</div>
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+      <a href="mailto:contact@heillon.com" class="dash-btn">${pt?'Novo contato':'New contact'}</a>
+      <button class="dash-btn" onclick="openCommandCenter()">${pt?'Abrir Command Center':'Open Command Center'}</button>
+      <a href="https://hdr.heillon.com" target="_blank" class="dash-btn">${pt?'Portal HDR':'HDR Portal'}</a>
+    </div>
+  </div>`;
+}
+
+function clientAnalystDash(s, pt){
+  return `
+  <div class="dash-welcome">
+    <h2>${pt?'Área do Cliente':'Client Area'}</h2>
+    <p>${pt?'Visualize suas decisões, certificados e relatórios de auditoria.':'View your decisions, certificates and audit reports.'}</p>
+  </div>
+  <div class="dash-grid">
+    <div class="dash-card">
+      <div class="dash-card-icon">📋</div>
+      <div class="dash-card-title">${pt?'Minhas Decisões':'My Decisions'}</div>
+      <div class="dash-card-desc">${pt?'HDRs gerados para sua conta, verificáveis publicamente.':'HDRs generated for your account, publicly verifiable.'}</div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-card-icon">🏅</div>
+      <div class="dash-card-title">${pt?'Certificados':'Certificates'}</div>
+      <div class="dash-card-desc">${pt?'Certificados de conformidade gerados pelo HAV.':'Compliance certificates generated by HAV.'}</div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-card-icon">🔍</div>
+      <div class="dash-card-title">${pt?'Solicitar Auditoria':'Request Audit'}</div>
+      <div class="dash-card-desc">${pt?'Acione uma auditoria HAV imediata para sua conta.':'Trigger an immediate HAV audit for your account.'}</div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-card-icon">📁</div>
+      <div class="dash-card-title">${pt?'Documentos':'Documents'}</div>
+      <div class="dash-card-desc">${pt?'Contratos, SLAs e documentos institucionais.':'Contracts, SLAs and institutional documents.'}</div>
+    </div>
+  </div>
+  <div class="dash-section">
+    <div class="dash-section-title">${pt?'VERIFICAR HDR':'VERIFY HDR'}</div>
+    <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
+      <input type="text" id="verify-input" placeholder="${pt?'Cole o ID da decisão...':'Paste decision ID...'}" style="background:#05050a;border:1px solid rgba(123,127,196,.18);color:var(--ink);font-family:DM Mono,monospace;font-size:.8rem;padding:.6rem 1rem;outline:none;flex:1;min-width:220px">
+      <a id="verify-link" href="https://hdr.heillon.com#verify" target="_blank" class="dash-btn dash-btn-primary">${pt?'Verificar':'Verify'}</a>
+    </div>
+  </div>`;
+}
+</script>
+
 </body>
 </html>
