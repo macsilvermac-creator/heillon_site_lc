@@ -249,7 +249,10 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
     <li><a href="https://hdr.heillon.com">HDR</a></li>
   </ul>
   <a href="#hpg-section" class="nm-item" style="font-size:var(--xs);letter-spacing:.14em;text-transform:uppercase;color:var(--lav);text-decoration:none;opacity:0.85;transition:opacity .3s;">HPG</a>
-  <a href="#cta" class="nc">Contact</a>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <button id="lang-toggle" onclick="toggleLang()" style="font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.14em;text-transform:uppercase;color:var(--lav);background:transparent;border:1px solid rgba(123,127,196,0.22);padding:.3rem .75rem;cursor:pointer;transition:all .3s;">EN</button>
+    <a href="#cta" class="nc">Contact</a>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -261,14 +264,21 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
   </div>
   <p class="hero-ey">Computational Legitimacy Infrastructure</p>
   <h1 class="hero-t" id="heroTitle">
-    Sistemas podem agir.<br>
-    Mas podem <em>provar</em><br>
-    que deveriam?
+    <span class="lang-pt">Sistemas podem agir.<br>Mas podem <em>provar</em><br>que deveriam?</span>
+    <span class="lang-en" style="display:none;">Systems can act.<br>But can they <em>prove</em><br>they should have?</span>
   </h1>
-  <p class="hero-sub">A HEILLON é a camada de infraestrutura que torna decisões computacionais verificáveis — antes da execução, não depois.</p>
+  <p class="hero-sub">
+    <span class="lang-pt">A HEILLON é a camada de infraestrutura que torna decisões computacionais verificáveis — antes da execução, não depois.</span>
+    <span class="lang-en" style="display:none;">HEILLON is the infrastructure layer that makes computational decisions verifiable — before execution, not after.</span>
+  </p>
+  <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.2rem;position:relative;z-index:5;opacity:0;animation:fadeUp 1s ease forwards 1.9s;">
+    <span style="font-family:'DM Mono',monospace;font-size:.62rem;padding:.2rem .55rem;border:1px solid rgba(63,185,80,0.25);color:#3FB950;background:rgba(63,185,80,0.06);">D1 · FACT</span>
+    <span style="font-family:'DM Mono',monospace;font-size:.62rem;padding:.2rem .55rem;border:1px solid rgba(88,166,255,0.25);color:#58A6FF;background:rgba(88,166,255,0.06);">D2 · AUTHORITY</span>
+    <span style="font-family:'DM Mono',monospace;font-size:.62rem;padding:.2rem .55rem;border:1px solid rgba(188,140,255,0.25);color:#BC8CFF;background:rgba(188,140,255,0.06);">D3 · NORMATIVE CONTEXT</span>
+  </div>
   <div class="hero-cta">
-    <a href="https://hdr.heillon.com" class="btn-p">Explorar o Protocolo</a>
-    <a href="#cta" class="btn-s">Falar com a HEILLON</a>
+    <a href="https://hdr.heillon.com" class="btn-p"><span class="lang-pt">Explorar o Protocolo HDR v2.0</span><span class="lang-en" style="display:none;">Explore HDR v2.0 Protocol</span></a>
+    <a href="https://heillon-command-center.vercel.app/cc" class="btn-s" target="_blank"><span class="lang-pt">Acessar o Sistema →</span><span class="lang-en" style="display:none;">Access the System →</span></a>
   </div>
   <p class="hero-anc" style="font-family:'Cormorant Garamond',serif;font-size:1.02rem;font-style:italic;color:var(--lav);opacity:0.72;letter-spacing:0.04em;margin-top:1.75rem;">
     Invisível na instalação. Inevitável na prova.
@@ -523,6 +533,59 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
 </section>
 <div class="sdiv"></div>
 
+<!-- CORPUS NORMATIVO -->
+<section id="corpus" style="padding:var(--spad) var(--pad);background:rgba(8,10,20,0.8);">
+  <div class="rv">
+    <p class="lbl">06 — Corpus Normativo · Dimensão 3</p>
+    <h2 class="stitle"><strong>13 normas. 3 jurisdições.</strong><br>Vinculadas automaticamente.</h2>
+    <p style="font-size:var(--body);color:var(--ink-d);line-height:1.8;max-width:640px;margin-top:1rem;">
+      <span class="lang-pt">Cada decisão selada pela HEILLON carrega o contexto normativo exato em vigor naquele timestamp — verificável retroativamente, para sempre.</span>
+      <span class="lang-en" style="display:none;">Every decision sealed by HEILLON carries the exact normative context in force at that timestamp — retroactively verifiable, forever.</span>
+    </p>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.5rem;" class="rv d1">
+    <div style="background:rgba(12,14,34,0.8);border:1px solid rgba(188,140,255,0.15);border-top:3px solid rgba(188,140,255,0.5);padding:1.5rem;">
+      <div style="font-size:1.8rem;margin-bottom:.5rem;">🇧🇷</div>
+      <div style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--lav-g);margin-bottom:.25rem;">BRASIL</div>
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:rgba(188,140,255,0.7);margin-bottom:1rem;">7 normas ativas</div>
+      <div style="display:flex;flex-direction:column;gap:.3rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--ink-g);padding:.2rem .5rem;background:rgba(5,5,10,0.5);"><span style="color:rgba(188,140,255,0.7);margin-right:.4rem;">→</span>Resolução BCB 4.557/2017</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--ink-g);padding:.2rem .5rem;background:rgba(5,5,10,0.5);"><span style="color:rgba(188,140,255,0.7);margin-right:.4rem;">→</span>Circular BCB 3.978/2020</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--ink-g);padding:.2rem .5rem;background:rgba(5,5,10,0.5);"><span style="color:rgba(188,140,255,0.7);margin-right:.4rem;">→</span>CMN 4.966/2021</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--ink-g);padding:.2rem .5rem;background:rgba(5,5,10,0.5);"><span style="color:rgba(188,140,255,0.7);margin-right:.4rem;">→</span>LGPD Arts. 7 · 18 · 20</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--ink-g);padding:.2rem .5rem;background:rgba(5,5,10,0.5);"><span style="color:rgba(188,140,255,0.7);margin-right:.4rem;">→</span>RN ANS 443/2019</div>
+      </div>
+    </div>
+    <div style="background:rgba(12,14,34,0.8);border:1px solid rgba(188,140,255,0.15);border-top:3px solid rgba(188,140,255,0.5);padding:1.5rem;">
+      <div style="font-size:1.8rem;margin-bottom:.5rem;">🇦🇪</div>
+      <div style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--lav-g);margin-bottom:.25rem;">UAE / DIFC</div>
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:rgba(188,140,255,0.7);margin-bottom:1rem;">3 normas ativas</div>
+      <div style="display:flex;flex-direction:column;gap:.3rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--ink-g);padding:.2rem .5rem;background:rgba(5,5,10,0.5);"><span style="color:rgba(188,140,255,0.7);margin-right:.4rem;">→</span>DIFC Data Protection Law 2020</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--ink-g);padding:.2rem .5rem;background:rgba(5,5,10,0.5);"><span style="color:rgba(188,140,255,0.7);margin-right:.4rem;">→</span>DIFC AI Regulation 2024 (Reg.10)</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--ink-g);padding:.2rem .5rem;background:rgba(5,5,10,0.5);"><span style="color:rgba(188,140,255,0.7);margin-right:.4rem;">→</span>UAE Federal Decree-Law 45/2021</div>
+      </div>
+    </div>
+    <div style="background:rgba(12,14,34,0.8);border:1px solid rgba(188,140,255,0.15);border-top:3px solid rgba(188,140,255,0.5);padding:1.5rem;">
+      <div style="font-size:1.8rem;margin-bottom:.5rem;">🇪🇺</div>
+      <div style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--lav-g);margin-bottom:.25rem;">EUROPEAN UNION</div>
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:rgba(188,140,255,0.7);margin-bottom:1rem;">3 normas ativas</div>
+      <div style="display:flex;flex-direction:column;gap:.3rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--ink-g);padding:.2rem .5rem;background:rgba(5,5,10,0.5);"><span style="color:rgba(188,140,255,0.7);margin-right:.4rem;">→</span>GDPR Art. 22 — Automated Decisions</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--ink-g);padding:.2rem .5rem;background:rgba(5,5,10,0.5);"><span style="color:rgba(188,140,255,0.7);margin-right:.4rem;">→</span>GDPR Art. 5 — Processing Principles</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--ink-g);padding:.2rem .5rem;background:rgba(5,5,10,0.5);"><span style="color:rgba(188,140,255,0.7);margin-right:.4rem;">→</span>EU AI Act Art. 9 — Risk Management</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;" class="rv d2">
+    <a href="https://hdr.heillon.com#corpus" target="_blank" style="font-family:'DM Mono',monospace;font-size:.75rem;color:rgba(188,140,255,0.8);border:1px solid rgba(188,140,255,0.2);padding:.5rem 1rem;text-decoration:none;transition:all .3s;">
+      <span class="lang-pt">→ Ver corpus completo em hdr.heillon.com</span>
+      <span class="lang-en" style="display:none;">→ Full corpus at hdr.heillon.com</span>
+    </a>
+  </div>
+</section>
+<div class="sdiv"></div>
+
 <!-- CTA -->
 <section id="cta">
   <div class="cta-grid">
@@ -537,12 +600,12 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
     </div>
     <div class="rv d2">
       <div class="stat-gls">
-        <div class="sr"><span class="sk">Status</span><span class="sv live"><span class="ldot"></span>CONSTITUTIONAL_ACTIVE</span></div>
+        <div class="sr"><span class="sk">Status</span><span class="sv live"><span class="ldot"></span><span id="live-phase">CONSTITUTIONAL_ACTIVE</span></span></div>
         <div class="sr"><span class="sk">Version</span><span class="sv">v3.5.0</span></div>
-        <div class="sr"><span class="sk">Protocol</span><span class="sv">HDR · Open</span></div>
-        <div class="sr"><span class="sk">CCR Cycles</span><span class="sv">3 · 27/27 Valid</span></div>
+        <div class="sr"><span class="sk">Protocol</span><span class="sv">HDR v2.0 · Open</span></div>
+        <div class="sr"><span class="sk">Corpus</span><span class="sv" style="color:rgba(188,140,255,0.8);">13 normas · BR+UAE+EU</span></div>
         <div class="sr"><span class="sk">Ledger Events</span><span class="sv" id="cta-events">—</span></div>
-        <div class="sr"><span class="sk">Supply Chain</span><span class="sv">Sigstore · Rekor</span></div>
+        <div class="sr"><span class="sk">Active Clients</span><span class="sv" id="cta-clients">—</span></div>
       </div>
       <a href="mailto:contact@heillon.com" class="clink">contact@heillon.com</a>
     </div>
