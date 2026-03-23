@@ -1482,6 +1482,11 @@ function heilllonStaffDash(s, pt){
       <div class="dash-card-desc">${pt?'13 normas ativas — BR, UAE, EU.':'13 active norms — BR, UAE, EU.'}</div>
       <div class="dash-card-count">13</div>
     </div>
+    <div class="dash-card" style="border-top:2px solid var(--gold)" onclick="openCommandCenter()">
+      <div class="dash-card-icon">🔒</div>
+      <div class="dash-card-title">${pt?'HCC · Custódia':'HCC · Custody'}</div>
+      <div class="dash-card-desc">${pt?'Escopos de custódia histórica ativos. Ninguém altera o passado sem que se saiba.':'Active historical custody scopes. No one alters the past without it being known.'}</div>
+    </div>
   </div>
   <div class="dash-section">
     <div class="dash-section-title">${pt?'AÇÕES RÁPIDAS':'QUICK ACTIONS'}</div>
@@ -1519,6 +1524,12 @@ function clientAnalystDash(s, pt){
       <div class="dash-card-icon">📁</div>
       <div class="dash-card-title">${pt?'Documentos':'Documents'}</div>
       <div class="dash-card-desc">${pt?'Contratos, SLAs e documentos institucionais.':'Contracts, SLAs and institutional documents.'}</div>
+    </div>
+    <div class="dash-card" style="border-top:2px solid var(--gold)">
+      <div class="dash-card-icon">🔒</div>
+      <div class="dash-card-title">${pt?'Custódia HCC':'HCC Custody'}</div>
+      <div class="dash-card-desc">${pt?'Integridade histórica dos seus dados. Nenhuma alteração retroativa passa despercebida.':'Historical data integrity. No retroactive change goes undetected.'}</div>
+      <a href="${CC_URL}" target="_blank" class="dash-btn dash-btn-secondary" style="margin-top:.75rem;font-size:.7rem;padding:5px 12px">${pt?'Ver Escopos HCC →':'View HCC Scopes →'}</a>
     </div>
   </div>
   <div class="dash-section">
