@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEILLON · Live Demo — AI Decision Legitimacy Proof</title>
+<meta name="description" content="Watch a credit decision get sealed with cryptographic proof in real time. HEILLON makes every AI action institutionally defensible.">
+<style>
+:root {
+  --gold:#C9A84C; --gold-b:rgba(201,168,76,.15); --gold-t:rgba(201,168,76,.06);
+  --green:#40916C; --green-b:rgba(64,145,108,.25); --green-t:rgba(64,145,108,.07);
+  --bg:#08080A; --bg2:#0c0e18; --bg3:#0a0a12;
+  --ink:#F0EBE0; --dim:rgba(240,235,224,.45); --border:rgba(201,168,76,.12);
+  --blue:#1e5799; --purple:#6b3fa0;
+  --mono:'Courier New',monospace; --serif:Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh;}
+/* grid bg */
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(201,168,76,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,.025) 1px,transparent 1px);background-size:80px 80px;pointer-events:none;z-index:0;}
+.wrap{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:2rem 1.5rem;}
+
+/* ANIMATIONS */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes verdict-in{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:none}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 rgba(64,145,108,0)}50%{box-shadow:0 0 28px rgba(64,145,108,.22)}}
+@keyframes strip-in{0%{opacity:0;transform:translateX(-5px)}100%{opacity:1;transform:none}}
+@keyframes slide-in{0%{opacity:0;transform:translateX(10px)}100%{opacity:1;transform:none}}
+
+/* NAV */
+.nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+.nav-logo{font-size:1rem;font-weight:bold;letter-spacing:.3em;color:var(--gold);}
+.nav-tag{font-size:.65rem;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;}
+
+/* HEADER */
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;}
+.hdr-left h1{font-family:var(--serif);font-size:clamp(1.3rem,3vw,2rem);font-weight:300;color:var(--ink);line-height:1.2;}
+.hdr-left p{font-size:.72rem;color:var(--dim);margin-top:.4rem;}
+.hdr-label{font-size:.6rem;letter-spacing:.25em;color:var(--gold);margin-bottom:.4rem;text-transform:uppercase;}
+
+/* STATUS BADGE */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:.65rem;padding:4px 10px;border:1px solid;letter-spacing:.08em;}
+.badge.live{border-color:rgba(64,145,108,.4);color:var(--green);}
+.badge.offline{border-color:rgba(139,32,32,.4);color:#E05555;}
+.badge-dot{width:6px;height:6px;border-radius:50%;animation:pulse 2s infinite;}
+
+/* BTN */
+.btn-run{background:var(--gold);color:var(--bg);border:none;padding:9px 22px;cursor:pointer;font-family:var(--mono);font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;transition:opacity .2s;}
+.btn-run:hover{opacity:.85;}
+.btn-reset{background:transparent;color:var(--gold);border:1px solid var(--gold);padding:9px 22px;cursor:pointer;font-family:var(--mono);font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;}
+.processing{font-size:.72rem;color:var(--dim);padding:9px 16px;border:1px solid rgba(201,168,76,.2);}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:700px){.grid{grid-template-columns:1fr;}}
+.col{display:flex;flex-direction:column;gap:1rem;}
+
+/* PANELS */
+.panel{border:1px solid var(--border);background:var(--bg2);overflow:hidden;}
+.panel-hdr{padding:.65rem 1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.panel-label{font-size:.58rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;}
+.panel-body{padding:.85rem 1rem;}
+
+/* SCENARIO */
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:.35rem;}
+.sc-row{font-size:.7rem;}.sc-row span:first-child{color:var(--dim);}
+
+/* PIPELINE */
+.pipe-step{display:flex;align-items:center;gap:.65rem;padding:.55rem .7rem;border:1px solid rgba(201,168,76,.08);margin-bottom:.35rem;transition:all .35s ease;font-size:.73rem;}
+.pipe-step:last-child{margin-bottom:0;}
+.pipe-step.active{border-color:rgba(201,168,76,.45);background:rgba(201,168,76,.05);}
+.pipe-step.done{border-color:rgba(64,145,108,.35);background:rgba(64,145,108,.04);}
+.pipe-icon{width:26px;height:26px;border:1px solid rgba(201,168,76,.2);display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.8rem;color:var(--dim);flex-shrink:0;transition:all .35s;}
+.pipe-step.active .pipe-icon{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08);}
+.pipe-step.done .pipe-icon{border-color:var(--green);color:var(--green);background:rgba(64,145,108,.1);}
+.pipe-name{color:var(--ink);transition:color .35s;}
+.pipe-step.active .pipe-name{color:var(--gold);font-weight:bold;}
+.pipe-step.done .pipe-name{color:var(--green);}
+.pipe-desc{font-size:.62rem;color:var(--dim);}
+.pipe-status{margin-left:auto;font-size:.62rem;}
+.pipe-step.active .pipe-status{color:var(--gold);animation:pulse 1s infinite;}
+.pipe-step.done .pipe-status{color:var(--green);}
+
+/* HDR */
+.dim-block{padding:.7rem .85rem;border-bottom:1px solid rgba(201,168,76,.07);transition:opacity .5s;}
+.dim-block:last-child{border-bottom:none;}
+.dim-tag{display:inline-block;color:white;font-size:.56rem;padding:2px 7px;margin-bottom:.5rem;letter-spacing:1px;}
+.dim-tag.d1{background:#2D6A4F;}
+.dim-tag.d2{background:#1e5799;}
+.dim-tag.d3{background:#6b3fa0;}
+.dim-row{font-size:.7rem;line-height:1.9;}
+.dim-row .k{color:var(--dim);}
+.dim-row .v{color:var(--ink);}
+.dim-row .v.gold{color:var(--gold);}
+.dim-row .v.green{color:var(--green);}
+.dim-prove{font-size:.63rem;color:var(--green);margin-top:.2rem;}
+
+/* VERDICT */
+.verdict{border:1px solid rgba(64,145,108,.4);background:rgba(64,145,108,.07);padding:1.1rem;animation:verdict-in .6s ease,glow 2.5s ease 0s infinite;}
+.verdict-hdr{display:flex;align-items:center;gap:.7rem;margin-bottom:.7rem;}
+.verdict-icon{font-size:1.7rem;color:var(--green);line-height:1;}
+.verdict-label{font-size:1rem;font-weight:bold;color:var(--green);letter-spacing:.05em;}
+.verdict-sub{font-size:.62rem;color:var(--dim);margin-top:2px;}
+.verdict-strip{display:flex;flex-wrap:wrap;gap:.35rem;border-top:1px solid rgba(64,145,108,.2);padding-top:.65rem;}
+.vcheck{font-size:.66rem;color:var(--green);background:rgba(64,145,108,.07);border:1px solid rgba(64,145,108,.2);padding:3px 8px;animation:strip-in .3s ease both;}
+.verdict-meta{font-size:.62rem;color:var(--dim);margin-top:.65rem;}
+.verdict-meta .v{color:var(--gold);}
+
+/* TIMELINE */
+.tl-panel{border:1px solid rgba(201,168,76,.1);background:var(--bg3);padding:.7rem .85rem;max-height:210px;overflow-y:auto;}
+.tl-label{font-size:.57rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:.45rem;}
+.tl-row{display:flex;gap:.65rem;font-size:.67rem;line-height:1.85;animation:slide-in .3s ease both;}
+.tl-ts{color:rgba(201,168,76,.45);flex-shrink:0;}
+.tl-msg{color:var(--ink);}
+.tl-msg.done{color:var(--green);}
+
+/* IDLE STATE */
+.idle-tip{text-align:center;font-size:.72rem;color:var(--dim);margin-top:1.5rem;}
+.idle-tip span{color:var(--gold);}
+.idle-tip a{color:var(--green);text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="nav">
+    <div class="nav-logo">HEILLON</div>
+    <div class="nav-tag">Live Demo · HDR v2.0 · Decision Proof</div>
+  </nav>
+
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-label">Cenário: Fintech · Decisão de Crédito</div>
+      <h1>Decisão de R$50k às 3h da manhã</h1>
+      <p>IA aprova crédito sem revisão humana. O que prova que tinha autoridade?</p>
+    </div>
+    <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;">
+      <div id="badge" class="badge live"><span class="badge-dot" style="background:var(--green)"></span>CONNECTING...</div>
+      <button id="btn-run" class="btn-run" onclick="runDemo()">▶ Iniciar Demo</button>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- COL LEFT -->
+    <div class="col">
+
+      <!-- SCENARIO -->
+      <div class="panel">
+        <div class="panel-hdr"><span class="panel-label">CENÁRIO</span></div>
+        <div class="panel-body">
+          <div class="sc-grid">
+            <div class="sc-row"><span>Ator: </span><span>scoring-engine-v3</span></div>
+            <div class="sc-row"><span>Ação: </span><span>credit_approval</span></div>
+            <div class="sc-row"><span>Valor: </span><span>R$ 50.000</span></div>
+            <div class="sc-row"><span>Horário: </span><span>03:17:42 UTC</span></div>
+            <div class="sc-row"><span>Domínio: </span><span>FINANCIAL</span></div>
+            <div class="sc-row"><span>NLO: </span><span>3 / 5</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIPELINE -->
+      <div class="panel">
+        <div class="panel-hdr"><span class="panel-label">PIPELINE Z-J-M-H-K</span></div>
+        <div class="panel-body" id="pipeline">
+          <div class="pipe-step" id="step-Z"><div class="pipe-icon">Z</div><div><div class="pipe-name">Zone</div><div class="pipe-desc">Institutional domain + boundaries</div></div><span class="pipe-status">WAITING</span></div>
+          <div class="pipe-step" id="step-J"><div class="pipe-icon">J</div><div><div class="pipe-name">Jurisdiction</div><div class="pipe-desc">Cryptographic authority verification</div></div><span class="pipe-status">WAITING</span></div>
+          <div class="pipe-step" id="step-M"><div class="pipe-icon">M</div><div><div class="pipe-name">Mandate</div><div class="pipe-desc">Intent sealed before execution</div></div><span class="pipe-status">WAITING</span></div>
+          <div class="pipe-step" id="step-H"><div class="pipe-icon">H</div><div><div class="pipe-name">HEILLON</div><div class="pipe-desc">Constitutional hash seal</div></div><span class="pipe-status">WAITING</span></div>
+          <div class="pipe-step" id="step-K"><div class="pipe-icon">K</div><div><div class="pipe-name">Knowledge</div><div class="pipe-desc">NLO certification + audit record</div></div><span class="pipe-status">WAITING</span></div>
+        </div>
+      </div>
+
+    </div><!-- /col left -->
+
+    <!-- COL RIGHT -->
+    <div class="col">
+
+      <!-- HDR -->
+      <div class="panel">
+        <div class="panel-hdr">
+          <span class="panel-label">HDR v2.0 · HDR-2026-00847</span>
+          <span id="hdr-sealed" style="display:none;font-size:.6rem;color:var(--green)">● SEALED</span>
+        </div>
+        <!-- D1 -->
+        <div class="dim-block" id="d1" style="opacity:.2">
+          <div class="dim-tag d1">D1 · FACT</div>
+          <div class="dim-row"><span class="k">hash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="v gold" id="d1-hash">—</span></div>
+          <div class="dim-row"><span class="k">timestamp </span><span class="v" id="d1-ts">—</span></div>
+          <div class="dim-prove" id="d1-prove" style="display:none">✓ FACT PROVEN</div>
+        </div>
+        <!-- D2 -->
+        <div class="dim-block" id="d2" style="opacity:.2">
+          <div class="dim-tag d2">D2 · AUTHORITY</div>
+          <div class="dim-row"><span class="k">actor &nbsp;&nbsp;&nbsp;&nbsp; </span><span class="v" id="d2-actor">—</span></div>
+          <div class="dim-row"><span class="k">nlo_level </span><span class="v gold" id="d2-nlo">—</span></div>
+          <div class="dim-prove" id="d2-prove" style="display:none">✓ AUTHORITY PROVEN</div>
+        </div>
+        <!-- D3 -->
+        <div class="dim-block" id="d3" style="opacity:.2">
+          <div class="dim-tag d3">D3 · NORMATIVE</div>
+          <div class="dim-row"><span class="k">norms &nbsp;&nbsp;&nbsp;&nbsp; </span><span class="v" id="d3-norms">—</span></div>
+          <div class="dim-row"><span class="k">binding &nbsp;&nbsp; </span><span class="v gold" id="d3-bind">—</span></div>
+          <div class="dim-prove" id="d3-prove" style="display:none">✓ COMPLIANCE PROVEN</div>
+        </div>
+      </div>
+
+      <!-- VERDICT -->
+      <div class="verdict" id="verdict" style="display:none">
+        <div class="verdict-hdr">
+          <span class="verdict-icon">✓</span>
+          <div>
+            <div class="verdict-label">EXECUTION: LEGITIMATE</div>
+            <div class="verdict-sub">This decision was proven valid at execution time · HDR v2.0</div>
+          </div>
+        </div>
+        <div class="verdict-strip" id="vstrip"></div>
+        <div class="verdict-meta">chain: <span class="v">78cfdd36991382f9...</span> &nbsp;·&nbsp; confidence: <span class="v">97.0%</span> &nbsp;·&nbsp; NLO-3</div>
+      </div>
+
+      <!-- TIMELINE -->
+      <div class="tl-panel" id="tl-panel" style="display:none">
+        <div class="tl-label">EXECUTION TIMELINE</div>
+        <div id="tl-rows"></div>
+      </div>
+
+    </div><!-- /col right -->
+  </div><!-- /grid -->
+
+  <div class="idle-tip" id="idle-tip">
+    Clique em <span>Iniciar Demo</span> para ver o fluxo em tempo real.
+    &nbsp;·&nbsp; Verifique ao vivo em <a href="https://hdr.heillon.com" target="_blank">hdr.heillon.com</a>
+  </div>
+
+</div><!-- /wrap -->
+<script>
+const BACKEND = 'https://heilloncommandcenter-production.up.railway.app'
+const SCENARIO = {
+  hash: 'a3f9e2c1b8d46f501c27e3b9a84d72f1',
+  actor: 'scoring-engine-v3',
+  norms: 'BCB 4.557 · LGPD Art.20 · CMN 4.893',
+  ts: '2026-03-24T03:17:42.000Z',
+}
+const PIPELINE = [
+  {key:'Z',delay:0},  {key:'J',delay:600}, {key:'M',delay:1200},
+  {key:'H',delay:1800},{key:'K',delay:2400}
+]
+let timers = []
+function now(){ return new Date().toISOString().slice(11,23) }
+function addEvent(msg, done=false){
+  const row = document.getElementById('tl-rows')
+  if(!row) return
+  const el = document.createElement('div')
+  el.className = 'tl-row'
+  el.style.animationDelay = '0ms'
+  el.innerHTML = `<span class="tl-ts">${now()}</span><span class="tl-msg${done?' done':''}">${msg}</span>`
+  row.appendChild(el)
+  row.parentElement.scrollTop = row.parentElement.scrollHeight
+}
+function typewriter(el, text, speed=18){
+  let i=0; el.textContent=''
+  const iv = setInterval(()=>{ el.textContent=text.slice(0,++i); if(i>=text.length) clearInterval(iv) },speed)
+}
+function stepActive(key){
+  const el = document.getElementById('step-'+key)
+  if(!el) return
+  el.classList.add('active')
+  el.querySelector('.pipe-icon').textContent = key
+  el.querySelector('.pipe-status').textContent = 'ACTIVE'
+}
+function stepDone(key){
+  const el = document.getElementById('step-'+key)
+  if(!el) return
+  el.classList.remove('active'); el.classList.add('done')
+  el.querySelector('.pipe-icon').textContent = '✓'
+  el.querySelector('.pipe-status').textContent = 'SEALED'
+}
+function resetAll(){
+  timers.forEach(clearTimeout); timers=[]
+  PIPELINE.forEach(p=>{
+    const el=document.getElementById('step-'+p.key)
+    if(!el)return
+    el.className='pipe-step'
+    el.querySelector('.pipe-icon').textContent=p.key
+    el.querySelector('.pipe-status').textContent='WAITING'
+  })
+  ;['d1','d2','d3'].forEach(id=>{
+    const el=document.getElementById(id); if(!el)return
+    el.style.opacity='.2'
+    el.querySelectorAll('.dim-prove').forEach(e=>e.style.display='none')
+  })
+  ;['d1-hash','d1-ts','d2-actor','d2-nlo','d3-norms','d3-bind'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.textContent='—'
+  })
+  document.getElementById('verdict').style.display='none'
+  document.getElementById('hdr-sealed').style.display='none'
+  document.getElementById('tl-panel').style.display='none'
+  document.getElementById('tl-rows').innerHTML=''
+  document.getElementById('vstrip').innerHTML=''
+  document.getElementById('idle-tip').style.display='block'
+  document.getElementById('btn-run').style.display='inline-block'
+  document.getElementById('btn-run').textContent='▶ Iniciar Demo'
+  document.getElementById('btn-run').onclick=runDemo
+}
+function runDemo(){
+  resetAll()
+  document.getElementById('idle-tip').style.display='none'
+  document.getElementById('btn-run').textContent='PROCESSANDO...'
+  document.getElementById('btn-run').style.display='none'
+  document.getElementById('tl-panel').style.display='block'
+  addEvent('Decision received — initiating Z-J-M-H-K pipeline')
+
+  PIPELINE.forEach((p,i)=>{
+    const msgs=['Zone boundary verified','Jurisdiction authority confirmed','Mandate sealed before execution','HEILLON constitutional hash applied','NLO-3 certification complete']
+    timers.push(setTimeout(()=>{ stepActive(p.key); addEvent(`${p.key} · ${msgs[i]}`) }, p.delay+300))
+    timers.push(setTimeout(()=>stepDone(p.key), p.delay+900))
+  })
+
+  // D1
+  timers.push(setTimeout(()=>{
+    document.getElementById('d1').style.opacity='1'
+    typewriter(document.getElementById('d1-hash'), SCENARIO.hash)
+    document.getElementById('d1-ts').textContent=SCENARIO.ts
+    setTimeout(()=>{ document.getElementById('d1-prove').style.display='block' },600)
+    addEvent('D1 · Fact sealed — SHA-256 immutable')
+  },3200))
+  // D2
+  timers.push(setTimeout(()=>{
+    document.getElementById('d2').style.opacity='1'
+    typewriter(document.getElementById('d2-actor'), SCENARIO.actor, 22)
+    document.getElementById('d2-nlo').textContent='3 / 5'
+    setTimeout(()=>{ document.getElementById('d2-prove').style.display='block' },500)
+    addEvent('D2 · Authority verified — NLO-3 confirmed')
+  },3900))
+  // D3
+  timers.push(setTimeout(()=>{
+    document.getElementById('d3').style.opacity='1'
+    typewriter(document.getElementById('d3-norms'), SCENARIO.norms, 20)
+    document.getElementById('d3-bind').textContent='AT TIMESTAMP'
+    setTimeout(()=>{ document.getElementById('d3-prove').style.display='block' },600)
+    addEvent('D3 · Normative context bound — 3 norms active')
+  },4600))
+  // VERDICT
+  timers.push(setTimeout(()=>{
+    document.getElementById('hdr-sealed').style.display='inline-flex'
+    const v=document.getElementById('verdict'); v.style.display='block'
+    const strip=document.getElementById('vstrip')
+    const checks=['✔ Authority: VALID','✔ Proof: INTACT','✔ Chain: VERIFIED','✔ Norms: BOUND','✔ Drift: NOT DETECTED']
+    checks.forEach((c,i)=>{
+      const s=document.createElement('span')
+      s.className='vcheck'; s.textContent=c
+      s.style.animationDelay=`${i*120}ms`
+      strip.appendChild(s)
+    })
+    addEvent('EXECUTION: LEGITIMATE — verdict sealed', true)
+    const btn=document.getElementById('btn-run')
+    btn.style.display='inline-block'; btn.textContent='↺ Reiniciar'; btn.className='btn-reset'; btn.onclick=resetAll
+  },5400))
+}
+// Backend status
+fetch(BACKEND+'/health').then(r=>r.ok?r.json():null).then(d=>{
+  const badge=document.getElementById('badge')
+  if(d?.api==='healthy'){
+    badge.innerHTML='<span class="badge-dot" style="background:var(--green)"></span>BACKEND LIVE'
+    badge.className='badge live'
+  } else { badge.innerHTML='<span class="badge-dot" style="background:#E05555"></span>BACKEND OFFLINE'; badge.className='badge offline' }
+}).catch(()=>{
+  const badge=document.getElementById('badge')
+  badge.innerHTML='<span class="badge-dot" style="background:#E05555"></span>OFFLINE'; badge.className='badge offline'
+})
+</script>
+</body>
+</html>
