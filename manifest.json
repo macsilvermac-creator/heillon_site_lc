@@ -1,0 +1,33 @@
+{
+  "name": "HEILLON — LC²S",
+  "short_name": "HEILLON",
+  "description": "Constitutional Sovereign Kernel — Control what your AI can do",
+  "start_url": "/app.html",
+  "display": "standalone",
+  "background_color": "#08080A",
+  "theme_color": "#C9A84C",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/app.html",
+      "sizes": "390x844",
+      "type": "image/html"
+    }
+  ],
+  "categories": ["productivity", "business"],
+  "lang": "pt-BR"
+}
