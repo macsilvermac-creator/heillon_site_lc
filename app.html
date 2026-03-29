@@ -57,6 +57,12 @@ body::before { content: ''; position: fixed; inset: 0; background-image: linear-
 .idle-events { font-family: var(--mono); font-size: .65rem; color: var(--text-g); }
 .tap-hint { font-size: .72rem; color: var(--text-g); margin-top: 36px; animation: fadeUp .8s ease forwards 1s; opacity: 0; }
 
+/* Notif button */
+.notif-btn { font-family: var(--mono); font-size: .65rem; letter-spacing: .1em; text-transform: uppercase; padding: .45rem 1.1rem; border-radius: 20px; cursor: pointer; transition: all .2s; -webkit-appearance: none; margin-top: 16px; }
+.notif-btn.off { background: transparent; border: 1px solid var(--pass-br); color: rgba(34,197,94,.55); }
+.notif-btn.on  { background: var(--pass-bg); border: 1px solid var(--pass-br); color: var(--pass); }
+.notif-btn.denied { background: transparent; border: 1px solid var(--border); color: var(--text-g); cursor: default; }
+
 /* ── PANEL SCREEN ── */
 #panel-screen { justify-content: flex-end; padding-bottom: 0; }
 .panel-sheet { width: 100%; max-height: 88vh; background: var(--surface); border-radius: 20px 20px 0 0; border: 1px solid var(--border); border-bottom: none; overflow-y: auto; overflow-x: hidden; animation: slide-in .28s cubic-bezier(.16,1,.3,1); padding-bottom: calc(var(--safe-bot) + 16px); }
@@ -158,6 +164,7 @@ body::before { content: ''; position: fixed; inset: 0; background-image: linear-
     <span class="idle-events" id="idleEvents">—</span>
   </div>
   <p class="tap-hint">Toque para ver a última decisão</p>
+  <button class="notif-btn off" id="notifBtn" onclick="toggleNotif()">🔔 Ativar alertas</button>
 </div>
 
 <!-- PANEL SCREEN -->
@@ -362,6 +369,7 @@ async function poll() {
         try { const nr = await fetch(`${BASE}/hdr/${id}/context`); const nd = await nr.json(); norms = (nd.norms||[]).slice(0,3).map(n=>(n.code||'').split('(')[0].trim()); } catch(_) {}
         fullData = {...hdr, corpus_hash: cert.corpus_hash||d.ledger?.last_event_hash||'', cert};
         currentDecision = {id, verdict: hdr.verdict||'approved', intent: hdr.intent?.intent||'Ação registrada pelo LC²S', actorType: hdr.intent?.actor_type||'AI', actorId: hdr.intent?.actor_id||'—', action: hdr.intent?.action||'—', chain: hdr.proof?.hash_chain||'INTACT', norms};
+        maybeNotify(currentDecision);
         if(panelOpen) { const wm=document.querySelector('.waiting-msg'); if(wm) document.getElementById('panelContent').innerHTML=''; renderDecision(currentDecision); }
       } catch(_) {}
     }
@@ -380,6 +388,98 @@ if('serviceWorker' in navigator) {
 
 poll();
 setInterval(poll, 3000);
+
+// ── PUSH NOTIFICATIONS ────────────────────────────────────────────────────
+// VAPID public key do backend (se configurado) — fallback: notificação local via SW
+const VAPID_PUBLIC = '';   // deixar vazio → usa notificação local sem servidor push
+
+async function getNotifState() {
+  if (!('Notification' in window)) return 'unsupported';
+  if (Notification.permission === 'denied') return 'denied';
+  if (Notification.permission === 'granted') {
+    // Verifica se já tem subscription ativa
+    if ('serviceWorker' in navigator) {
+      const reg = await navigator.serviceWorker.ready.catch(() => null);
+      if (reg) {
+        const sub = await reg.pushManager.getSubscription().catch(() => null);
+        if (sub) return 'on';
+      }
+    }
+    return 'granted-no-sub';
+  }
+  return 'off';
+}
+
+async function updateNotifBtn() {
+  const btn = document.getElementById('notifBtn');
+  if (!btn) return;
+  const state = await getNotifState();
+  if (state === 'unsupported') { btn.style.display = 'none'; return; }
+  if (state === 'denied') { btn.className = 'notif-btn denied'; btn.textContent = '🔕 Alertas bloqueados'; return; }
+  if (state === 'on') { btn.className = 'notif-btn on'; btn.textContent = '🔔 Alertas ativos'; return; }
+  btn.className = 'notif-btn off'; btn.textContent = '🔔 Ativar alertas';
+}
+
+async function toggleNotif() {
+  const state = await getNotifState();
+  if (state === 'on') {
+    // Desativar — remover subscription
+    const reg = await navigator.serviceWorker.ready.catch(() => null);
+    if (reg) { const sub = await reg.pushManager.getSubscription().catch(() => null); if (sub) await sub.unsubscribe().catch(() => {}); }
+    updateNotifBtn(); return;
+  }
+  // Ativar
+  const perm = await Notification.requestPermission().catch(() => 'denied');
+  if (perm !== 'granted') { updateNotifBtn(); return; }
+
+  const reg = await navigator.serviceWorker.ready.catch(() => null);
+  if (!reg) { updateNotifBtn(); return; }
+
+  // Tentar subscription push real (requer VAPID_PUBLIC configurado)
+  if (VAPID_PUBLIC) {
+    try {
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC)
+      });
+      console.log('[HEILLON] Push subscription:', JSON.stringify(sub));
+    } catch (_) { /* fallback para notif local */ }
+  }
+  updateNotifBtn();
+  // Mostrar notif de confirmação imediata
+  reg.showNotification('HEILLON', {
+    body: 'Alertas ativados. Você será notificado a cada nova decisão soberana.',
+    icon: '/icon-192.png', badge: '/icon-192.png', tag: 'heillon-welcome',
+    vibrate: [50, 30, 80],
+  });
+}
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const raw = window.atob(base64);
+  return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+}
+
+// Notificação local quando novo HDR chega (sem servidor push — funciona offline)
+let lastNotifId = null;
+function maybeNotify(decision) {
+  if (!decision || decision.id === lastNotifId) return;
+  if (Notification.permission !== 'granted') return;
+  lastNotifId = decision.id;
+  navigator.serviceWorker.ready.then(reg => {
+    const isBlocked = ['denied','BLOCKED','blocked'].includes(decision.verdict);
+    reg.showNotification('HEILLON · ' + (isBlocked ? 'BLOCKED' : 'ALLOW'), {
+      body: decision.intent?.slice(0, 80) || 'Nova decisão soberana',
+      icon: '/icon-192.png', badge: '/icon-192.png',
+      tag: 'heillon-hdr', renotify: true,
+      data: { hdr_id: decision.id },
+      vibrate: isBlocked ? [100, 50, 200, 50, 100] : [50, 30, 80],
+    });
+  }).catch(() => {});
+}
+
+updateNotifBtn();
 
 // Swipe down to close panel
 let touchStartY = 0;
