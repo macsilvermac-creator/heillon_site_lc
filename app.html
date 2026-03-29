@@ -141,6 +141,32 @@ body::before { content: ''; position: fixed; inset: 0; background-image: linear-
 .status-dot { width: 5px; height: 5px; border-radius: 50%; animation: dot-pulse 2s ease-in-out infinite; flex-shrink: 0; }
 .status-text { font-family: var(--mono); font-size: 9px; color: var(--text-g); letter-spacing: .08em; }
 
+/* ── ONBOARDING ── */
+#onboarding {
+  position: fixed; inset: 0; z-index: 100;
+  background: #FFFFFF;
+  display: flex; flex-direction: column;
+  padding: calc(var(--safe-top) + 48px) 28px calc(var(--safe-bot) + 32px);
+  transition: opacity .4s ease, transform .4s ease;
+  overflow-y: auto;
+}
+#onboarding.hiding { opacity: 0; transform: scale(.97); pointer-events: none; }
+.ob-logo { width: 72px; height: 72px; border-radius: 50%; background: var(--pass-bg); border: 2px solid var(--pass-br); display: flex; align-items: center; justify-content: center; margin-bottom: 28px; box-shadow: 0 0 0 8px rgba(22,163,74,.06); }
+.ob-logo span { font-size: 28px; font-weight: 700; color: var(--pass); font-family: var(--sans); }
+.ob-eyebrow { font-family: var(--mono); font-size: .6rem; letter-spacing: .22em; text-transform: uppercase; color: var(--pass); opacity: .7; margin-bottom: 10px; }
+.ob-title { font-size: 1.6rem; font-weight: 300; line-height: 1.2; color: var(--text); margin-bottom: 8px; }
+.ob-title strong { font-weight: 700; }
+.ob-tagline { font-family: var(--mono); font-size: .72rem; color: rgba(22,163,74,.55); margin-bottom: 36px; font-style: italic; }
+.ob-steps { display: flex; flex-direction: column; gap: 20px; margin-bottom: 40px; }
+.ob-step { display: flex; gap: 14px; align-items: flex-start; opacity: 0; transform: translateX(-10px); transition: opacity .4s ease, transform .4s ease; }
+.ob-step.visible { opacity: 1; transform: none; }
+.ob-num { font-family: var(--mono); font-size: .65rem; font-weight: 700; color: var(--pass); background: var(--pass-bg); border: 1px solid var(--pass-br); border-radius: 4px; padding: 2px 7px; flex-shrink: 0; margin-top: 2px; }
+.ob-step h3 { font-size: .95rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.ob-step p { font-size: .82rem; color: var(--text-d); line-height: 1.55; margin: 0; }
+.ob-hint { font-family: var(--mono); font-size: .68rem; color: var(--text-g); text-align: center; margin-bottom: 16px; }
+.ob-btn { width: 100%; padding: 15px 0; border-radius: 10px; background: var(--pass); border: none; color: #fff; font-size: .9rem; font-weight: 700; font-family: var(--sans); letter-spacing: .04em; cursor: pointer; transition: background .2s, transform .1s; -webkit-appearance: none; box-shadow: 0 4px 16px rgba(22,163,74,.25); }
+.ob-btn:active { background: #15803d; transform: scale(.98); }
+
 /* Close button */
 .close-btn { position: fixed; top: calc(var(--safe-top) + 16px); right: 20px; width: 36px; height: 36px; border-radius: 50%; background: var(--raised); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; font-size: 18px; color: var(--text-g); -webkit-appearance: none; }
 </style>
@@ -193,6 +219,41 @@ body::before { content: ''; position: fixed; inset: 0; background-image: linear-
 
 <!-- Close button (panel only) -->
 <button class="close-btn hidden" id="closeBtn" onclick="closePanel()">×</button>
+
+<!-- ONBOARDING — aparece só na primeira vez -->
+<div id="onboarding">
+  <div class="ob-logo"><span>H</span></div>
+  <div class="ob-eyebrow">HEILLON · Companion</div>
+  <h1 class="ob-title">Invisível na captura.<br><strong>Inevitável na prova.</strong></h1>
+  <div class="ob-tagline">O seu motor local de governança computacional soberana.</div>
+
+  <div class="ob-steps">
+    <div class="ob-step" id="ob-s1">
+      <span class="ob-num">01</span>
+      <div>
+        <h3>Monitoramento em tempo real</h3>
+        <p>O motor escuta o backend soberano continuamente. Cada decisão de IA que chega é capturada em segundos.</p>
+      </div>
+    </div>
+    <div class="ob-step" id="ob-s2">
+      <span class="ob-num">02</span>
+      <div>
+        <h3>Portão Constitucional</h3>
+        <p>Toda ação passa pelos 4 gates LC²S antes de ser autorizada — Authority, Policy, Risk e NLO. Em menos de 52ms.</p>
+      </div>
+    </div>
+    <div class="ob-step" id="ob-s3">
+      <span class="ob-num">03</span>
+      <div>
+        <h3>HDR — Prova imutável</h3>
+        <p>Cada decisão gera um Heillon Decision Record selado na cadeia Merkle. Verificável offline por qualquer auditor.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="ob-hint">O H fica ativo em background. Toque-o quando quiser ver a última decisão.</p>
+  <button class="ob-btn" onclick="startEngine()">INICIAR MOTOR DE SOBERANIA</button>
+</div>
 
 <script>
 const BASE = 'https://heilloncommandcenter-production.up.railway.app';
@@ -384,6 +445,33 @@ async function poll() {
 // Service Worker
 if('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
+
+// ── ONBOARDING ────────────────────────────────────────────────────────────
+(function() {
+  const ob = document.getElementById('onboarding');
+  if (!ob) return;
+  // Já onboardado — ocultar imediatamente
+  if (localStorage.getItem('heillon_onboarded')) {
+    ob.style.display = 'none'; return;
+  }
+  // Animar steps com delay sequencial
+  const steps = ['ob-s1','ob-s2','ob-s3'];
+  steps.forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('visible');
+    }, 400 + i * 220);
+  });
+})();
+
+function startEngine() {
+  const ob = document.getElementById('onboarding');
+  if (!ob) return;
+  ob.classList.add('hiding');
+  setTimeout(() => { ob.style.display = 'none'; }, 420);
+  localStorage.setItem('heillon_onboarded', '1');
+  if (navigator.vibrate) navigator.vibrate([30, 40, 60]);
 }
 
 poll();
