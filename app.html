@@ -1,516 +1,394 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="HEILLON">
-<meta name="theme-color" content="#C9A84C">
-<title>HEILLON — LC²S</title>
+<meta name="theme-color" content="#090E15">
+<title>HEILLON Companion</title>
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-:root{
-  --gold:#C9A84C; --gold-dim:rgba(201,168,76,.15); --gold-border:rgba(201,168,76,.25);
-  --green:#40916C; --green-dim:rgba(64,145,108,.15); --green-border:rgba(64,145,108,.3);
-  --red:#E05555; --red-dim:rgba(224,85,85,.1);
-  --bg:#08080A; --bg2:#0c0e18; --bg3:#0a0a12;
-  --ink:#F0EBE0; --dim:rgba(240,235,224,.45); --border:rgba(201,168,76,.12);
-  --mono:'Courier New',monospace; --serif:Georgia,serif;
-  --safe-top:env(safe-area-inset-top); --safe-bot:env(safe-area-inset-bottom);
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --void: #090E15; --surface: #0D1420; --raised: #101926; --border: #1A2332; --border-hi: #2A3A50;
+  --pass: #22C55E; --pass-bg: rgba(34,197,94,.08); --pass-br: rgba(34,197,94,.22);
+  --fail: #EF4444; --fail-bg: rgba(239,68,68,.08); --fail-br: rgba(239,68,68,.22);
+  --warn: #F59E0B; --text: #E8EEF4; --text-d: rgba(232,238,244,.6); --text-g: rgba(232,238,244,.28);
+  --mono: 'IBM Plex Mono', monospace; --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --safe-top: env(safe-area-inset-top); --safe-bot: env(safe-area-inset-bottom);
 }
-html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--mono);overflow:hidden;}
-/* Grid background */
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(201,168,76,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,.02) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;}
+html, body { height: 100%; background: var(--void); color: var(--text); font-family: var(--sans); overflow: hidden; }
+body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(34,197,94,.012) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,.012) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
 
-/* ── SCREENS ────────────────────────────────────────────────────────────── */
-.screen{position:fixed;inset:0;display:flex;flex-direction:column;padding:var(--safe-top) 0 var(--safe-bot);transition:opacity .35s ease,transform .35s ease;}
-.screen.hidden{opacity:0;pointer-events:none;transform:translateY(20px);}
-.screen.active{opacity:1;transform:none;}
+/* ── IDLE SCREEN ── */
+.screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: calc(var(--safe-top) + 20px) 24px calc(var(--safe-bot) + 20px); z-index: 10; transition: opacity .3s ease, transform .3s ease; }
+.screen.hidden { opacity: 0; pointer-events: none; transform: scale(.97); }
 
-/* ── IDLE SCREEN — o H que pulsa ─────────────────────────────────────────── */
-#screen-idle{align-items:center;justify-content:center;gap:0;}
-.idle-h-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:180px;height:180px;cursor:pointer;}
-.idle-ring{position:absolute;border-radius:50%;border:1px solid var(--gold-border);animation:ring-pulse 3s ease infinite;}
-.idle-ring:nth-child(1){width:180px;height:180px;animation-delay:0s;}
-.idle-ring:nth-child(2){width:140px;height:140px;animation-delay:.5s;border-color:rgba(201,168,76,.2);}
-.idle-ring:nth-child(3){width:100px;height:100px;animation-delay:1s;border-color:rgba(201,168,76,.3);}
-.idle-h{position:relative;z-index:2;font-family:var(--serif);font-size:4rem;font-weight:300;color:var(--gold);line-height:1;user-select:none;}
-.idle-h.action{animation:h-action .6s ease;}
-.idle-label{font-size:.6rem;letter-spacing:.3em;color:var(--dim);text-transform:uppercase;margin-top:2rem;text-align:center;}
-.idle-sub{font-size:.65rem;color:rgba(201,168,76,.5);margin-top:.5rem;text-align:center;letter-spacing:.08em;}
-.idle-counter{margin-top:2.5rem;display:flex;gap:.5rem;align-items:center;justify-content:center;}
-.idle-dot{width:8px;height:8px;border-radius:50%;background:var(--gold-border);transition:background .3s;}
-.idle-dot.used{background:rgba(224,85,85,.5);}
-.idle-dot.active{background:var(--gold);box-shadow:0 0 8px var(--gold);}
-.idle-tries{font-size:.65rem;color:var(--dim);margin-top:.75rem;text-align:center;}
+/* H Button */
+.h-wrap { position: relative; width: 160px; height: 160px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.h-ring { position: absolute; border-radius: 50%; border: 1px solid var(--pass-br); animation: ring-idle 2.4s ease-in-out infinite; }
+.h-ring:nth-child(1) { width: 160px; height: 160px; }
+.h-ring:nth-child(2) { width: 120px; height: 120px; animation-delay: .5s; border-color: rgba(34,197,94,.15); }
+.h-ring:nth-child(3) { width: 80px; height: 80px; animation-delay: 1s; border-color: rgba(34,197,94,.25); }
+.h-center { position: relative; z-index: 2; width: 64px; height: 64px; border-radius: 50%; background: var(--raised); border: 2px solid var(--pass); display: flex; align-items: center; justify-content: center; transition: all .3s; }
+.h-letter { font-size: 26px; font-weight: 700; color: var(--pass); font-family: var(--sans); line-height: 1; }
+.h-wrap.blocked .h-center { border-color: var(--fail); }
+.h-wrap.blocked .h-letter { color: var(--fail); }
+.h-wrap.blocked .h-ring { border-color: var(--fail-br); animation-name: ring-fast; }
+.h-wrap.pulsed .h-center { transform: scale(1.08); }
 
-@keyframes ring-pulse{0%,100%{opacity:.4;transform:scale(1);}50%{opacity:.8;transform:scale(1.04);}}
-@keyframes h-action{0%{transform:scale(1);}30%{transform:scale(1.15);color:#fff;}60%{transform:scale(.95);}100%{transform:scale(1);}}
-@keyframes h-blocked{0%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}100%{transform:translateX(0);color:var(--red);}}
+@keyframes ring-idle { 0%,100%{opacity:.3;transform:scale(1)} 50%{opacity:.7;transform:scale(1.04)} }
+@keyframes ring-fast { 0%,100%{opacity:.6;transform:scale(1)} 50%{opacity:.2;transform:scale(1.08)} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+@keyframes slide-in { from{opacity:0;transform:translateY(100%)} to{opacity:1;transform:none} }
+@keyframes gate-in { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:none} }
+@keyframes dot-pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-/* ── EXECUTE SCREEN ──────────────────────────────────────────────────────── */
-#screen-exec{padding:1.5rem 1.25rem;overflow-y:auto;gap:1rem;}
-.exec-header{padding-bottom:1rem;border-bottom:1px solid var(--border);}
-.exec-title{font-family:var(--serif);font-size:1.4rem;font-weight:300;}
-.exec-sub{font-size:.68rem;color:var(--dim);margin-top:.25rem;}
+.idle-label { font-family: var(--mono); font-size: .65rem; letter-spacing: .2em; text-transform: uppercase; color: var(--text-g); margin-top: 28px; text-align: center; }
+.idle-sub { font-family: var(--mono); font-size: .7rem; color: rgba(34,197,94,.5); margin-top: 8px; text-align: center; }
+.idle-counter { display: flex; gap: 10px; margin-top: 20px; align-items: center; justify-content: center; }
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--pass); animation: dot-pulse 2s ease-in-out infinite; }
+.idle-events { font-family: var(--mono); font-size: .65rem; color: var(--text-g); }
+.tap-hint { font-size: .72rem; color: var(--text-g); margin-top: 36px; animation: fadeUp .8s ease forwards 1s; opacity: 0; }
 
-.pipeline{display:flex;flex-direction:column;gap:.4rem;}
-.pipe-row{display:flex;align-items:center;gap:.75rem;padding:.65rem .75rem;border:1px solid rgba(201,168,76,.08);transition:all .4s;}
-.pipe-row.active{border-color:rgba(201,168,76,.4);background:rgba(201,168,76,.04);}
-.pipe-row.done{border-color:rgba(64,145,108,.3);background:rgba(64,145,108,.04);}
-.pipe-key{width:26px;height:26px;border:1px solid rgba(201,168,76,.2);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:bold;color:var(--dim);flex-shrink:0;transition:all .4s;}
-.pipe-row.active .pipe-key{border-color:var(--gold);color:var(--gold);}
-.pipe-row.done .pipe-key{border-color:var(--green);color:var(--green);}
-.pipe-name{font-size:.75rem;color:var(--ink);flex:1;}
-.pipe-row.active .pipe-name{color:var(--gold);font-weight:bold;}
-.pipe-row.done .pipe-name{color:var(--green);}
-.pipe-st{font-size:.6rem;color:var(--dim);margin-left:auto;}
-.pipe-row.active .pipe-st{color:var(--gold);}
-.pipe-row.done .pipe-st{color:var(--green);}
+/* ── PANEL SCREEN ── */
+#panel-screen { justify-content: flex-end; padding-bottom: 0; }
+.panel-sheet { width: 100%; max-height: 88vh; background: var(--surface); border-radius: 20px 20px 0 0; border: 1px solid var(--border); border-bottom: none; overflow-y: auto; overflow-x: hidden; animation: slide-in .28s cubic-bezier(.16,1,.3,1); padding-bottom: calc(var(--safe-bot) + 16px); }
+.panel-handle { width: 36px; height: 4px; background: var(--border-hi); border-radius: 2px; margin: 14px auto 0; }
+.panel-header { padding: 14px 18px 0; display: flex; align-items: center; gap: 10px; }
+.ph-logo { width: 26px; height: 26px; border-radius: 50%; background: var(--pass-bg); border: 1.5px solid var(--pass-br); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ph-logo span { font-size: 12px; font-weight: 700; color: var(--pass); }
+.ph-brand { font-size: 13px; font-weight: 600; color: var(--text); }
+.ph-sub { font-family: var(--mono); font-size: 9px; color: var(--text-g); letter-spacing: .1em; }
+.ph-count { margin-left: auto; font-family: var(--mono); font-size: 10px; color: var(--text-g); }
 
-.hdr-preview{border:1px solid var(--border);background:var(--bg2);padding:.85rem;}
-.hdr-label{font-size:.58rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:.6rem;}
-.hdr-dim{padding:.5rem .65rem;border:1px solid rgba(201,168,76,.08);margin-bottom:.25rem;font-size:.68rem;transition:opacity .5s;opacity:.25;}
-.hdr-dim.active{opacity:1;}
-.dim-tag{display:inline-block;color:#fff;font-size:.54rem;padding:1px 6px;margin-bottom:3px;}
-.d1{background:#2D6A4F;}.d2{background:#1e5799;}.d3{background:#6b3fa0;}
+.verdict-row { padding: 14px 18px 0; }
+.verdict-badge { display: inline-flex; align-items: center; gap: 7px; border-radius: 6px; padding: 5px 12px; }
+.verdict-badge.allow { background: var(--pass-bg); border: 1px solid var(--pass-br); }
+.verdict-badge.block { background: var(--fail-bg); border: 1px solid var(--fail-br); }
+.verdict-dot { width: 7px; height: 7px; border-radius: 50%; animation: dot-pulse 1.8s ease-in-out infinite; flex-shrink: 0; }
+.allow .verdict-dot { background: var(--pass); }
+.block .verdict-dot { background: var(--fail); }
+.verdict-text { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .1em; }
+.allow .verdict-text { color: var(--pass); }
+.block .verdict-text { color: var(--fail); }
 
-/* ── VERDICT SCREEN ──────────────────────────────────────────────────────── */
-#screen-verdict{padding:1.5rem 1.25rem;overflow-y:auto;gap:1rem;align-items:stretch;}
-.verdict-banner{display:flex;align-items:center;gap:.85rem;padding:1.25rem;border:1px solid;animation:fadeUp .5s ease;}
-.verdict-icon{font-size:2.2rem;line-height:1;flex-shrink:0;}
-.verdict-title{font-size:1rem;font-weight:bold;letter-spacing:.05em;}
-.verdict-ts{font-size:.6rem;color:var(--dim);margin-top:3px;}
-.strip{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.75rem;}
-.vcheck{font-size:.62rem;padding:2px 8px;border:1px solid;}
-.vcheck.ok{color:var(--green);border-color:rgba(64,145,108,.3);background:rgba(64,145,108,.06);}
-.vcheck.fail{color:var(--red);border-color:rgba(224,85,85,.3);background:rgba(224,85,85,.06);}
+.intent-section { padding: 12px 18px 0; }
+.sec-label { font-family: var(--mono); font-size: 9px; color: var(--text-g); letter-spacing: .1em; margin-bottom: 5px; text-transform: uppercase; }
+.intent-text { font-size: 14px; font-weight: 500; line-height: 1.4; }
+.intent-meta { font-family: var(--mono); font-size: 10px; color: var(--text-g); margin-top: 4px; }
 
-.hdr-card{border:1px solid var(--border);background:var(--bg2);padding:1rem;}
-.hdr-id{font-size:.7rem;color:var(--gold);word-break:break-all;margin-bottom:.5rem;}
-.hdr-meta{font-size:.68rem;color:var(--dim);line-height:1.9;}
-.hdr-meta span{color:var(--ink);}
+.gates-section { padding: 10px 18px; border-bottom: 1px solid var(--border); }
+.gate-row { display: flex; align-items: center; gap: 9px; padding: 4px 0; opacity: .15; transition: opacity .15s; }
+.gate-row.active { opacity: 1; animation: gate-in .28s ease-out; }
+.gate-box { width: 16px; height: 16px; border-radius: 3px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .2s; }
+.gate-row.active .gate-box { background: var(--pass-bg); border-color: var(--pass-br); }
+.gate-check { width: 6px; height: 6px; border-radius: 50%; background: var(--pass); display: none; }
+.gate-row.active .gate-check { display: block; }
+.gate-label { font-size: 12px; color: var(--text-g); }
+.gate-row.active .gate-label { color: var(--text-d); }
 
-.verdict-actions{display:flex;flex-direction:column;gap:.6rem;}
-.btn{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;padding:13px 20px;cursor:pointer;border:1px solid;text-decoration:none;text-align:center;display:block;transition:all .2s;}
-.btn-primary{background:var(--gold);color:var(--bg);border-color:var(--gold);}
-.btn-ghost{background:transparent;color:var(--gold);border-color:var(--gold-border);}
-.btn-red{background:transparent;color:var(--red);border-color:rgba(224,85,85,.3);}
+.norms-section { padding: 10px 18px; border-bottom: 1px solid var(--border); }
+.norm-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+.norm-tag { font-family: var(--mono); font-size: 9px; color: var(--text-g); background: var(--raised); border: 1px solid var(--border); border-radius: 3px; padding: 2px 7px; }
 
-/* ── WALL SCREEN — conversão ─────────────────────────────────────────────── */
-#screen-wall{padding:2rem 1.5rem;justify-content:center;gap:1.25rem;}
-.wall-icon{font-size:3rem;text-align:center;}
-.wall-title{font-family:var(--serif);font-size:1.6rem;font-weight:300;text-align:center;line-height:1.3;}
-.wall-sub{font-size:.72rem;color:var(--dim);text-align:center;line-height:1.8;}
-.wall-plans{display:flex;flex-direction:column;gap:.5rem;}
-.plan{border:1px solid var(--border);padding:1rem;background:var(--bg2);}
-.plan.featured{border-color:var(--gold-border);background:rgba(201,168,76,.04);}
-.plan-name{font-size:.7rem;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;margin-bottom:.3rem;}
-.plan-price{font-size:1.2rem;color:var(--ink);font-family:var(--serif);}
-.plan-desc{font-size:.65rem;color:var(--dim);margin-top:.3rem;line-height:1.7;}
+.footer-section { padding: 10px 18px; }
+.footer-meta { display: flex; justify-content: space-between; margin-bottom: 9px; }
+.footer-meta span { font-family: var(--mono); font-size: 10px; color: var(--text-g); }
+.hdr-btn { width: 100%; display: flex; align-items: center; gap: 7px; background: var(--raised); border: 1px solid var(--border); border-radius: 7px; padding: 9px 12px; cursor: pointer; margin-bottom: 8px; -webkit-appearance: none; transition: border-color .2s; }
+.hdr-btn:active { border-color: var(--border-hi); }
+.hdr-id { font-family: var(--mono); font-size: 10px; color: var(--text-g); flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.copy-icon { font-size: 12px; color: var(--text-g); flex-shrink: 0; transition: color .2s; }
+.copy-icon.ok { color: var(--pass); }
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
-@keyframes spin{to{transform:rotate(360deg);}}
+/* Tech expand */
+.tech-toggle { width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px; background: transparent; border: 1px solid rgba(26,35,50,.8); border-radius: 6px; padding: 6px 0; cursor: pointer; -webkit-appearance: none; margin-bottom: 2px; }
+.tech-toggle-text { font-family: var(--mono); font-size: 9px; color: rgba(34,197,94,.3); letter-spacing: .1em; }
+.tech-arrow { font-size: 9px; color: rgba(34,197,94,.3); transition: transform .2s; }
+.tech-arrow.open { transform: rotate(180deg); }
 
-/* ── TOAST ─────────────────────────────────────────────────────────────── */
-.toast{position:fixed;bottom:calc(1.5rem + var(--safe-bot));left:1rem;right:1rem;padding:.85rem 1rem;background:var(--bg2);border:1px solid var(--gold-border);font-size:.72rem;color:var(--ink);z-index:100;animation:fadeUp .3s ease;display:none;}
-.toast.show{display:block;}
+/* Tech panel */
+.tech-panel { background: #07090F; border-top: 1px solid rgba(17,25,38,.8); padding: 12px 18px 4px; }
+.tech-section-lbl { font-family: var(--mono); font-size: 8px; color: rgba(34,197,94,.35); letter-spacing: .14em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+.tech-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 2.5px 0; gap: 8px; }
+.tech-key { font-family: var(--mono); font-size: 9px; color: rgba(42,58,80,.9); flex-shrink: 0; }
+.tech-val { font-family: var(--mono); font-size: 9px; color: rgba(34,90,60,.9); text-align: right; word-break: break-all; max-width: 180px; cursor: pointer; }
+.tech-val.ok { color: rgba(34,197,94,.55); }
+.tech-divider { border: none; border-top: 1px solid rgba(17,25,38,.8); margin: 8px 0; }
+.tech-verify-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px; background: rgba(34,197,94,.03); border: 1px solid rgba(34,197,94,.09); border-radius: 5px; padding: 7px 0; cursor: pointer; margin: 8px 0; -webkit-appearance: none; }
+.tech-verify-text { font-family: var(--mono); font-size: 9px; color: rgba(34,197,94,.4); letter-spacing: .1em; }
+
+.install-area { padding: 0 18px 6px; }
+.install-btn { width: 100%; padding: 11px 0; border-radius: 8px; background: var(--pass-bg); border: 1px solid var(--pass-br); color: var(--pass); font-size: 12px; font-weight: 600; letter-spacing: .05em; cursor: pointer; font-family: var(--sans); -webkit-appearance: none; transition: background .2s; }
+.install-btn:active { background: rgba(34,197,94,.14); }
+
+.waiting-msg { padding: 32px 18px; text-align: center; color: var(--text-g); font-size: 12px; line-height: 1.7; }
+
+/* Status bar */
+.status-bar { position: fixed; bottom: calc(var(--safe-bot) + 12px); left: 24px; display: flex; align-items: center; gap: 8px; z-index: 20; }
+.status-dot { width: 5px; height: 5px; border-radius: 50%; animation: dot-pulse 2s ease-in-out infinite; flex-shrink: 0; }
+.status-text { font-family: var(--mono); font-size: 9px; color: var(--text-g); letter-spacing: .08em; }
+
+/* Close button */
+.close-btn { position: fixed; top: calc(var(--safe-top) + 16px); right: 20px; width: 36px; height: 36px; border-radius: 50%; background: var(--raised); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; font-size: 18px; color: var(--text-g); -webkit-appearance: none; }
 </style>
 </head>
 <body>
 
-<!-- ── SCREEN: IDLE ──────────────────────────────────────────────────────── -->
-<div id="screen-idle" class="screen active">
-  <div class="idle-h-wrap" id="btnExecute">
-    <div class="idle-ring"></div>
-    <div class="idle-ring"></div>
-    <div class="idle-ring"></div>
-    <div class="idle-h" id="idleH">H</div>
+<!-- IDLE SCREEN -->
+<div id="idle-screen" class="screen">
+  <div class="h-wrap" id="hBtn" onclick="openPanel()">
+    <div class="h-ring"></div>
+    <div class="h-ring"></div>
+    <div class="h-ring"></div>
+    <div class="h-center">
+      <span class="h-letter">H</span>
+    </div>
   </div>
-  <div class="idle-label">LC²S · Kernel Constitucional Soberano</div>
-  <div class="idle-sub" id="idleSub">Toque para executar</div>
+  <div class="idle-label">HEILLON · DINO GRAVITY</div>
+  <div class="idle-sub" id="idleSub">Conectando...</div>
   <div class="idle-counter">
-    <div class="idle-dot active" id="dot0"></div>
-    <div class="idle-dot" id="dot1"></div>
-    <div class="idle-dot" id="dot2"></div>
+    <div class="live-dot" id="statusDotIdle" style="background:var(--text-g)"></div>
+    <span class="idle-events" id="idleEvents">—</span>
   </div>
-  <div class="idle-tries" id="idleTries">3 execuções gratuitas</div>
+  <p class="tap-hint">Toque para ver a última decisão</p>
 </div>
 
-<!-- ── SCREEN: EXECUTE ─────────────────────────────────────────────────── -->
-<div id="screen-exec" class="screen hidden">
-  <div class="exec-header">
-    <div class="exec-title">LC²S avaliando...</div>
-    <div class="exec-sub" id="execScenario">IA · approve credit R$50k · FINANCIAL</div>
-  </div>
-
-  <div class="pipeline" id="pipeline">
-    <div class="pipe-row" id="p-Z">
-      <div class="pipe-key">Z</div>
-      <div><div class="pipe-name">Zone</div><div style="font-size:.6rem;color:var(--dim)">Institutional domain</div></div>
-      <div class="pipe-st">—</div>
+<!-- PANEL SCREEN -->
+<div id="panel-screen" class="screen hidden">
+  <div class="panel-sheet" id="panelSheet">
+    <div class="panel-handle"></div>
+    <div class="panel-header">
+      <div class="ph-logo"><span>H</span></div>
+      <div>
+        <div class="ph-brand">HEILLON</div>
+        <div class="ph-sub">DINO GRAVITY</div>
+      </div>
+      <div class="ph-count" id="phCount">—</div>
     </div>
-    <div class="pipe-row" id="p-J">
-      <div class="pipe-key">J</div>
-      <div><div class="pipe-name">Jurisdiction</div><div style="font-size:.6rem;color:var(--dim)">Authority verification</div></div>
-      <div class="pipe-st">—</div>
-    </div>
-    <div class="pipe-row" id="p-M">
-      <div class="pipe-key">M</div>
-      <div><div class="pipe-name">Mandate</div><div style="font-size:.6rem;color:var(--dim)">Intent sealed</div></div>
-      <div class="pipe-st">—</div>
-    </div>
-    <div class="pipe-row" id="p-H">
-      <div class="pipe-key">H</div>
-      <div><div class="pipe-name">HEILLON</div><div style="font-size:.6rem;color:var(--dim)">Constitutional seal</div></div>
-      <div class="pipe-st">—</div>
-    </div>
-    <div class="pipe-row" id="p-K">
-      <div class="pipe-key">K</div>
-      <div><div class="pipe-name">Knowledge</div><div style="font-size:.6rem;color:var(--dim)">NLO certification</div></div>
-      <div class="pipe-st">—</div>
-    </div>
-  </div>
-
-  <div class="hdr-preview">
-    <div class="hdr-label">HDR v2.0 gerando...</div>
-    <div class="hdr-dim" id="hdr-d1">
-      <span class="dim-tag d1">D1 · FACT</span><br>
-      hash: <span id="d1val" style="color:var(--gold)">—</span>
-    </div>
-    <div class="hdr-dim" id="hdr-d2">
-      <span class="dim-tag d2">D2 · AUTHORITY</span><br>
-      actor: <span id="d2val">—</span> · nlo: <span id="d2nlo" style="color:var(--gold)">—</span>
-    </div>
-    <div class="hdr-dim" id="hdr-d3">
-      <span class="dim-tag d3">D3 · NORMATIVE</span><br>
-      <span id="d3val">—</span>
+    <div id="panelContent">
+      <div class="waiting-msg">Conectando ao backend soberano...<br><span style="font-size:9px;opacity:.5">polling a cada 3 segundos</span></div>
     </div>
   </div>
 </div>
 
-<!-- ── SCREEN: VERDICT ─────────────────────────────────────────────────── -->
-<div id="screen-verdict" class="screen hidden">
-  <div class="verdict-banner" id="verdictBanner">
-    <div class="verdict-icon" id="verdictIcon">✓</div>
-    <div>
-      <div class="verdict-title" id="verdictTitle">EXECUTION: LEGITIMATE</div>
-      <div class="verdict-ts" id="verdictTs"></div>
-    </div>
-  </div>
-  <div class="strip" id="verdictStrip"></div>
-
-  <div class="hdr-card">
-    <div class="hdr-label" style="font-size:.56rem;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;margin-bottom:.6rem;">HDR GERADO</div>
-    <div class="hdr-id" id="hdrId">—</div>
-    <div class="hdr-meta" id="hdrMeta"></div>
-    <a id="hdrVerifyLink" href="https://hdr.heillon.com/#verify" target="_blank"
-      style="display:inline-block;margin-top:.75rem;font-size:.62rem;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.25);padding:4px 12px;letter-spacing:.08em;">
-      → Verificar em hdr.heillon.com
-    </a>
-  </div>
-
-  <div class="verdict-actions" id="verdictActions">
-    <!-- preenchido pelo JS -->
-  </div>
+<!-- Status bar (always visible) -->
+<div class="status-bar" id="statusBar">
+  <div class="status-dot" id="statusDot" style="background:var(--text-g)"></div>
+  <span class="status-text" id="statusText">Conectando...</span>
 </div>
 
-<!-- ── SCREEN: WALL ────────────────────────────────────────────────────── -->
-<div id="screen-wall" class="screen hidden">
-  <div class="wall-icon">⚖</div>
-  <div class="wall-title">Suas 3 execuções gratuitas acabaram.</div>
-  <div class="wall-sub">Você sentiu o LC²S em ação. Agora escolha como continuar governando suas IAs.</div>
-  <div class="wall-plans">
-    <div class="plan">
-      <div class="plan-name">Starter</div>
-      <div class="plan-price">R$ 1.900<span style="font-size:.7rem;color:var(--dim)">/mês</span></div>
-      <div class="plan-desc">50 execuções · 1 domínio · Histórico de HDRs</div>
-    </div>
-    <div class="plan featured">
-      <div class="plan-name">Business ⭐</div>
-      <div class="plan-price">R$ 6.900<span style="font-size:.7rem;color:var(--dim)">/mês</span></div>
-      <div class="plan-desc">Ilimitado · Multi-domínio · API key · SLA · HCC incluído</div>
-    </div>
-    <div class="plan">
-      <div class="plan-name">Enterprise</div>
-      <div class="plan-price">Sob consulta</div>
-      <div class="plan-desc">On-premise · Corpus customizado · NLO-5 · Auditoria externa</div>
-    </div>
-  </div>
-  <a href="mailto:contact@heillon.com?subject=HEILLON App — Quero assinar"
-    class="btn btn-primary">→ Falar com o time</a>
-  <a href="https://heillon.com" class="btn btn-ghost">← Voltar ao site</a>
-</div>
-
-<!-- ── TOAST ─────────────────────────────────────────────────────────────── -->
-<div class="toast" id="toast"></div>
+<!-- Close button (panel only) -->
+<button class="close-btn hidden" id="closeBtn" onclick="closePanel()">×</button>
 
 <script>
-const BACKEND = 'https://heilloncommandcenter-production.up.railway.app'
-const MAX_FREE = 3
+const BASE = 'https://heilloncommandcenter-production.up.railway.app';
+let panelOpen = false, lastHdrId = null, currentDecision = null;
+let elapsed = 0, elapsedTimer = null, gateTimers = [];
+let techOpen = false, fullData = {};
 
-// Cenários rotativos
-const SCENARIOS = [
-  { actor:'ai-scoring-v3', type:'AI', intent:'approve credit R$50k', action:'CREDIT_APPROVAL', domain:'FINANCIAL', nlo:3 },
-  { actor:'risk-engine-v2', type:'AI', intent:'deny insurance claim $20k', action:'CLAIM_DECISION', domain:'INSURANCE', nlo:2 },
-  { actor:'compliance-bot', type:'AI', intent:'flag transaction for AML review', action:'AML_FLAG', domain:'FINANCIAL', nlo:3 },
-]
-
-let timers = []
-let currentResult = null
-let scenarioIdx = 0
-
-// ── Utils ───────────────────────────────────────────────────────────────────
-function getUsed() { return parseInt(localStorage.getItem('hln_used') || '0') }
-function setUsed(n) { localStorage.setItem('hln_used', n) }
-function clearUsed() { localStorage.removeItem('hln_used') }
-
-function show(id) {
-  document.querySelectorAll('.screen').forEach(s => {
-    s.classList.toggle('active', s.id === id)
-    s.classList.toggle('hidden', s.id !== id)
-  })
+function openPanel() {
+  panelOpen = true;
+  document.getElementById('idle-screen').classList.add('hidden');
+  document.getElementById('panel-screen').classList.remove('hidden');
+  document.getElementById('closeBtn').classList.remove('hidden');
+  if (currentDecision) renderDecision(currentDecision);
+  // Haptic
+  if (navigator.vibrate) navigator.vibrate(30);
 }
 
-function toast(msg, ms = 2500) {
-  const el = document.getElementById('toast')
-  el.textContent = msg
-  el.classList.add('show')
-  setTimeout(() => el.classList.remove('show'), ms)
+function closePanel() {
+  panelOpen = false;
+  document.getElementById('panel-screen').classList.add('hidden');
+  document.getElementById('idle-screen').classList.remove('hidden');
+  document.getElementById('closeBtn').classList.add('hidden');
+  if (navigator.vibrate) navigator.vibrate(15);
 }
 
-function clearTimers() { timers.forEach(clearTimeout); timers = [] }
-
-// ── Update idle screen ──────────────────────────────────────────────────────
-function updateIdle() {
-  const used = getUsed()
-  const left = MAX_FREE - used
-  for (let i = 0; i < 3; i++) {
-    const d = document.getElementById('dot' + i)
-    d.className = 'idle-dot' + (i < used ? ' used' : i === used ? ' active' : '')
-  }
-  if (left === 0) {
-    document.getElementById('idleTries').textContent = 'Limite gratuito atingido'
-    document.getElementById('idleSub').textContent = 'Assine para continuar'
-  } else {
-    document.getElementById('idleTries').textContent =
-      left === 1 ? '1 execução gratuita restante' : `${left} execuções gratuitas`
-    document.getElementById('idleSub').textContent = 'Toque para executar'
-  }
+function setGate(i, a) {
+  const rows = document.querySelectorAll('.gate-row');
+  if (rows[i]) rows[i].classList.toggle('active', a);
+}
+function animateGates() {
+  gateTimers.forEach(clearTimeout); gateTimers = [];
+  setGate(0,false); setGate(1,false); setGate(2,false);
+  gateTimers.push(setTimeout(() => setGate(0,true), 200));
+  gateTimers.push(setTimeout(() => setGate(1,true), 450));
+  gateTimers.push(setTimeout(() => setGate(2,true), 720));
 }
 
-// ── Typewriter ──────────────────────────────────────────────────────────────
-function typewriter(el, text, speed = 18) {
-  let i = 0; el.textContent = ''
-  const iv = setInterval(() => { el.innerHTML = text.slice(0, ++i); if (i >= text.length) clearInterval(iv) }, speed)
+function fmt(s) { return s < 60 ? s+'s atrás' : Math.floor(s/60)+'m atrás'; }
+function trunc(s, n) { if(!s||s==='—')return'—'; s=String(s); return s.length>n?s.slice(0,n)+'…':s; }
+function updateElapsed() { const el=document.getElementById('elapsedSpan'); if(el) el.textContent=fmt(elapsed); }
+
+function toggleTech() {
+  techOpen = !techOpen;
+  const arrow = document.getElementById('techArrow');
+  const label = document.getElementById('techToggleText');
+  const panel = document.getElementById('techPanel');
+  if(arrow) arrow.className='tech-arrow'+(techOpen?' open':'');
+  if(label) label.textContent = techOpen?'OCULTAR':'VER DETALHES TÉCNICOS';
+  if(panel) { if(techOpen){panel.style.display='block';buildTech();}else{panel.style.display='none';} }
 }
 
-// ── Step pipeline ────────────────────────────────────────────────────────────
-function pipeActive(k) {
-  const el = document.getElementById('p-' + k)
-  el.classList.add('active')
-  el.querySelector('.pipe-key').textContent = k
-  el.querySelector('.pipe-st').textContent = 'ACTIVE'
+function buildTech() {
+  const p = document.getElementById('techPanel');
+  if(!p||!currentDecision) return;
+  const d = currentDecision, f = fullData;
+  const eHash = f.proof?.hash||'—';
+  const pHash = f.proof?.previous_hash||'—';
+  const eId = f.event_id||'—';
+  const eType = f.event_type||'INSTITUTIONAL_DECISION_ISSUED';
+  const tsMs = f.proof?.timestamp_sovereign||'—';
+  const cHash = f.corpus_hash||'—';
+  const cert = f.cert||{};
+  const ctx = f.intent?.context||{};
+  const ctxRows = Object.entries(ctx).slice(0,3).map(([k,v])=>`<div class="tech-row"><span class="tech-key">ctx.${k}</span><span class="tech-val">${trunc(String(v),20)}</span></div>`).join('');
+  p.innerHTML=`
+    <div class="tech-section-lbl">PROVA CRIPTOGRÁFICA</div>
+    <div class="tech-row"><span class="tech-key">event_id</span><span class="tech-val">${trunc(eId,24)}</span></div>
+    <div class="tech-row"><span class="tech-key">event_hash</span><span class="tech-val" onclick="cp('${eHash}')" title="Copiar">${trunc(eHash,20)} ↗</span></div>
+    <div class="tech-row"><span class="tech-key">prev_hash</span><span class="tech-val" onclick="cp('${pHash}')" title="Copiar">${trunc(pHash,20)} ↗</span></div>
+    <div class="tech-row"><span class="tech-key">timestamp_ms</span><span class="tech-val">${tsMs}</span></div>
+    <div class="tech-row"><span class="tech-key">chain</span><span class="tech-val ok">${f.proof?.hash_chain||'INTACT'}</span></div>
+    <hr class="tech-divider">
+    <div class="tech-section-lbl">CONTEXTO DA AÇÃO</div>
+    <div class="tech-row"><span class="tech-key">actor_id</span><span class="tech-val">${trunc(f.intent?.actor_id||d.actorId||'—',22)}</span></div>
+    <div class="tech-row"><span class="tech-key">actor_type</span><span class="tech-val">${f.intent?.actor_type||d.actorType||'—'}</span></div>
+    <div class="tech-row"><span class="tech-key">action</span><span class="tech-val">${f.intent?.action||d.action||'—'}</span></div>
+    <div class="tech-row"><span class="tech-key">domain</span><span class="tech-val">${f.intent?.domain||'—'}</span></div>
+    <div class="tech-row"><span class="tech-key">nlo_required</span><span class="tech-val">${f.intent?.nlo_required??'—'}</span></div>
+    ${ctxRows}
+    <hr class="tech-divider">
+    <div class="tech-section-lbl">ESTADO CONSTITUCIONAL</div>
+    <div class="tech-row"><span class="tech-key">corpus_hash</span><span class="tech-val" onclick="cp('${cHash}')" title="Copiar">${trunc(cHash,20)} ↗</span></div>
+    <div class="tech-row"><span class="tech-key">event_type</span><span class="tech-val">${trunc(eType,26)}</span></div>
+    <div class="tech-row"><span class="tech-key">policy_ver</span><span class="tech-val">${cert.policy_version||'v1.0.0'}</span></div>
+    <div class="tech-row"><span class="tech-key">guard_ver</span><span class="tech-val">${cert.guard_version||'v1.0.0'}</span></div>
+    <button class="tech-verify-btn" onclick="openVerify()"><span class="tech-verify-text">VERIFICAR OFFLINE  ↗</span></button>`;
 }
-function pipeDone(k) {
-  const el = document.getElementById('p-' + k)
-  el.classList.remove('active'); el.classList.add('done')
-  el.querySelector('.pipe-key').textContent = '✓'
-  el.querySelector('.pipe-st').textContent = 'SEALED'
+
+function cp(text) {
+  if(!text||text==='—') return;
+  navigator.clipboard?.writeText(text).catch(()=>{});
+  if(navigator.vibrate) navigator.vibrate(20);
 }
-function pipeReset() {
-  ;['Z','J','M','H','K'].forEach(k => {
-    const el = document.getElementById('p-' + k)
-    el.className = 'pipe-row'
-    el.querySelector('.pipe-key').textContent = k
-    el.querySelector('.pipe-st').textContent = '—'
-  })
-  ;['hdr-d1','hdr-d2','hdr-d3'].forEach(id => document.getElementById(id).classList.remove('active'))
+function openVerify() {
+  if(currentDecision?.id) window.open(`${BASE}/public/verify/${currentDecision.id}`, '_blank');
 }
 
-// ── Main execute ─────────────────────────────────────────────────────────────
-function now() { return new Date().toISOString().slice(11,23) }
+function renderDecision(d) {
+  const bl = ['denied','BLOCKED','blocked','escalated'].includes(d.verdict);
+  const hBtn = document.getElementById('hBtn');
+  if(hBtn) hBtn.className = 'h-wrap' + (bl?' blocked':'');
+  const norms = (d.norms&&d.norms.length) ? d.norms.map(n=>`<span class="norm-tag">${n}</span>`).join('') : '<span class="norm-tag">BCB 4.557</span><span class="norm-tag">LGPD Art.20</span>';
+  const phCount = document.getElementById('phCount');
+  document.getElementById('panelContent').innerHTML = `
+    <div class="verdict-row"><div class="verdict-badge ${bl?'block':'allow'}"><span class="verdict-dot"></span><span class="verdict-text">${bl?'BLOCKED':'ALLOW'}</span></div></div>
+    <div class="intent-section"><div class="sec-label">INTENÇÃO DECLARADA</div><div class="intent-text">${d.intent||'Ação registrada'}</div><div class="intent-meta">${d.actorType||'AI'} · ${d.action||'—'}</div></div>
+    <div class="gates-section"><div class="sec-label">PORTÃO CONSTITUCIONAL</div>
+      <div class="gate-row"><div class="gate-box"><div class="gate-check"></div></div><span class="gate-label">Autoridade validada</span></div>
+      <div class="gate-row"><div class="gate-box"><div class="gate-check"></div></div><span class="gate-label">Políticas respeitadas</span></div>
+      <div class="gate-row"><div class="gate-box"><div class="gate-check"></div></div><span class="gate-label">Risco dentro dos limites</span></div>
+    </div>
+    <div class="norms-section"><div class="sec-label">NORMAS VIGENTES</div><div class="norm-tags">${norms}</div></div>
+    <div class="footer-section">
+      <div class="footer-meta"><span id="elapsedSpan">há pouco</span><span>${d.chain||'INTACT'}</span></div>
+      <button class="hdr-btn" onclick="copyHdr()"><span class="hdr-id">${d.id||'—'}</span><span class="copy-icon" id="copyIcon">↗</span></button>
+      <button class="tech-toggle" onclick="toggleTech()"><span class="tech-toggle-text" id="techToggleText">VER DETALHES TÉCNICOS</span><span class="tech-arrow" id="techArrow">▾</span></button>
+    </div>
+    <div class="tech-panel" id="techPanel" style="display:none"></div>
+    <div class="install-area"><button class="install-btn" onclick="promptInstall()">Instalar Companion</button></div>`;
+  techOpen = false;
+  animateGates();
+  updateElapsed();
+}
 
-async function execute() {
-  const used = getUsed()
-  if (used >= MAX_FREE) { show('screen-wall'); return }
+function copyHdr() {
+  if(currentDecision?.id) { navigator.clipboard?.writeText(currentDecision.id).catch(()=>{}); if(navigator.vibrate) navigator.vibrate([30,20,30]); }
+  const ic = document.getElementById('copyIcon');
+  if(ic) { ic.textContent='✓'; ic.className='copy-icon ok'; setTimeout(()=>{ic.textContent='↗';ic.className='copy-icon';},1800); }
+}
 
-  const sc = SCENARIOS[scenarioIdx % SCENARIOS.length]
-  scenarioIdx++
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; });
+function promptInstall() {
+  if(deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(()=>{ deferredPrompt=null; }); }
+  else { alert('Para instalar:\n\n📱 iOS: Safari → Compartilhar → Adicionar à Tela de Início\n🤖 Android: Menu → Adicionar à tela inicial\n💻 Desktop: ícone ⊕ na barra de endereço'); }
+}
 
-  // Animate H
-  const h = document.getElementById('idleH')
-  h.classList.add('action')
-  setTimeout(() => h.classList.remove('action'), 600)
+function triggerNew() {
+  const btn = document.getElementById('hBtn');
+  if(btn) { btn.classList.add('pulsed'); setTimeout(()=>btn.classList.remove('pulsed'),600); }
+  if(navigator.vibrate) navigator.vibrate([50,30,80]);
+}
 
-  // Vibrate
-  navigator.vibrate?.(50)
-
-  // Go to exec screen
-  pipeReset()
-  document.getElementById('execScenario').textContent =
-    `${sc.type} · ${sc.intent} · ${sc.domain}`
-  show('screen-exec')
-
-  clearTimers()
-
-  // Animate pipeline
-  const pipe = ['Z','J','M','H','K']
-  pipe.forEach((k, i) => {
-    timers.push(setTimeout(() => pipeActive(k), i * 600 + 300))
-    timers.push(setTimeout(() => pipeDone(k), i * 600 + 900))
-  })
-
-  // HDR dims
-  timers.push(setTimeout(() => {
-    document.getElementById('hdr-d1').classList.add('active')
-    typewriter(document.getElementById('d1val'), 'a3f9e2c1b8d46f501c27e3b9a84d72f1', 20)
-  }, 3200))
-  timers.push(setTimeout(() => {
-    document.getElementById('hdr-d2').classList.add('active')
-    document.getElementById('d2val').textContent = sc.actor
-    document.getElementById('d2nlo').textContent = sc.nlo + ' / 5'
-  }, 3900))
-  timers.push(setTimeout(() => {
-    document.getElementById('hdr-d3').classList.add('active')
-    document.getElementById('d3val').textContent = 'BCB 4.557 · LGPD Art.20 · CMN 4.893'
-  }, 4600))
-
-  // Call API
+async function poll() {
   try {
-    const r = await fetch(BACKEND + '/lc2s/execute', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        actor_id: sc.actor, actor_type: sc.type,
-        intent: sc.intent, action_type: sc.action,
-        domain: sc.domain, nlo_required: sc.nlo
-      })
-    })
-    currentResult = await r.json()
-  } catch (e) {
-    // Offline fallback
-    currentResult = {
-      verdict: 'EXECUTION: BLOCKED',
-      verdict_code: 'BLOCKED',
-      legitimate: false,
-      exec_id: 'LC2S-OFFLINE-' + Date.now(),
-      processed_in_ms: 42,
-      instance_2_lc2s: { gates_passed: { authority: false, policy: true, risk: true }, narrative: 'Sem conexão com o backend. Modo offline.' },
-      hdr: { id: 'HDR-OFFLINE-' + Date.now(), verdict: 'BLOCKED', lc2s_kernel: 'HEILLON_HPS1_CORE', timestamp: Date.now(), verifiable_at: 'https://hdr.heillon.com/#verify' }
+    const r = await fetch(`${BASE}/crl/state`);
+    const d = await r.json();
+    const id = d.ledger?.last_hdr_id;
+    const tot = d.ledger?.total_events||0;
+
+    // Update UI
+    document.getElementById('statusDot').style.background = 'var(--pass)';
+    document.getElementById('statusDotIdle').style.background = 'var(--pass)';
+    document.getElementById('statusText').textContent = 'CONSTITUTIONAL_ACTIVE · '+tot+' decisões';
+    document.getElementById('idleSub').textContent = tot+' decisões soberanas';
+    document.getElementById('idleEvents').textContent = '#'+tot;
+    const phc = document.getElementById('phCount');
+    if(phc) phc.textContent = '#'+tot;
+
+    if(id && id !== lastHdrId) {
+      lastHdrId = id; elapsed = 0;
+      clearInterval(elapsedTimer);
+      elapsedTimer = setInterval(()=>{elapsed++;updateElapsed();}, 1000);
+      triggerNew();
+
+      try {
+        const [vr, cr] = await Promise.all([
+          fetch(`${BASE}/public/verify/${id}`),
+          fetch(`${BASE}/guard/v1/certificate/${id}?format=json`)
+        ]);
+        const hdr = await vr.json();
+        let cert = {}; try{cert = await cr.json();}catch(_){}
+        let norms = [];
+        try { const nr = await fetch(`${BASE}/hdr/${id}/context`); const nd = await nr.json(); norms = (nd.norms||[]).slice(0,3).map(n=>(n.code||'').split('(')[0].trim()); } catch(_) {}
+        fullData = {...hdr, corpus_hash: cert.corpus_hash||d.ledger?.last_event_hash||'', cert};
+        currentDecision = {id, verdict: hdr.verdict||'approved', intent: hdr.intent?.intent||'Ação registrada pelo LC²S', actorType: hdr.intent?.actor_type||'AI', actorId: hdr.intent?.actor_id||'—', action: hdr.intent?.action||'—', chain: hdr.proof?.hash_chain||'INTACT', norms};
+        if(panelOpen) { const wm=document.querySelector('.waiting-msg'); if(wm) document.getElementById('panelContent').innerHTML=''; renderDecision(currentDecision); }
+      } catch(_) {}
     }
+  } catch(e) {
+    document.getElementById('statusDot').style.background = 'var(--fail)';
+    document.getElementById('statusDotIdle').style.background = 'var(--fail)';
+    document.getElementById('statusText').textContent = 'Reconectando...';
+    document.getElementById('idleSub').textContent = 'Sem conexão';
   }
-
-  // Show verdict after pipeline completes
-  timers.push(setTimeout(() => {
-    setUsed(used + 1)
-    showVerdict(currentResult, used + 1)
-  }, 5500))
 }
 
-// ── Show verdict ─────────────────────────────────────────────────────────────
-function showVerdict(r, usedNow) {
-  const legit = r.legitimate
-  const code  = r.verdict_code
-  const color = code === 'LEGITIMATE' ? '#40916C' : code === 'ESCALATED' ? '#C9A84C' : '#E05555'
-  const banner = document.getElementById('verdictBanner')
-  banner.style.borderColor = color + '44'
-  banner.style.background  = color + '08'
-  document.getElementById('verdictIcon').style.color = color
-  document.getElementById('verdictIcon').textContent = legit ? '✓' : '✗'
-  document.getElementById('verdictTitle').style.color = color
-  document.getElementById('verdictTitle').textContent = r.verdict || 'EXECUTION: BLOCKED'
-  document.getElementById('verdictTs').textContent =
-    'exec: ' + (r.exec_id || '—') + ' · ' + (r.processed_in_ms || 0) + 'ms'
-
-  // Strip
-  const strip = document.getElementById('verdictStrip')
-  strip.innerHTML = ''
-  const checks = [
-    ['Authority', r.instance_2_lc2s?.gates_passed?.authority],
-    ['Policy',    r.instance_2_lc2s?.gates_passed?.policy],
-    ['Risk',      r.instance_2_lc2s?.gates_passed?.risk],
-    ['Drift',     true],
-  ]
-  checks.forEach(([label, ok]) => {
-    const s = document.createElement('span')
-    s.className = 'vcheck ' + (ok ? 'ok' : 'fail')
-    s.textContent = (ok ? '✔' : '✗') + ' ' + label
-    strip.appendChild(s)
-  })
-
-  // HDR
-  const hdr = r.hdr || {}
-  document.getElementById('hdrId').textContent = hdr.id || '—'
-  document.getElementById('hdrMeta').innerHTML =
-    `Kernel: <span>${hdr.lc2s_kernel || 'HEILLON_HPS1_CORE'}</span><br>` +
-    `Verdict: <span style="color:${color}">${hdr.verdict || code}</span><br>` +
-    `Timestamp: <span>${new Date(hdr.timestamp || Date.now()).toLocaleString('pt-BR')}</span>`
-
-  // Actions
-  const actions = document.getElementById('verdictActions')
-  actions.innerHTML = ''
-  const left = MAX_FREE - usedNow
-
-  if (left > 0) {
-    const btnAgain = document.createElement('button')
-    btnAgain.className = 'btn btn-ghost'
-    btnAgain.textContent = `↺ Executar novamente (${left} restante${left > 1 ? 's' : ''})`
-    btnAgain.onclick = () => { show('screen-idle'); updateIdle() }
-    actions.appendChild(btnAgain)
-  } else {
-    const btnWall = document.createElement('button')
-    btnWall.className = 'btn btn-primary'
-    btnWall.textContent = '→ Ver planos — continuar'
-    btnWall.onclick = () => show('screen-wall')
-    actions.appendChild(btnWall)
-  }
-
-  const btnVerify = document.createElement('a')
-  btnVerify.className = 'btn btn-ghost'
-  btnVerify.href = 'https://hdr.heillon.com/#verify'
-  btnVerify.target = '_blank'
-  btnVerify.textContent = '→ Verificar HDR publicamente'
-  actions.appendChild(btnVerify)
-
-  show('screen-verdict')
-  navigator.vibrate?.([100, 50, 100])
+// Service Worker
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(()=>{});
 }
 
-// ── Init ─────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  updateIdle()
+poll();
+setInterval(poll, 3000);
 
-  document.getElementById('btnExecute').addEventListener('click', () => {
-    const used = getUsed()
-    if (used >= MAX_FREE) { show('screen-wall'); return }
-    execute()
-  })
-
-  // Back from verdict to idle
-  document.addEventListener('click', e => {
-    if (e.target.matches('[data-back]')) { show('screen-idle'); updateIdle() }
-  })
-
-  // Register PWA
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(() => {})
-  }
-
-  // Install prompt
-  let deferredPrompt
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault()
-    deferredPrompt = e
-    // Mostra toast de instalação após 3s
-    setTimeout(() => {
-      toast('💡 Adicione à tela inicial para acesso rápido')
-    }, 3000)
-  })
-})
+// Swipe down to close panel
+let touchStartY = 0;
+document.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, {passive:true});
+document.addEventListener('touchmove', e => {
+  if(!panelOpen) return;
+  const dy = e.touches[0].clientY - touchStartY;
+  if(dy > 80) closePanel();
+}, {passive:true});
 </script>
 </body>
 </html>
