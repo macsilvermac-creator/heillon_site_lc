@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"/>
@@ -127,7 +127,7 @@ footer{padding:1.1rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);dis
     <span class="cbadge cb-pop">MAIS POPULAR</span>
     <div class="ctop">
       <div class="tname" style="color:var(--gold)">POCKET SOVEREIGN</div>
-      <div class="tprice" style="color:var(--gold)"><span id="ps">R$29</span><s id="pp">/mês</s></div>
+      <div class="tprice" style="color:var(--gold)"><span id="ps">R$19,90</span><s id="pp">/mês</s></div>
       <div class="ttag" id="pt">1 dispositivo · cancela quando quiseres</div>
     </div>
     <div class="cdiv"></div>
@@ -149,7 +149,7 @@ footer{padding:1.1rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);dis
   <div class="card">
     <div class="ctop">
       <div class="tname" style="color:var(--blue)">POCKET COUNCIL</div>
-      <div class="tprice" style="color:var(--blue)"><span id="pc">R$149</span><s id="pcp">/mês</s></div>
+      <div class="tprice" style="color:var(--blue)"><span id="pc">R$149,90</span><s id="pcp">/mês</s></div>
       <div class="ttag" id="ct">Até 5 dispositivos · para equipas</div>
     </div>
     <div class="cdiv"></div>
@@ -199,14 +199,14 @@ function tog(){
   document.getElementById('la').classList.toggle('active',annual)
   document.getElementById('savt').style.display=annual?'inline-block':'none'
   if(annual){
-    document.getElementById('ps').textContent='R$290';document.getElementById('pp').textContent='/ano'
+    document.getElementById('ps').textContent='R$19,900';document.getElementById('pp').textContent='/ano'
     document.getElementById('pt').textContent='= R$24/mês · poupa R$58'
-    document.getElementById('pc').textContent='R$1.490';document.getElementById('pcp').textContent='/ano'
-    document.getElementById('ct').textContent='= R$124/mês · poupa R$298'
+    document.getElementById('pc').textContent='R$1.499,90';document.getElementById('pcp').textContent='/ano'
+    document.getElementById('ct').textContent='= R$124/mês · poupa R$19,908'
   } else {
-    document.getElementById('ps').textContent='R$29';document.getElementById('pp').textContent='/mês'
+    document.getElementById('ps').textContent='R$19,90';document.getElementById('pp').textContent='/mês'
     document.getElementById('pt').textContent='1 dispositivo · cancela quando quiseres'
-    document.getElementById('pc').textContent='R$149';document.getElementById('pcp').textContent='/mês'
+    document.getElementById('pc').textContent='R$149,90';document.getElementById('pcp').textContent='/mês'
     document.getElementById('ct').textContent='Até 5 dispositivos · para equipas'
   }
 }
