@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="HEILLON"/>
+  <meta name="theme-color" content="#070C14"/>
+  <title>HEILLON Pocket Witness</title>
+  <link rel="apple-touch-icon" href="icons/pocket-icon-180.png"/>
+  <link rel="manifest" href="pocket-manifest.json"/>
+  <style>
+    :root {
+      --gold: #C9A84C;
+      --green: #22C55E;
+      --red: #EF4444;
+      --orange: #E08855;
+      --blue: #4A9EBE;
+      --bg: #070C14;
+      --surface: #0D1520;
+      --border: rgba(201,168,76,0.18);
+      --text: #F0EBE0;
+      --dim: rgba(160,168,179,0.55);
+      --mono: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      width:100%; min-height:100vh; min-height:100dvh;
+      background:var(--bg); color:var(--text);
+      font-family:var(--mono); font-size:13px;
+      overflow-x:hidden;
+    }
+
+    /* ── Safe area ── */
+    .safe-top    { height: env(safe-area-inset-top, 0px); }
+    .safe-bottom { height: env(safe-area-inset-bottom, 0px); }
+
+    /* ── Header ── */
+    .header {
+      position:sticky; top:0; z-index:100;
+      background:rgba(7,12,20,0.95);
+      border-bottom:1px solid var(--border);
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      padding:14px 20px 12px;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .brand { display:flex; align-items:center; gap:10px; }
+    .brand-h {
+      width:34px; height:34px;
+      border:2px solid var(--gold); border-radius:8px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:16px; font-weight:700; color:var(--gold);
+    }
+    .brand-text .name { font-size:15px; color:var(--gold); letter-spacing:0.12em; }
+    .brand-text .tier { font-size:9px; color:var(--dim); letter-spacing:0.2em; }
+    .status-pill {
+      display:flex; align-items:center; gap:5px;
+      background:rgba(34,197,94,0.1);
+      border:1px solid rgba(34,197,94,0.3);
+      border-radius:20px; padding:4px 10px;
+      font-size:10px; color:var(--green); letter-spacing:0.1em;
+    }
+    .status-pill .dot {
+      width:6px; height:6px; border-radius:50%;
+      background:var(--green);
+      box-shadow:0 0 6px rgba(34,197,94,0.7);
+      animation:pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+    /* ── Sections ── */
+    .section { padding:16px 20px; }
+    .section-title {
+      font-size:9px; letter-spacing:0.22em; color:var(--dim);
+      text-transform:uppercase; margin-bottom:12px;
+    }
+
+    /* ── Intent card ── */
+    .intent-card {
+      background:var(--surface);
+      border:1px solid var(--border); border-radius:10px;
+      overflow:hidden;
+    }
+    .intent-input {
+      width:100%; padding:14px 16px;
+      background:transparent; border:none; outline:none;
+      color:var(--text); font-family:var(--mono); font-size:13px;
+      line-height:1.5; resize:none; min-height:80px;
+    }
+    .intent-input::placeholder { color:var(--dim); }
+    .intent-footer {
+      padding:10px 16px;
+      border-top:1px solid rgba(255,255,255,0.05);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .intent-hdr { font-size:9px; color:var(--dim); }
+    .intent-hdr span { color:var(--gold); }
+    .btn-declare {
+      background:rgba(201,168,76,0.15);
+      border:1px solid rgba(201,168,76,0.4); border-radius:6px;
+      color:var(--gold); font-family:var(--mono); font-size:11px;
+      letter-spacing:0.1em; padding:8px 16px; cursor:pointer;
+      transition:background 0.2s;
+    }
+    .btn-declare:active { background:rgba(201,168,76,0.25); }
+    .btn-declare:disabled { opacity:0.4; cursor:default; }
+
+    /* ── Session info ── */
+    .session-box {
+      background:rgba(201,168,76,0.05);
+      border:1px solid rgba(201,168,76,0.2); border-radius:10px;
+      padding:14px 16px;
+    }
+    .session-row {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:6px;
+    }
+    .session-row:last-child { margin-bottom:0; }
+    .sess-label { font-size:10px; color:var(--dim); }
+    .sess-value { font-size:11px; color:var(--text); }
+    .sess-value.gold { color:var(--gold); }
+    .sess-value.green { color:var(--green); }
+    .sess-value.red { color:var(--red); }
+    .score-bar-wrap {
+      height:4px; background:rgba(255,255,255,0.08);
+      border-radius:2px; overflow:hidden; margin-top:10px;
+    }
+    .score-bar {
+      height:100%; border-radius:2px;
+      background:linear-gradient(90deg, var(--green), var(--gold));
+      transition:width 0.5s ease;
+    }
+
+    /* ── Filtros ── */
+    .filters-grid {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:8px;
+    }
+    .filter-card {
+      background:var(--surface);
+      border:1px solid rgba(255,255,255,0.07); border-radius:10px;
+      padding:12px 14px;
+      display:flex; align-items:center; justify-content:space-between;
+      cursor:pointer; transition:border-color 0.15s;
+      -webkit-user-select:none; user-select:none;
+    }
+    .filter-card.active { border-color:rgba(201,168,76,0.35); background:rgba(201,168,76,0.06); }
+    .filter-left { display:flex; align-items:center; gap:8px; }
+    .filter-emoji { font-size:18px; }
+    .filter-name { font-size:11px; color:rgba(240,235,224,0.85); }
+    /* Toggle switch */
+    .toggle {
+      width:36px; height:20px; border-radius:10px;
+      background:#1A2333; border:1px solid rgba(255,255,255,0.1);
+      position:relative; transition:background 0.2s, border-color 0.2s;
+      flex-shrink:0;
+    }
+    .toggle.on { background:rgba(201,168,76,0.5); border-color:rgba(201,168,76,0.7); }
+    .toggle::after {
+      content:''; position:absolute;
+      width:14px; height:14px; border-radius:50%;
+      background:rgba(160,168,179,0.6);
+      top:2px; left:2px; transition:left 0.2s, background 0.2s;
+    }
+    .toggle.on::after { left:18px; background:var(--gold); }
+
+    /* ── Alertas ── */
+    .alert-item {
+      border-radius:8px; padding:12px 14px; margin-bottom:8px;
+      display:flex; gap:10px; align-items:flex-start;
+    }
+    .alert-item.high   { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.25); }
+    .alert-item.medium { background:rgba(224,136,85,0.08); border:1px solid rgba(224,136,85,0.22); }
+    .alert-item.info   { background:rgba(74,158,190,0.08); border:1px solid rgba(74,158,190,0.2); }
+    .alert-icon { font-size:18px; flex-shrink:0; }
+    .alert-content .alert-msg { font-size:12px; line-height:1.4; margin-bottom:3px; }
+    .alert-content .alert-meta { font-size:9px; color:var(--dim); letter-spacing:0.08em; }
+    .no-alerts { font-size:11px; color:var(--dim); text-align:center; padding:16px 0; }
+
+    /* ── Context token ── */
+    .context-box {
+      background:var(--surface); border:1px solid var(--border); border-radius:10px;
+      padding:14px 16px;
+    }
+    .context-token {
+      font-size:10px; color:var(--gold); line-height:1.6; word-break:break-all;
+      background:rgba(201,168,76,0.05); border-radius:6px; padding:10px;
+      margin-bottom:10px;
+    }
+    .btn-copy {
+      width:100%; padding:12px; border-radius:8px; cursor:pointer;
+      background:rgba(74,158,190,0.15); border:1px solid rgba(74,158,190,0.35);
+      color:var(--blue); font-family:var(--mono); font-size:11px; letter-spacing:0.1em;
+      transition:background 0.2s;
+    }
+    .btn-copy:active { background:rgba(74,158,190,0.25); }
+
+    /* ── Upgrade banner ── */
+    .upgrade-banner {
+      margin:16px 20px 0;
+      background:rgba(201,168,76,0.06);
+      border:1px solid rgba(201,168,76,0.25); border-radius:12px;
+      padding:16px; text-align:center;
+    }
+    .upgrade-title { font-size:14px; color:var(--gold); margin-bottom:4px; }
+    .upgrade-sub { font-size:10px; color:var(--dim); margin-bottom:12px; line-height:1.5; }
+    .btn-upgrade {
+      display:block; width:100%; padding:13px;
+      background:linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.08));
+      border:1px solid rgba(201,168,76,0.5); border-radius:8px;
+      color:var(--gold); font-family:var(--mono); font-size:12px;
+      letter-spacing:0.15em; text-decoration:none; cursor:pointer;
+      transition:background 0.2s;
+    }
+    .btn-upgrade:active { background:rgba(201,168,76,0.2); }
+
+    /* ── Tabs ── */
+    .tabs {
+      display:flex; gap:0;
+      background:var(--surface); border-radius:10px; overflow:hidden;
+      border:1px solid rgba(255,255,255,0.07); margin-bottom:16px;
+    }
+    .tab {
+      flex:1; padding:11px 4px; text-align:center; cursor:pointer;
+      font-size:10px; letter-spacing:0.1em; color:var(--dim);
+      transition:background 0.15s, color 0.15s;
+      -webkit-user-select:none; user-select:none;
+    }
+    .tab.active { background:rgba(201,168,76,0.1); color:var(--gold); }
+
+    /* ── Toast ── */
+    .toast {
+      position:fixed; bottom:calc(20px + env(safe-area-inset-bottom));
+      left:50%; transform:translateX(-50%) translateY(80px);
+      background:rgba(13,21,32,0.95); border:1px solid var(--border);
+      border-radius:20px; padding:10px 20px;
+      font-size:11px; color:var(--text); letter-spacing:0.08em;
+      backdrop-filter:blur(12px); z-index:999;
+      transition:transform 0.3s ease;
+      white-space:nowrap;
+    }
+    .toast.show { transform:translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<div class="safe-top"></div>
+
+<!-- Header -->
+<div class="header">
+  <div class="brand">
+    <div class="brand-h">H</div>
+    <div class="brand-text">
+      <div class="name">HEILLON</div>
+      <div class="tier">POCKET WITNESS</div>
+    </div>
+  </div>
+  <div class="status-pill">
+    <div class="dot"></div>
+    <span id="statusLabel">ACTIVO</span>
+  </div>
+</div>
+
+<!-- Tabs de navegação -->
+<div class="section" style="padding-bottom:0">
+  <div class="tabs">
+    <div class="tab active" data-tab="intenção" onclick="switchTab('intenção')">⚡ Intenção</div>
+    <div class="tab" data-tab="filtros"   onclick="switchTab('filtros')">🛡 Filtros</div>
+    <div class="tab" data-tab="alertas"   onclick="switchTab('alertas')">🔔 Alertas</div>
+    <div class="tab" data-tab="contexto"  onclick="switchTab('contexto')">◈ Contexto</div>
+  </div>
+</div>
+
+<!-- ── TAB: INTENÇÃO ── -->
+<div id="tab-intenção" class="tab-content">
+  <div class="section">
+    <div class="section-title">DECLARE A TUA INTENÇÃO</div>
+    <div class="intent-card">
+      <textarea class="intent-input" id="intentInput"
+        placeholder="O que queres fazer com a AI hoje? Ex: 'Quero rever o contrato com o fornecedor X antes de assinar'"
+        rows="4"></textarea>
+      <div class="intent-footer">
+        <div class="intent-hdr" id="intentHdrLabel">HDR: <span>—</span></div>
+        <button class="btn-declare" id="btnDeclare" onclick="declareIntent()">Declarar ◈</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="sessionSection" style="display:none">
+    <div class="section-title">SESSÃO ACTIVA</div>
+    <div class="session-box">
+      <div class="session-row">
+        <span class="sess-label">HDR ID</span>
+        <span class="sess-value gold" id="sessHdrId">—</span>
+      </div>
+      <div class="session-row">
+        <span class="sess-label">Intenção</span>
+        <span class="sess-value" id="sessIntent" style="font-size:10px;max-width:180px;text-align:right">—</span>
+      </div>
+      <div class="session-row">
+        <span class="sess-label">Alinhamento</span>
+        <span class="sess-value green" id="sessScore">100%</span>
+      </div>
+      <div class="session-row">
+        <span class="sess-label">Alertas</span>
+        <span class="sess-value" id="sessAlerts">0</span>
+      </div>
+      <div class="session-row">
+        <span class="sess-label">Duração</span>
+        <span class="sess-value" id="sessDuration">0 min</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar" id="scoreBar" style="width:100%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TAB: FILTROS ── -->
+<div id="tab-filtros" class="tab-content" style="display:none">
+  <div class="section">
+    <div class="section-title">O QUE QUERES MONITORIZAR</div>
+    <div class="filters-grid" id="filtersGrid"></div>
+  </div>
+</div>
+
+<!-- ── TAB: ALERTAS ── -->
+<div id="tab-alertas" class="tab-content" style="display:none">
+  <div class="section">
+    <div class="section-title">ALERTAS DA SESSÃO</div>
+    <div id="alertsList"><div class="no-alerts">Nenhum alerta ainda ✓</div></div>
+  </div>
+</div>
+
+<!-- ── TAB: CONTEXTO ── -->
+<div id="tab-contexto" class="tab-content" style="display:none">
+  <div class="section">
+    <div class="section-title">TOKEN DE CONTEXTO SOBERANO</div>
+    <div class="context-box">
+      <div class="context-token" id="contextToken">
+        Declara uma intenção primeiro para gerar o token de contexto.
+      </div>
+      <button class="btn-copy" onclick="copyContext()">Copiar e colar no início da conversa com AI</button>
+    </div>
+    <div style="margin-top:12px; font-size:10px; color:var(--dim); line-height:1.6">
+      Cola este token no início de qualquer conversa com qualquer AI (ChatGPT, Claude, Gemini, hub).
+      A AI ficará ancorada na tua intenção — menos deriva, menos tokens desperdiçados.
+    </div>
+  </div>
+</div>
+
+<!-- Upgrade banner -->
+<div class="upgrade-banner">
+  <div class="upgrade-title">HEILLON Pocket Sovereign</div>
+  <div class="upgrade-sub">
+    Guarda esta sessão para sempre com prova verificável.<br/>
+    HDR permanente · PDF exportável · 1 dispositivo
+  </div>
+  <a class="btn-upgrade" href="https://heillon.com/pocket/upgrade" target="_blank">
+    GUARDAR COM PROVA → R$29/mês
+  </a>
+</div>
+
+<div class="safe-bottom" style="height:calc(env(safe-area-inset-bottom, 0px) + 20px)"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Config ────────────────────────────────────────────────────────────────────
+const FILTERS_DEF = [
+  { id:'financas',    emoji:'💰', name:'Finanças',    on:true  },
+  { id:'delete',      emoji:'🗑️', name:'Eliminação',  on:true  },
+  { id:'ataques',     emoji:'⚠️', name:'Ataques',     on:true  },
+  { id:'docs',        emoji:'📄', name:'Documentos',  on:true  },
+  { id:'acordos',     emoji:'🤝', name:'Acordos',     on:false },
+  { id:'privacidade', emoji:'🔒', name:'Privacidade', on:false },
+]
+
+const RISK_PATTERNS = {
+  financas:    { kws:['transferir','pagar','investir','bitcoin','pix','saldo','payment','transfer','invest'], sev:'HIGH',   msg:'Intenção financeira detectada.' },
+  delete:      { kws:['deletar','apagar','excluir','remover','delete','erase','wipe'],                       sev:'HIGH',   msg:'Instrução de eliminação detectada.' },
+  ataques:     { kws:['ignore previous','forget your','pretend you','jailbreak','bypass','ignora','finge'],   sev:'HIGH',   msg:'Possível manipulação da AI.' },
+  docs:        { kws:['contrato','acordo','assinar','sign','contract','agreement','cláusula'],               sev:'MEDIUM', msg:'Conversa envolve documentos legais.' },
+  acordos:     { kws:['eu concordo','aceito','i agree','deal','combinado','trato feito'],                    sev:'MEDIUM', msg:'Possível compromisso detectado.' },
+  privacidade: { kws:['cpf','senha','password','dados pessoais','card number','cvv'],                        sev:'HIGH',   msg:'Dados sensíveis na conversa.' },
+}
+
+// ── Estado ────────────────────────────────────────────────────────────────────
+let filters = {}
+let session = null
+let alerts  = []
+let sessionTimer = null
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+function init() {
+  const saved = JSON.parse(localStorage.getItem('h_filters') || '{}')
+  FILTERS_DEF.forEach(f => { filters[f.id] = f.id in saved ? saved[f.id] : f.on })
+  renderFilters()
+  const savedSession = sessionStorage.getItem('h_session')
+  if (savedSession) {
+    session = JSON.parse(savedSession)
+    renderSessionInfo()
+    renderContextToken()
+  }
+  const savedAlerts = JSON.parse(sessionStorage.getItem('h_alerts') || '[]')
+  alerts = savedAlerts
+  renderAlerts()
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none')
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'))
+  document.getElementById(`tab-${tab}`).style.display = 'block'
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('active')
+}
+
+// ── Filtros ───────────────────────────────────────────────────────────────────
+function renderFilters() {
+  const grid = document.getElementById('filtersGrid')
+  grid.innerHTML = FILTERS_DEF.map(f => `
+    <div class="filter-card ${filters[f.id] ? 'active' : ''}" onclick="toggleFilter('${f.id}')">
+      <div class="filter-left">
+        <span class="filter-emoji">${f.emoji}</span>
+        <span class="filter-name">${f.name}</span>
+      </div>
+      <div class="toggle ${filters[f.id] ? 'on' : ''}" data-id="${f.id}"></div>
+    </div>
+  `).join('')
+}
+
+function toggleFilter(id) {
+  filters[id] = !filters[id]
+  localStorage.setItem('h_filters', JSON.stringify(filters))
+  renderFilters()
+  showToast(filters[id] ? `${id} activado` : `${id} desactivado`)
+}
+
+// ── Declarar intenção ─────────────────────────────────────────────────────────
+function declareIntent() {
+  const text = document.getElementById('intentInput').value.trim()
+  if (!text || text.length < 5) { showToast('Escreve a tua intenção primeiro'); return }
+
+  const hdrId = 'HDR-POCKET-' + Date.now().toString(36).toUpperCase()
+  session = {
+    hdrId, intent:text, startedAt:Date.now(),
+    intentScore:100, alertCount:0,
+  }
+  sessionStorage.setItem('h_session', JSON.stringify(session))
+
+  document.getElementById('intentHdrLabel').innerHTML = `HDR: <span>${hdrId}</span>`
+  document.getElementById('btnDeclare').textContent = '◈ Declarado'
+  document.getElementById('btnDeclare').disabled = true
+  document.getElementById('sessionSection').style.display = 'block'
+  renderSessionInfo()
+  renderContextToken()
+  startTimer()
+  showToast('Intenção declarada — HDR efémero criado ◈')
+}
+
+function renderSessionInfo() {
+  if (!session) return
+  document.getElementById('sessHdrId').textContent = session.hdrId
+  document.getElementById('sessIntent').textContent =
+    session.intent.length > 40 ? session.intent.slice(0,40)+'…' : session.intent
+  const score = session.intentScore || 100
+  document.getElementById('sessScore').textContent = score + '%'
+  document.getElementById('sessScore').className = 'sess-value ' + (score > 70 ? 'green' : score > 40 ? '' : 'red')
+  document.getElementById('sessAlerts').textContent = alerts.length
+  document.getElementById('scoreBar').style.width = score + '%'
+  const mins = Math.round((Date.now() - session.startedAt) / 60000)
+  document.getElementById('sessDuration').textContent = mins + ' min'
+  document.getElementById('sessionSection').style.display = 'block'
+}
+
+function startTimer() {
+  if (sessionTimer) clearInterval(sessionTimer)
+  sessionTimer = setInterval(() => { if (session) renderSessionInfo() }, 30000)
+}
+
+// ── Token de contexto ─────────────────────────────────────────────────────────
+function renderContextToken() {
+  if (!session) return
+  const token = `[HEILLON CONTEXT v1.0]
+Intenção: ${session.intent}
+HDR: ${session.hdrId}
+Timestamp: ${new Date(session.startedAt).toISOString()}
+Alinhamento: ${session.intentScore}%
+Instrução: Mantém-te alinhado com a intenção declarada. Não desvies sem aviso explícito.`
+  document.getElementById('contextToken').textContent = token
+}
+
+function copyContext() {
+  const text = document.getElementById('contextToken').textContent
+  if (!session) { showToast('Declara uma intenção primeiro'); return }
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('✓ Copiado — cola no início da conversa com AI')
+  }).catch(() => {
+    // Fallback para mobile sem clipboard API
+    const el = document.createElement('textarea')
+    el.value = text; el.style.position='fixed'; el.style.opacity='0'
+    document.body.appendChild(el); el.select()
+    document.execCommand('copy'); document.body.removeChild(el)
+    showToast('✓ Copiado — cola no início da conversa')
+  })
+}
+
+// ── Análise de texto (análise manual pelo utilizador) ─────────────────────────
+function analyseText(text) {
+  if (!session || !text) return
+  const lower = text.toLowerCase()
+  Object.entries(RISK_PATTERNS).forEach(([cat, p]) => {
+    if (!filters[cat]) return
+    const found = p.kws.some(kw => lower.includes(kw))
+    if (!found) return
+    const alert = { cat, sev:p.sev, msg:p.msg, ts:Date.now() }
+    alerts.unshift(alert)
+    alerts = alerts.slice(0, 50)
+    sessionStorage.setItem('h_alerts', JSON.stringify(alerts))
+    // Reduzir score
+    const penalty = p.sev === 'HIGH' ? 15 : 8
+    session.intentScore = Math.max(0, (session.intentScore||100) - penalty)
+    session.alertCount = (session.alertCount||0) + 1
+    sessionStorage.setItem('h_session', JSON.stringify(session))
+    renderAlerts(); renderSessionInfo()
+    showToast(`⚠ ${p.msg}`, 3000)
+  })
+}
+
+// ── Alertas ───────────────────────────────────────────────────────────────────
+function renderAlerts() {
+  const list = document.getElementById('alertsList')
+  if (!alerts.length) {
+    list.innerHTML = '<div class="no-alerts">Nenhum alerta ainda ✓</div>'
+    return
+  }
+  const sevClass = { HIGH:'high', MEDIUM:'medium', LOW:'info' }
+  const sevIcon  = { HIGH:'🚨', MEDIUM:'⚠️', LOW:'ℹ️' }
+  list.innerHTML = alerts.slice(0,10).map(a => `
+    <div class="alert-item ${sevClass[a.sev]||'info'}">
+      <span class="alert-icon">${sevIcon[a.sev]||'ℹ️'}</span>
+      <div class="alert-content">
+        <div class="alert-msg">${a.msg}</div>
+        <div class="alert-meta">${a.cat?.toUpperCase()} · ${new Date(a.ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+    </div>
+  `).join('')
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+let toastTimer = null
+function showToast(msg, dur=2000) {
+  const t = document.getElementById('toast')
+  t.textContent = msg; t.classList.add('show')
+  clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => t.classList.remove('show'), dur)
+}
+
+init()
+</script>
+</body>
+</html>
