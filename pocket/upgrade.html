@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>HEILLON Pocket — Upgrade para Sovereign</title>
+<meta name="description" content="Guarda as tuas decisões com AI para sempre. HEILLON Pocket Sovereign."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400&family=DM+Mono:wght@300;400&family=Outfit:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+:root{--void:#05050a;--gold:#C9A84C;--green:#22C55E;--blue:#4A9EBE;--lav:#7b7fc4;--lav-b:#a8abdf;--ink:#eceaf5;--ink-d:rgba(236,234,245,0.58);--ink-g:rgba(236,234,245,0.22);--pad:clamp(1.2rem,4vw,5rem);}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--void);color:var(--ink);font-family:'Outfit',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden}
+.orb{position:fixed;border-radius:50%;filter:blur(160px);pointer-events:none;z-index:0}
+.o1{width:500px;height:500px;background:radial-gradient(circle,rgba(18,22,68,0.5),transparent 70%);top:-150px;left:-150px}
+.o2{width:350px;height:350px;background:radial-gradient(circle,rgba(201,168,76,0.07),transparent 70%);bottom:5vh;right:-80px}
+nav{position:sticky;top:0;z-index:100;padding:1rem var(--pad);display:flex;align-items:center;justify-content:space-between;background:rgba(5,5,10,0.92);border-bottom:1px solid rgba(123,127,196,0.1);backdrop-filter:blur(12px)}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.05rem;letter-spacing:.16em;color:var(--lav-b);text-decoration:none}
+.nav-back{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-g);text-decoration:none;border:1px solid rgba(123,127,196,0.18);padding:.3rem .8rem;transition:all .2s}
+.nav-back:hover{border-color:rgba(123,127,196,0.45);color:var(--lav-b)}
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:999;padding:.7rem 1.4rem;border-radius:8px;font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.08em;display:none}
+.toast.show{display:block;animation:fid .3s ease}
+@keyframes fid{from{opacity:0;transform:translateX(-50%) translateY(-8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.t-ok{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.35);color:#22C55E}
+.t-no{background:rgba(160,168,179,0.08);border:1px solid rgba(160,168,179,0.18);color:rgba(160,168,179,0.6)}
+.hero{padding:4rem var(--pad) 2.5rem;text-align:center;position:relative;z-index:10}
+.eyebrow{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.26em;text-transform:uppercase;color:rgba(201,168,76,0.7);margin-bottom:1rem;display:flex;align-items:center;justify-content:center;gap:.5rem}
+.eyebrow::before,.eyebrow::after{content:'';height:1px;width:30px;background:rgba(201,168,76,0.22)}
+h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4.5vw,3.2rem);font-weight:300;line-height:1.14;margin-bottom:1rem}
+h1 em{font-style:italic;color:var(--gold)}
+.sub{font-size:clamp(.86rem,1.1vw,.96rem);color:var(--ink-d);max-width:460px;margin:0 auto;line-height:1.72}
+.billing-toggle{display:flex;align-items:center;justify-content:center;gap:.7rem;margin:2rem 0 .8rem}
+.btg-label{font-family:'DM Mono',monospace;font-size:.66rem;letter-spacing:.1em;color:var(--ink-d);transition:color .2s}
+.btg-label.active{color:var(--gold)}
+.tog{width:46px;height:24px;background:#1A2333;border:1px solid rgba(255,255,255,0.1);border-radius:12px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.tog.on{background:rgba(201,168,76,0.4)}
+.tog::after{content:'';position:absolute;width:18px;height:18px;background:rgba(160,168,179,0.6);border-radius:50%;top:2px;left:2px;transition:left .2s,background .2s}
+.tog.on::after{left:22px;background:var(--gold)}
+.save-tag{font-family:'DM Mono',monospace;font-size:.56rem;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.28);color:#22C55E;padding:.15rem .5rem;border-radius:3px;letter-spacing:.08em;display:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1.2rem;max-width:880px;margin:0 auto;padding:0 var(--pad) 3rem;position:relative;z-index:10}
+.card{background:rgba(12,14,34,0.75);border:1px solid rgba(123,127,196,0.12);border-radius:13px;overflow:hidden;position:relative;transition:border-color .2s}
+.card.hl{border-color:rgba(201,168,76,0.32);background:rgba(14,17,40,0.85)}
+.cbadge{position:absolute;top:13px;right:13px;font-family:'DM Mono',monospace;font-size:.54rem;letter-spacing:.1em;padding:.18rem .5rem;border-radius:3px}
+.cb-pop{background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.3);color:var(--gold)}
+.cb-free{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.22);color:#22C55E}
+.ctop{padding:1.5rem 1.5rem .9rem}
+.tname{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.12em;margin-bottom:.45rem}
+.tprice{font-family:'Cormorant Garamond',serif;font-size:2.3rem;font-weight:300;line-height:1;margin-bottom:.25rem}
+.tprice s{font-size:.8rem;font-family:'DM Mono',monospace;font-weight:300;opacity:.45}
+.ttag{font-size:.8rem;color:var(--ink-d);margin-bottom:.9rem}
+.cdiv{height:1px;background:rgba(255,255,255,0.05);margin:0 1.5rem}
+.cfeats{padding:1.1rem 1.5rem}
+.feat{display:flex;align-items:flex-start;gap:.55rem;margin-bottom:.6rem;font-size:.82rem;color:var(--ink-d)}
+.feat:last-child{margin-bottom:0}
+.fi{flex-shrink:0;font-size:.82rem;margin-top:.06rem}
+.ccta{padding:1.1rem 1.5rem 1.5rem}
+.btn{display:block;width:100%;padding:.8rem;text-align:center;font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border-radius:7px;cursor:pointer;transition:all .18s;border:none}
+.btn-gold{background:rgba(201,168,76,0.14);border:1px solid rgba(201,168,76,0.4);color:var(--gold)}
+.btn-gold:hover{background:rgba(201,168,76,0.22)}
+.btn-blue{background:rgba(74,158,190,0.1);border:1px solid rgba(74,158,190,0.28);color:var(--blue)}
+.btn-blue:hover{background:rgba(74,158,190,0.18)}
+.btn-ghost{background:transparent;border:1px solid rgba(123,127,196,0.18);color:var(--ink-g)}
+.btn-ghost:hover{border-color:rgba(123,127,196,0.38);color:var(--lav-b)}
+.btn.ld{opacity:.6;cursor:not-allowed;pointer-events:none}
+.trust{display:flex;flex-wrap:wrap;justify-content:center;gap:1.1rem;padding:0 var(--pad) 2.5rem;position:relative;z-index:10}
+.ti{display:flex;align-items:center;gap:.45rem;font-family:'DM Mono',monospace;font-size:.6rem;color:var(--ink-g);letter-spacing:.05em}
+.faq-sec{padding:0 var(--pad) 3.5rem;max-width:660px;margin:0 auto;position:relative;z-index:10}
+.faq-t{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(160,168,179,0.32);text-align:center;margin-bottom:1.2rem}
+details{border:1px solid rgba(123,127,196,0.09);border-radius:7px;margin-bottom:.45rem;overflow:hidden}
+summary{padding:.85rem 1.1rem;cursor:pointer;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--ink);list-style:none;display:flex;justify-content:space-between;user-select:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'＋';color:var(--lav);font-size:.8rem}
+details[open] summary::after{content:'－'}
+.fa{padding:.6rem 1.1rem .85rem;font-size:.78rem;line-height:1.62;color:var(--ink-d);border-top:1px solid rgba(123,127,196,0.06)}
+footer{padding:1.1rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);display:flex;justify-content:space-between;align-items:center;position:relative;z-index:10}
+.fl{font-family:'DM Mono',monospace;font-size:.57rem;letter-spacing:.09em;color:var(--ink-g)}
+.fr{font-family:'DM Mono',monospace;font-size:.57rem;color:var(--lav);opacity:.22}
+@media(max-width:560px){.grid{grid-template-columns:1fr;padding:0 1rem 3rem}}
+</style>
+</head>
+<body>
+<div class="orb o1"></div><div class="orb o2"></div>
+<div class="toast t-ok" id="tOk">✓ Pagamento concluído — bem-vindo ao Sovereign!</div>
+<div class="toast t-no" id="tNo">Pagamento cancelado — podes voltar quando quiseres.</div>
+
+<nav>
+  <a href="/" class="nav-logo">HEILLON</a>
+  <a href="/pocket-install.html" class="nav-back">← Pocket</a>
+</nav>
+
+<div class="hero">
+  <div class="eyebrow">UPGRADE · HEILLON POCKET</div>
+  <h1>Guarda as tuas decisões.<br><em>Para sempre.</em></h1>
+  <p class="sub">O Witness é grátis eternamente. Quando uma decisão importar — sela-a com prova criptográfica permanente.</p>
+  <div class="billing-toggle">
+    <span class="btg-label active" id="lm">Mensal</span>
+    <div class="tog" id="btog" onclick="tog()"></div>
+    <span class="btg-label" id="la">Anual</span>
+    <span class="save-tag" id="savt">Poupa 17%</span>
+  </div>
+</div>
+
+<div class="grid">
+  <!-- WITNESS -->
+  <div class="card">
+    <span class="cbadge cb-free">GRÁTIS</span>
+    <div class="ctop">
+      <div class="tname" style="color:#22C55E">POCKET WITNESS</div>
+      <div class="tprice" style="color:#22C55E">R$0<s>/mês</s></div>
+      <div class="ttag">Para sempre · sem cartão</div>
+    </div>
+    <div class="cdiv"></div>
+    <div class="cfeats">
+      <div class="feat"><span class="fi">✓</span>6 filtros de alerta em tempo real</div>
+      <div class="feat"><span class="fi">✓</span>Intent Drift Monitor</div>
+      <div class="feat"><span class="fi">✓</span>Token de contexto HDR (↓ tokens)</div>
+      <div class="feat"><span class="fi">✓</span>Widget flutuante em páginas de AI</div>
+      <div class="feat" style="opacity:.4"><span class="fi">✗</span>HDR permanente</div>
+      <div class="feat" style="opacity:.4"><span class="fi">✗</span>Exportar prova PDF</div>
+    </div>
+    <div class="ccta"><a href="/pocket-install.html" class="btn btn-ghost">Instalar grátis</a></div>
+  </div>
+
+  <!-- SOVEREIGN -->
+  <div class="card hl">
+    <span class="cbadge cb-pop">MAIS POPULAR</span>
+    <div class="ctop">
+      <div class="tname" style="color:var(--gold)">POCKET SOVEREIGN</div>
+      <div class="tprice" style="color:var(--gold)"><span id="ps">R$29</span><s id="pp">/mês</s></div>
+      <div class="ttag" id="pt">1 dispositivo · cancela quando quiseres</div>
+    </div>
+    <div class="cdiv"></div>
+    <div class="cfeats">
+      <div class="feat"><span class="fi" style="color:var(--gold)">◈</span>Tudo do Witness, mais:</div>
+      <div class="feat"><span class="fi">✓</span>HDR permanente selado no ledger</div>
+      <div class="feat"><span class="fi">✓</span>Exportar prova em PDF verificável</div>
+      <div class="feat"><span class="fi">✓</span>Histórico completo de sessões</div>
+      <div class="feat"><span class="fi">✓</span>1 dispositivo registado</div>
+      <div class="feat"><span class="fi">✓</span>Suporte prioritário por email</div>
+    </div>
+    <div class="ccta">
+      <button class="btn btn-gold" id="bS" onclick="pay('sovereign')">Começar Sovereign →</button>
+      <div style="font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(160,168,179,0.35);text-align:center;margin-top:.55rem">Stripe · cancela a qualquer momento</div>
+    </div>
+  </div>
+
+  <!-- COUNCIL -->
+  <div class="card">
+    <div class="ctop">
+      <div class="tname" style="color:var(--blue)">POCKET COUNCIL</div>
+      <div class="tprice" style="color:var(--blue)"><span id="pc">R$149</span><s id="pcp">/mês</s></div>
+      <div class="ttag" id="ct">Até 5 dispositivos · para equipas</div>
+    </div>
+    <div class="cdiv"></div>
+    <div class="cfeats">
+      <div class="feat"><span class="fi" style="color:var(--blue)">⬡</span>Tudo do Sovereign, mais:</div>
+      <div class="feat"><span class="fi">✓</span>Até 5 dispositivos/membros</div>
+      <div class="feat"><span class="fi">✓</span>Histórico partilhado de decisões</div>
+      <div class="feat"><span class="fi">✓</span>Relatório Shadow AI mensal</div>
+      <div class="feat"><span class="fi">✓</span>Dashboard de equipa</div>
+      <div class="feat"><span class="fi">✓</span>Gateway para HEILLON Core</div>
+    </div>
+    <div class="ccta"><button class="btn btn-blue" id="bC" onclick="pay('council')">Começar Council →</button></div>
+  </div>
+</div>
+
+<div class="trust">
+  <div class="ti"><span>🔒</span>Stripe · PCI DSS</div>
+  <div class="ti"><span>🇧🇷</span>Preços em BRL</div>
+  <div class="ti"><span>↩</span>Cancela quando quiseres</div>
+  <div class="ti"><span>◈</span>HDRs compatíveis com HEILLON Core</div>
+</div>
+
+<div class="faq-sec">
+  <div class="faq-t">Perguntas frequentes</div>
+  <details><summary>Posso cancelar a qualquer momento?</summary><div class="fa">Sim. Sem fidelidade. Os HDRs permanentes que geraste ficam no ledger para sempre mesmo após cancelamento.</div></details>
+  <details><summary>O Witness continua grátis se cancelar o Sovereign?</summary><div class="fa">Sim. O Witness é gratuito eternamente. Se cancelares o Sovereign, voltas automaticamente ao Witness.</div></details>
+  <details><summary>Os HDRs Pocket são compatíveis com o HEILLON Core?</summary><div class="fa">Sim — native compatible. Se a tua empresa adoptar o HEILLON Core, todos os HDRs migram sem fricção.</div></details>
+</div>
+
+<footer>
+  <p class="fl">HEILLON Pocket · heillon.com</p>
+  <p class="fr">© 2026 HEILLON</p>
+</footer>
+
+<script>
+const API='https://heilloncommandcenter-production.up.railway.app'
+let annual=false
+;(function(){
+  const p=new URLSearchParams(location.search)
+  if(p.get('success')==='true'){const t=document.getElementById('tOk');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),6000)}
+  if(p.get('cancelled')==='true'){const t=document.getElementById('tNo');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),4000)}
+})()
+function tog(){
+  annual=!annual
+  document.getElementById('btog').classList.toggle('on',annual)
+  document.getElementById('lm').classList.toggle('active',!annual)
+  document.getElementById('la').classList.toggle('active',annual)
+  document.getElementById('savt').style.display=annual?'inline-block':'none'
+  if(annual){
+    document.getElementById('ps').textContent='R$290';document.getElementById('pp').textContent='/ano'
+    document.getElementById('pt').textContent='= R$24/mês · poupa R$58'
+    document.getElementById('pc').textContent='R$1.490';document.getElementById('pcp').textContent='/ano'
+    document.getElementById('ct').textContent='= R$124/mês · poupa R$298'
+  } else {
+    document.getElementById('ps').textContent='R$29';document.getElementById('pp').textContent='/mês'
+    document.getElementById('pt').textContent='1 dispositivo · cancela quando quiseres'
+    document.getElementById('pc').textContent='R$149';document.getElementById('pcp').textContent='/mês'
+    document.getElementById('ct').textContent='Até 5 dispositivos · para equipas'
+  }
+}
+async function pay(product){
+  const tier=product+(annual?'_annual':'_monthly')
+  const btnId=product==='sovereign'?'bS':'bC'
+  const btn=document.getElementById(btnId)
+  const orig=btn.textContent
+  btn.classList.add('ld');btn.textContent='A preparar ···'
+  try{
+    const r=await fetch(API+'/payments/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tier,device_id:localStorage.getItem('heillon_device_id')||'',hdr_session_id:(sessionStorage.getItem('h_session')?JSON.parse(sessionStorage.getItem('h_session')).hdrId||'':'')})})
+    const d=await r.json()
+    if(d.checkout_url){location.href=d.checkout_url}
+    else{alert('Erro: '+(d.detail||'Tenta novamente'));btn.classList.remove('ld');btn.textContent=orig}
+  }catch(e){alert('Erro de ligação. Verifica a internet.');btn.classList.remove('ld');btn.textContent=orig}
+}
+</script>
+</body>
+</html>
