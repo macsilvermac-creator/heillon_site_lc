@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HEILLON Pocket — Como Instalar</title>
+<meta name="description" content="Instala o HEILLON Pocket Witness em 3 formas: PWA smartphone, extensão Chrome, ou widget flutuante nas páginas de AI."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400&family=DM+Mono:wght@300;400&family=Outfit:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --void:#05050a;--deep:#0c0e22;
+  --lav:#7b7fc4;--lav-b:#a8abdf;--lav-g:#c4c6f0;
+  --ink:#eceaf5;--ink-d:rgba(236,234,245,0.58);--ink-g:rgba(236,234,245,0.22);
+  --gold:#C9A84C;--green:#22C55E;--orange:#E08855;--blue:#4A9EBE;
+  --pad:clamp(1.5rem,5vw,6rem);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--void);color:var(--ink);font-family:'Outfit',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:#1e2155}
+.orb{position:fixed;border-radius:50%;filter:blur(160px);pointer-events:none;z-index:0}
+.o1{width:600px;height:600px;background:radial-gradient(circle,rgba(18,22,68,0.5) 0%,transparent 70%);top:-200px;left:-200px}
+.o2{width:400px;height:400px;background:radial-gradient(circle,rgba(201,168,76,0.06) 0%,transparent 70%);bottom:10vh;right:-100px}
+nav{position:sticky;top:0;z-index:100;padding:1.2rem var(--pad);display:flex;align-items:center;justify-content:space-between;background:rgba(5,5,10,0.92);border-bottom:1px solid rgba(123,127,196,0.1);backdrop-filter:blur(14px)}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.1rem;letter-spacing:.18em;color:var(--lav-g);text-decoration:none}
+.nav-back{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-g);text-decoration:none;border:1px solid rgba(123,127,196,0.2);padding:.35rem .9rem;transition:all .2s}
+.nav-back:hover{border-color:rgba(123,127,196,0.5);color:var(--lav-b)}
+.page-hero{padding:5rem var(--pad) 3.5rem;position:relative;z-index:10;text-align:center}
+.eyebrow{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(201,168,76,0.75);margin-bottom:1.2rem;display:flex;align-items:center;justify-content:center;gap:.6rem}
+.eyebrow::before,.eyebrow::after{content:'';height:1px;width:36px;background:rgba(201,168,76,0.28)}
+h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,5vw,3.8rem);font-weight:300;line-height:1.12;margin-bottom:1.2rem}
+h1 em{font-style:italic;color:var(--gold)}
+.page-sub{font-size:clamp(.88rem,1.2vw,1rem);color:var(--ink-d);max-width:520px;margin:0 auto 2.5rem;line-height:1.75}
+.tier-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:.55rem}
+.pill{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;padding:.28rem .75rem;border-radius:20px;border:1px solid}
+.pill-free{border-color:rgba(34,197,94,0.3);color:#22C55E;background:rgba(34,197,94,0.07)}
+.pill-paid{border-color:rgba(201,168,76,0.3);color:var(--gold);background:rgba(201,168,76,0.07)}
+.pill-biz{border-color:rgba(74,158,190,0.3);color:var(--blue);background:rgba(74,158,190,0.07)}
+.pill-corp{border-color:rgba(123,127,196,0.3);color:var(--lav-b);background:rgba(123,127,196,0.07)}
+.install-wrap{padding:0 var(--pad) 4rem;position:relative;z-index:10}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem;margin-bottom:1.5rem}
+.card{background:rgba(12,14,34,0.7);border:1px solid rgba(123,127,196,0.12);border-radius:12px;overflow:hidden;transition:border-color .22s}
+.card:hover{border-color:rgba(201,168,76,0.25)}
+.card-hd{padding:1.4rem;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:.9rem}
+.card-ico{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.ico-pwa{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.22)}
+.ico-ext{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.22)}
+.ico-flt{background:rgba(74,158,190,0.1);border:1px solid rgba(74,158,190,0.22)}
+.card-name{font-family:'DM Mono',monospace;font-size:.85rem;letter-spacing:.07em;color:var(--ink);margin-bottom:.2rem}
+.badge{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.1em;padding:.18rem .45rem;border-radius:3px;display:inline-block}
+.b-free{background:rgba(34,197,94,0.1);color:#22C55E;border:1px solid rgba(34,197,94,0.22)}
+.b-ext{background:rgba(201,168,76,0.1);color:var(--gold);border:1px solid rgba(201,168,76,0.22)}
+.b-inc{background:rgba(74,158,190,0.1);color:var(--blue);border:1px solid rgba(74,158,190,0.22)}
+.card-body{padding:1.4rem}
+.sub-label{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;margin-bottom:.5rem;margin-top:.9rem}
+.sub-label:first-child{margin-top:0}
+.sub-label.green{color:rgba(34,197,94,0.65)}
+.sub-label.gold{color:rgba(201,168,76,0.65)}
+.sub-label.blue{color:rgba(74,158,190,0.65)}
+.steps{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.1rem}
+.step{display:flex;align-items:flex-start;gap:.65rem}
+.snum{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.6rem;font-weight:bold;flex-shrink:0;margin-top:.08rem}
+.sn-g{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.28);color:#22C55E}
+.sn-o{background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.28);color:var(--gold)}
+.sn-b{background:rgba(74,158,190,0.12);border:1px solid rgba(74,158,190,0.28);color:var(--blue)}
+.stxt{font-size:.85rem;color:var(--ink-d);line-height:1.5}
+.stxt strong{color:var(--ink)}
+.stxt code{font-family:'DM Mono',monospace;font-size:.76rem;background:rgba(123,127,196,0.1);padding:.08rem .3rem;border-radius:3px;color:var(--lav-b)}
+.stxt em{font-size:.75rem;color:rgba(160,168,179,0.45);font-style:normal}
+.sep{height:1px;background:rgba(255,255,255,0.05);margin:.6rem 0}
+.btn{display:flex;align-items:center;justify-content:center;gap:.45rem;font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;padding:.6rem 1.1rem;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .18s;width:100%}
+.btn-g{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);color:#22C55E}
+.btn-g:hover{background:rgba(34,197,94,0.18)}
+.btn-o{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold)}
+.btn-o:hover{background:rgba(201,168,76,0.18)}
+.btn-b{background:rgba(74,158,190,0.1);border:1px solid rgba(74,158,190,0.3);color:var(--blue)}
+.btn-b:hover{background:rgba(74,158,190,0.18)}
+.pnote{font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(160,168,179,0.4);text-align:center;margin-top:.6rem;letter-spacing:.05em}
+.dot-box{background:rgba(74,158,190,0.05);border:1px solid rgba(74,158,190,0.18);border-radius:7px;padding:.9rem 1rem;font-size:.78rem;color:var(--ink-d);line-height:1.7;margin-top:.75rem}
+.dot-box strong{color:var(--blue)}
+.compat-wrap{background:rgba(12,14,34,0.5);border:1px solid rgba(123,127,196,0.1);border-radius:10px;padding:1.4rem;margin-top:1.25rem}
+.compat-title{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(160,168,179,0.4);margin-bottom:.9rem}
+table{width:100%;border-collapse:collapse}
+th{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(160,168,179,0.45);padding:.35rem .7rem;text-align:left;border-bottom:1px solid rgba(255,255,255,0.05)}
+td{font-size:.78rem;color:var(--ink-d);padding:.45rem .7rem;border-bottom:1px solid rgba(255,255,255,0.03)}
+.cy{color:#22C55E}.cp{color:var(--orange)}.cn{color:rgba(160,168,179,0.3)}
+.platforms-wrap{text-align:center;margin:2rem 0 0}
+.plat-label{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(160,168,179,0.38);margin-bottom:1rem}
+.plat-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem}
+.plat-tag{font-family:'DM Mono',monospace;font-size:.62rem;color:rgba(168,171,223,0.65);border:1px solid rgba(123,127,196,0.14);padding:.22rem .6rem;border-radius:4px}
+.sdiv{height:1px;background:linear-gradient(to right,transparent,rgba(201,168,76,0.12),transparent);margin:3rem 0}
+.escalada-wrap{padding:0 var(--pad) 4rem;position:relative;z-index:10}
+.esc-title{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(160,168,179,0.38);text-align:center;margin-bottom:1.8rem}
+.esc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:rgba(123,127,196,0.07);border-radius:12px;overflow:hidden}
+.esc-tier{background:var(--void);padding:1.8rem 1.4rem;text-align:center}
+.esc-name{font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.12em;margin-bottom:.3rem}
+.esc-tag{font-size:.76rem;color:var(--ink-d);line-height:1.55;margin-bottom:.65rem}
+.esc-price{font-family:'DM Mono',monospace;font-size:.62rem;color:rgba(160,168,179,0.38)}
+.faq-wrap{padding:0 var(--pad) 4rem;max-width:680px;margin:0 auto;position:relative;z-index:10}
+.faq-title{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(160,168,179,0.38);text-align:center;margin-bottom:1.5rem}
+details{border:1px solid rgba(123,127,196,0.11);border-radius:8px;overflow:hidden;margin-bottom:.55rem}
+summary{padding:.95rem 1.2rem;cursor:pointer;font-family:'DM Mono',monospace;font-size:.76rem;color:var(--ink);list-style:none;display:flex;justify-content:space-between;user-select:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'＋';color:var(--lav);font-size:.85rem}
+details[open] summary::after{content:'－'}
+.faq-a{padding:.7rem 1.2rem .95rem;font-size:.82rem;line-height:1.65;color:var(--ink-d);border-top:1px solid rgba(123,127,196,0.07)}
+.faq-a a{color:var(--gold);text-decoration:none}
+footer{padding:1.4rem var(--pad);border-top:1px solid rgba(123,127,196,0.06);display:flex;justify-content:space-between;align-items:center;position:relative;z-index:10}
+.fl{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--ink-g)}
+.fr{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.07em;color:var(--lav);opacity:.28}
+@media(max-width:640px){.cards{grid-template-columns:1fr}.esc-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:400px){.esc-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="orb o1"></div>
+<div class="orb o2"></div>
+
+<nav>
+  <a href="/" class="nav-logo">HEILLON</a>
+  <a href="/" class="nav-back">← Voltar</a>
+</nav>
+
+<div class="page-hero">
+  <div class="eyebrow">HEILLON POCKET WITNESS</div>
+  <h1>A tua AI lembra.<br><em>As tuas decisões ficam.</em></h1>
+  <p class="page-sub">Monitoriza intenções, detecta alertas e mantém contexto soberano em qualquer conversa com AI — grátis, sem conta, sem fricção.</p>
+  <div class="tier-pills">
+    <span class="pill pill-free">◉ WITNESS — Grátis</span>
+    <span class="pill pill-paid">◈ SOVEREIGN — R$29/mês</span>
+    <span class="pill pill-biz">⬡ COUNCIL — R$149/mês</span>
+    <span class="pill pill-corp">◆ HEILLON CORE — Enterprise</span>
+  </div>
+</div>
+
+<div class="install-wrap">
+  <div class="cards">
+
+    <!-- FORMA 1: PWA -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-ico ico-pwa">📱</div>
+        <div>
+          <div class="card-name">Forma 1 — PWA Smartphone</div>
+          <span class="badge b-free">GRÁTIS · SEM APP STORE</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="sub-label green">iPhone — Safari (obrigatório)</div>
+        <div class="steps">
+          <div class="step"><div class="snum sn-g">1</div><div class="stxt">Abre o <strong>Safari</strong> e vai para <code>heillon.com/pocket.html</code></div></div>
+          <div class="step"><div class="snum sn-g">2</div><div class="stxt">Toca no ícone de <strong>Partilha</strong> ⬆ na barra inferior</div></div>
+          <div class="step"><div class="snum sn-g">3</div><div class="stxt">Selecciona <strong>"Adicionar ao Ecrã Inicial"</strong> → "Adicionar"</div></div>
+          <div class="step"><div class="snum sn-g">4</div><div class="stxt">O ícone <strong>H dourado</strong> aparece no ecrã ✓</div></div>
+        </div>
+        <div class="sep"></div>
+        <div class="sub-label green">Android — Chrome</div>
+        <div class="steps">
+          <div class="step"><div class="snum sn-g">1</div><div class="stxt">Abre o <strong>Chrome</strong> e vai para <code>heillon.com/pocket.html</code></div></div>
+          <div class="step"><div class="snum sn-g">2</div><div class="stxt">Banner <strong>"Instalar aplicação"</strong> aparece → toca <em>(ou menu ⋮ → "Adicionar ao ecrã inicial")</em></div></div>
+          <div class="step"><div class="snum sn-g">3</div><div class="stxt">O ícone H aparece no ecrã — <strong>instalado</strong> ✓</div></div>
+        </div>
+        <a href="/pocket.html" class="btn btn-g">📱 Abrir HEILLON Pocket</a>
+        <p class="pnote">iPhone · Android · iPad · qualquer browser móvel</p>
+      </div>
+    </div>
+
+    <!-- FORMA 2: Extensão Chrome -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-ico ico-ext">🔌</div>
+        <div>
+          <div class="card-name">Forma 2 — Extensão Chrome</div>
+          <span class="badge b-ext">AUTOMÁTICO · LÊ PÁGINAS DE AI</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="sub-label gold">PC / Mac — Chrome, Edge, Brave</div>
+        <div class="steps">
+          <div class="step"><div class="snum sn-o">1</div><div class="stxt">Abre o Chrome e vai para <code>chrome://extensions</code></div></div>
+          <div class="step"><div class="snum sn-o">2</div><div class="stxt">Activa o <strong>"Modo de programador"</strong> (canto superior direito)</div></div>
+          <div class="step"><div class="snum sn-o">3</div><div class="stxt">Clica em <strong>"Carregar sem compactação"</strong></div></div>
+          <div class="step"><div class="snum sn-o">4</div><div class="stxt">Selecciona a pasta <code>heillon-pocket-extension/</code></div></div>
+          <div class="step"><div class="snum sn-o">5</div><div class="stxt">O ícone <strong>H dourado</strong> aparece na barra do Chrome ✓</div></div>
+        </div>
+        <div class="sep"></div>
+        <div class="sub-label gold">Android — versão completa</div>
+        <div class="steps">
+          <div class="step"><div class="snum sn-o">1</div><div class="stxt">Instala o <strong>Kiwi Browser</strong> no Google Play (grátis)</div></div>
+          <div class="step"><div class="snum sn-o">2</div><div class="stxt">Menu ⋮ → <strong>Extensions</strong> → activar modo dev → carregar ZIP</div></div>
+        </div>
+        <a href="https://github.com/macsilvermac-creator/HEILLON_COMMAND_CENTER/tree/master/heillon-pocket-extension" target="_blank" class="btn btn-o">⬇ Ver Extensão no GitHub</a>
+        <p class="pnote">Chrome · Edge · Brave · Kiwi Browser (Android)</p>
+      </div>
+    </div>
+
+    <!-- FORMA 3: Flutuante -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-ico ico-flt">🪄</div>
+        <div>
+          <div class="card-name">Forma 3 — Widget Flutuante</div>
+          <span class="badge b-inc">INCLUÍDO NA EXTENSÃO</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="sub-label blue">Automático — parte da extensão</div>
+        <div class="steps">
+          <div class="step"><div class="snum sn-b">1</div><div class="stxt">Instala a extensão Chrome (Forma 2 acima)</div></div>
+          <div class="step"><div class="snum sn-b">2</div><div class="stxt">Abre qualquer página de AI: <strong>ChatGPT, Claude, Gemini</strong>, hub brasileiro...</div></div>
+          <div class="step"><div class="snum sn-b">3</div><div class="stxt">O widget <strong>H + ponto colorido</strong> aparece no canto da página automaticamente</div></div>
+          <div class="step"><div class="snum sn-b">4</div><div class="stxt"><strong>Clica</strong> para expandir: score, alertas, sessão em tempo real</div></div>
+          <div class="step"><div class="snum sn-b">5</div><div class="stxt"><strong>Arrasta</strong> para qualquer posição — guardada automaticamente</div></div>
+        </div>
+        <div class="dot-box">
+          <strong>O ponto colorido indica:</strong><br/>
+          🟢 Verde — sessão limpa, sem alertas<br/>
+          🟡 Laranja — alerta MÉDIO detectado<br/>
+          🔴 Vermelho piscante — alerta ALTO
+        </div>
+        <p class="pnote" style="margin-top:.75rem">Não requer configuração · aparece em todas as páginas de AI</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Tabela de compatibilidade -->
+  <div class="compat-wrap">
+    <div class="compat-title">Compatibilidade por plataforma</div>
+    <table>
+      <tr>
+        <th>Plataforma</th><th>PWA</th><th>Extensão</th><th>Flutuante</th><th>AIs locais (localhost)</th>
+      </tr>
+      <tr><td>iPhone (iOS)</td><td class="cy">✓ Safari</td><td class="cp">~ Firefox</td><td class="cp">~ Firefox</td><td class="cn">✗</td></tr>
+      <tr><td>Android</td><td class="cy">✓ Chrome</td><td class="cy">✓ Kiwi</td><td class="cy">✓ Kiwi</td><td class="cp">~ Kiwi</td></tr>
+      <tr><td>PC / Mac — Chrome</td><td class="cy">✓</td><td class="cy">✓</td><td class="cy">✓</td><td class="cy">✓</td></tr>
+      <tr><td>PC / Mac — Edge / Brave</td><td class="cy">✓</td><td class="cy">✓</td><td class="cy">✓</td><td class="cy">✓</td></tr>
+      <tr><td>PC / Mac — Firefox</td><td class="cy">✓</td><td class="cp">Em breve</td><td class="cp">Em breve</td><td class="cy">✓</td></tr>
+    </table>
+    <div style="font-family:'DM Mono',monospace;font-size:.56rem;color:rgba(160,168,179,0.3);margin-top:.65rem">✓ = total · ~ = via browser específico · ✗ = não suportado</div>
+  </div>
+
+  <!-- Plataformas -->
+  <div class="platforms-wrap">
+    <div class="plat-label">Plataformas de AI monitorizadas automaticamente</div>
+    <div class="plat-tags" id="platTags"></div>
+  </div>
+</div>
+
+<div class="sdiv"></div>
+
+<!-- Escalada -->
+<div class="escalada-wrap">
+  <div class="esc-title">Escalada natural — da observação à soberania</div>
+  <div class="esc-grid">
+    <div class="esc-tier">
+      <div class="esc-name" style="color:#22C55E">POCKET WITNESS</div>
+      <div class="esc-tag">Vês mas não proves.<br>Alertas + contexto.</div>
+      <div class="esc-price">GRÁTIS · qualquer device</div>
+    </div>
+    <div class="esc-tier">
+      <div class="esc-name" style="color:var(--gold)">POCKET SOVEREIGN</div>
+      <div class="esc-tag">Proves e guardas.<br>HDR permanente.</div>
+      <div class="esc-price">R$29/mês · 1 device</div>
+    </div>
+    <div class="esc-tier">
+      <div class="esc-name" style="color:var(--blue)">POCKET COUNCIL</div>
+      <div class="esc-tag">Equipa prova junta.<br>Shadow AI report.</div>
+      <div class="esc-price">R$149/mês · 5 devices</div>
+    </div>
+    <div class="esc-tier">
+      <div class="esc-name" style="color:var(--lav-b)">HEILLON CORE</div>
+      <div class="esc-tag">Empresa inteira.<br>Migração nativa.</div>
+      <div class="esc-price">Enterprise · contacto</div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-wrap">
+  <div class="faq-title">Perguntas frequentes</div>
+  <details>
+    <summary>Preciso de criar conta para o Pocket Witness?</summary>
+    <div class="faq-a">Não. O Witness é completamente anónimo. Sem conta, sem email, sem cartão. Instalas e usas imediatamente. Os filtros e o histórico ficam no teu dispositivo.</div>
+  </details>
+  <details>
+    <summary>O Pocket envia os meus dados para algum servidor?</summary>
+    <div class="faq-a">No tier Witness, zero dados saem do teu dispositivo. As análises são feitas localmente. Apenas no upgrade Sovereign o HDR é selado no ledger HEILLON — e mesmo aí, só o que declarares explicitamente.</div>
+  </details>
+  <details>
+    <summary>Funciona com os hubs de AI brasileiros?</summary>
+    <div class="faq-a">Sim — qualquer hub que funcione via browser é monitorizado automaticamente pela extensão. O Pocket não compete com o hub; senta-se por cima de qualquer AI. O token de contexto HDR pode ser colado no início de qualquer conversa em qualquer plataforma.</div>
+  </details>
+  <details>
+    <summary>E as AIs que correm localmente (LM Studio, Ollama)?</summary>
+    <div class="faq-a">Se a AI local corre via browser (localhost), a extensão detecta e monitoriza automaticamente. Para apps nativas usa a PWA com o token de contexto — colas no início da conversa manualmente.</div>
+  </details>
+  <details>
+    <summary>Quando vem a versão paga Sovereign?</summary>
+    <div class="faq-a">Em breve. O botão "SOVEREIGN →" no popup da extensão levará para <a href="/pocket/upgrade">heillon.com/pocket/upgrade</a> com subscrição mensal e anual via Stripe / Pagar.me.</div>
+  </details>
+</div>
+
+<footer>
+  <p class="fl">HEILLON Pocket Witness v1.0.1 · heillon.com</p>
+  <p class="fr">© 2026 HEILLON</p>
+</footer>
+
+<script>
+var plats=['ChatGPT','Claude','Gemini','Copilot','Poe','You.com','LM Studio (local)','Open WebUI (local)','Jan.ai (local)','Hubs BR via browser'];
+var wrap=document.getElementById('platTags');
+plats.forEach(function(p){var s=document.createElement('span');s.className='plat-tag';s.textContent=p;wrap.appendChild(s);});
+</script>
+</body>
+</html>
