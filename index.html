@@ -287,6 +287,14 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
 .portal-input{width:100%;background:#05050a;border:1px solid rgba(123,127,196,.18);color:var(--ink);font-family:'DM Mono',monospace;font-size:.95rem;letter-spacing:.08em;padding:1rem 1.25rem;outline:none;transition:border-color .2s;text-transform:uppercase}
 .portal-input:focus{border-color:rgba(123,127,196,.5)}
 .portal-input::placeholder{color:rgba(123,127,196,.3);text-transform:uppercase;font-size:.8rem;letter-spacing:.12em}
+
+.portal-passkey-btn{width:100%;padding:1rem 1.2rem;background:rgba(201,168,76,0.1);color:#C9A84C;font-family:'DM Mono',monospace;font-size:.78rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;border:1px solid rgba(201,168,76,0.35);cursor:pointer;transition:all .25s;margin-bottom:.75rem;display:flex;align-items:center;justify-content:center;gap:.6rem}
+.portal-passkey-btn:hover{background:rgba(201,168,76,0.18);border-color:rgba(201,168,76,0.6)}
+.portal-passkey-btn:disabled{opacity:.35;cursor:not-allowed}
+.portal-passkey-icon{font-size:1rem}
+.portal-divider{display:flex;align-items:center;gap:.75rem;margin:.75rem 0;color:rgba(160,168,179,0.3);font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em}
+.portal-divider::before,.portal-divider::after{content:'';flex:1;height:1px;background:rgba(160,168,179,0.12)}
+.portal-passkey-hint{font-family:'DM Mono',monospace;font-size:.62rem;color:rgba(160,168,179,0.4);text-align:center;margin-bottom:.5rem;letter-spacing:.06em}
 .portal-btn{width:100%;padding:1rem;background:var(--lav-b);color:var(--void);font-family:'DM Mono',monospace;font-size:.8rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s;margin-bottom:1rem}
 .portal-btn:hover{background:var(--lav-g)}
 .portal-btn:disabled{opacity:.4;cursor:not-allowed}
@@ -1508,10 +1516,21 @@ document.querySelectorAll('.gpanel').forEach(function(p){var hd=p.querySelector(
     <div class="portal-header">
       <div class="portal-eyebrow">HEILLON · ACESSO SOBERANO</div>
       <h2 class="portal-title"><span class="lang-pt">Acesse seu portal</span><span class="lang-en" style="display:none">Access your portal</span></h2>
-      <p class="portal-subtitle"><span class="lang-pt">Use seu código soberano HEILLON-XXXX-XXXX para entrar.</span><span class="lang-en" style="display:none">Use your sovereign code HEILLON-XXXX-XXXX to sign in.</span></p>
+      <p class="portal-subtitle"><span class="lang-pt">Autentique com Passkey ou use o seu código soberano HEILLON-XXXX-XXXX.</span><span class="lang-en" style="display:none">Use your sovereign code HEILLON-XXXX-XXXX to sign in.</span></p>
     </div>
     <div class="portal-body">
       <div class="portal-error" id="portal-error"></div>
+      <!-- Passkey — entrada principal soberana -->
+      <button class="portal-passkey-btn" id="passkey-btn" onclick="runPasskeyLogin()">
+        <span class="portal-passkey-icon">🔑</span>
+        <span class="lang-pt">Entrar com Passkey</span><span class="lang-en" style="display:none">Sign in with Passkey</span>
+      </button>
+      <button class="portal-passkey-btn" id="passkey-register-btn" onclick="runPasskeyRegister()" style="font-size:.68rem;opacity:.65;margin-bottom:0">
+        <span class="portal-passkey-icon">＋</span>
+        <span class="lang-pt">Registar nova Passkey</span><span class="lang-en" style="display:none">Register new Passkey</span>
+      </button>
+      <!-- Divisor -->
+      <div class="portal-divider"><span>OU CÓDIGO SOBERANO</span></div>
       <div class="portal-input-wrap">
         <input type="text" class="portal-input" id="portal-code" placeholder="HEILLON-XXXX-XXXX" maxlength="18" autocomplete="off" oninput="formatCode(this)" onkeydown="if(event.key==='Enter')submitCode()">
       </div>
@@ -1734,6 +1753,167 @@ function clientAnalystDash(s, pt){
     </div>
   </div>`;
 }
+
+// ── WebAuthn / Passkey ─────────────────────────────────────────────────────
+// SimpleWebAuthn browser library via CDN (ESM)
+let _simpleWebAuthn = null;
+
+async function _loadWebAuthn() {
+  if (_simpleWebAuthn) return _simpleWebAuthn;
+  try {
+    _simpleWebAuthn = await import('https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@13/+esm');
+    return _simpleWebAuthn;
+  } catch(e) {
+    console.error('WebAuthn CDN load failed:', e);
+    return null;
+  }
+}
+
+function _setPasskeyBtns(loading) {
+  const b1 = document.getElementById('passkey-btn');
+  const b2 = document.getElementById('passkey-register-btn');
+  if (b1) b1.disabled = loading;
+  if (b2) b2.disabled = loading;
+}
+
+async function runPasskeyLogin() {
+  const errEl = document.getElementById('portal-error');
+  errEl.classList.remove('show');
+  _setPasskeyBtns(true);
+  const btn = document.getElementById('passkey-btn');
+  const origHTML = btn ? btn.innerHTML : '';
+  if (btn) btn.innerHTML = '<span>...</span>';
+
+  try {
+    const lib = await _loadWebAuthn();
+    if (!lib) throw new Error('Biblioteca WebAuthn não disponível.');
+
+    // Gerar opções de login
+    const genRes = await fetch(BACKEND + '/auth/login/generate-options', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ username: '' })
+    });
+    const genJson = await genRes.json();
+    if (!genRes.ok) {
+      const msg = genJson.detail || genJson.message || 'Erro ao iniciar Passkey.';
+      throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
+    }
+    const challengeId = genJson.challenge_id;
+    if (!challengeId) throw new Error('challenge_id ausente na resposta.');
+
+    // Activar autenticação no browser
+    const credential = await lib.startAuthentication({ optionsJSON: genJson.options });
+
+    // Verificar
+    const verRes = await fetch(BACKEND + '/auth/login/verify', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ challenge_id: challengeId, credential })
+    });
+    const verJson = await verRes.json();
+    if (!verRes.ok || !verJson.access_token) {
+      const msg = verJson.detail || verJson.message || 'Passkey inválida.';
+      throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
+    }
+
+    // Sessão estabelecida
+    _session = verJson;
+    localStorage.setItem('heillon-session', JSON.stringify(verJson));
+    closePortal();
+    const role = verJson.persona_code || '';
+    if (CC_ROLES.some(r => role.includes(r))) {
+      window.open(CC_URL + '?token=' + verJson.access_token, '_blank');
+      return;
+    }
+    renderDash();
+
+  } catch(e) {
+    const msg = e.message || String(e);
+    if (msg.toLowerCase().includes('cancel') || msg.toLowerCase().includes('abort') || msg.toLowerCase().includes('user')) {
+      errEl.textContent = 'Autenticação cancelada.';
+    } else {
+      errEl.textContent = msg.slice(0, 200);
+    }
+    errEl.classList.add('show');
+  } finally {
+    _setPasskeyBtns(false);
+    if (btn) btn.innerHTML = origHTML;
+  }
+}
+
+async function runPasskeyRegister() {
+  const errEl = document.getElementById('portal-error');
+  errEl.classList.remove('show');
+  _setPasskeyBtns(true);
+  const btn = document.getElementById('passkey-register-btn');
+  const origHTML = btn ? btn.innerHTML : '';
+  if (btn) btn.innerHTML = '<span>...</span>';
+
+  // Pedir username para registo
+  const username = window.prompt('Username para a Passkey (ex: marcelo@heillon.com):');
+  if (!username || !username.trim()) {
+    _setPasskeyBtns(false);
+    if (btn) btn.innerHTML = origHTML;
+    return;
+  }
+
+  try {
+    const lib = await _loadWebAuthn();
+    if (!lib) throw new Error('Biblioteca WebAuthn não disponível.');
+
+    const genRes = await fetch(BACKEND + '/auth/register/generate-options', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ username: username.trim(), display_name: username.trim() })
+    });
+    const genJson = await genRes.json();
+    if (!genRes.ok) {
+      const msg = genJson.detail || 'Erro ao iniciar registo.';
+      throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
+    }
+    const challengeId = genJson.challenge_id;
+    if (!challengeId) throw new Error('challenge_id ausente.');
+
+    const credential = await lib.startRegistration({ optionsJSON: genJson.options });
+
+    const verRes = await fetch(BACKEND + '/auth/register/verify', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ challenge_id: challengeId, credential })
+    });
+    const verJson = await verRes.json();
+    if (!verRes.ok || !verJson.access_token) {
+      const msg = verJson.detail || 'Registo falhou.';
+      throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
+    }
+
+    // Registo + login automático
+    _session = verJson;
+    localStorage.setItem('heillon-session', JSON.stringify(verJson));
+    closePortal();
+    const role = verJson.persona_code || '';
+    if (CC_ROLES.some(r => role.includes(r))) {
+      window.open(CC_URL + '?token=' + verJson.access_token, '_blank');
+      return;
+    }
+    renderDash();
+
+  } catch(e) {
+    const msg = e.message || String(e);
+    if (msg.toLowerCase().includes('cancel') || msg.toLowerCase().includes('abort')) {
+      errEl.textContent = 'Registo cancelado.';
+    } else {
+      errEl.textContent = msg.slice(0, 200);
+    }
+    errEl.classList.add('show');
+  } finally {
+    _setPasskeyBtns(false);
+    if (btn) btn.innerHTML = origHTML;
+  }
+}
+// ── fim WebAuthn ────────────────────────────────────────────────────────────
+
 </script>
 
 </body>
