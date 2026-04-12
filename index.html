@@ -819,7 +819,50 @@ details[open] .faq-q::after { content:'－'; }
       <p class="lbl">08 — Próximo Passo</p>
       <h2 class="cta-title">Seu sistema já age. HEILLON garante que ele pode — e prova que agiu certo.</h2>
       <p class="cta-body">Reguladores exigem. Auditores perguntam. IAs executam sem parar. A HEILLON é a infraestrutura que faltava: segurança antes da ação, prova depois, redução de custo no meio do caminho.</p>
-      <div class="cta-btns">
+      <form id="hln-contact" onsubmit="hlnSubmit(event)" style="margin-bottom:1.5rem;max-width:500px;display:flex;flex-direction:column;gap:.65rem">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem">
+    <input id="hcn" placeholder="Nome / Name" style="padding:.6rem .9rem;background:rgba(255,255,255,.04);border:1px solid rgba(123,127,196,.22);border-radius:5px;color:#E8E4D9;font-family:inherit;font-size:.85rem;outline:none"/>
+    <input id="hcc" placeholder="Empresa / Company" style="padding:.6rem .9rem;background:rgba(255,255,255,.04);border:1px solid rgba(123,127,196,.22);border-radius:5px;color:#E8E4D9;font-family:inherit;font-size:.85rem;outline:none"/>
+  </div>
+  <input id="hce" type="email" placeholder="Email *" required style="padding:.6rem .9rem;background:rgba(255,255,255,.04);border:1px solid rgba(123,127,196,.22);border-radius:5px;color:#E8E4D9;font-family:inherit;font-size:.85rem;outline:none"/>
+  <select id="hcx" style="padding:.6rem .9rem;background:#08090F;border:1px solid rgba(123,127,196,.22);border-radius:5px;color:#8A95B4;font-family:inherit;font-size:.82rem;outline:none;cursor:pointer">
+    <option value="">Contexto (opcional)</option>
+    <option value="demo">Quero uma demonstracao</option>
+    <option value="api">Quero integrar via API</option>
+    <option value="enterprise">Enterprise / Compliance</option>
+    <option value="invest">Investimento / Parceria</option>
+  </select>
+  <div style="display:flex;align-items:center;gap:.8rem;flex-wrap:wrap">
+    <button type="submit" id="hcb" class="btn-p" style="border:none;cursor:pointer;padding:.65rem 1.8rem">
+      <span class="lang-pt">Enviar mensagem</span><span class="lang-en" style="display:none">Send message</span>
+    </button>
+    <p id="hcs" style="font-family:'DM Mono',monospace;font-size:.75rem;display:none;margin:0;color:#22C55E"></p>
+  </div>
+</form>
+<script>
+async function hlnSubmit(e){
+  e.preventDefault();
+  var b=document.getElementById("hcb"),s=document.getElementById("hcs");
+  b.disabled=true; b.textContent="Enviando...";
+  try{
+    var r=await fetch("https://heilloncommandcenter-production.up.railway.app/contact",
+      {method:"POST",headers:{"Content-Type":"application/json"},
+       body:JSON.stringify({name:document.getElementById("hcn").value,company:document.getElementById("hcc").value,
+         email:document.getElementById("hce").value,context:document.getElementById("hcx").value,message:""})
+      }).then(x=>x.json());
+    s.style.display="block"; s.style.color=r.ok?"#22C55E":"#E85555";
+    s.textContent=r.ok?"\u2713 Mensagem recebida. Falaremos em breve.":"Erro - contacte contact@heillon.com";
+    if(r.ok) e.target.reset();
+  }catch(err){
+    s.style.display="block"; s.style.color="#E85555";
+    s.textContent="Erro de rede - contacte contact@heillon.com";
+  }finally{
+    b.disabled=false;
+    b.innerHTML="<span class=\"lang-pt\">Enviar mensagem</span><span class=\"lang-en\" style=\"display:none\">Send message</span>";
+  }
+}
+</script>
+<div class="cta-btns">
         <a href="mailto:contact@heillon.com?subject=HEILLON%20—%20Quero%20conhecer%20a%20infraestrutura" class="btn-p"><span class="lang-pt">Falar com a HEILLON</span><span class="lang-en" style="display:none">Talk to HEILLON</span></a>
         <a href="https://hdr.heillon.com" class="btn-s"><span class="lang-pt">Explorar o Protocolo HDR</span><span class="lang-en" style="display:none">Explore the HDR Protocol</span></a>
       </div>
@@ -903,7 +946,7 @@ details[open] .faq-q::after { content:'－'; }
 
 <footer>
   <p class="fl">HEILLON · LC²S · Legitimidade Constitucional Soberana · Joinville, BR</p>
-  <p class="fr">&copy; 2026 HEILLON &middot; <a href="https://vitrine.heillon.com" style="color:inherit;opacity:.6;text-decoration:none">Produto</a> &middot; <a href="https://hdr.heillon.com" style="color:inherit;opacity:.6;text-decoration:none">HDR</a> &middot; <a href="https://hpc.heillon.com" style="color:inherit;opacity:.6;text-decoration:none">HPC</a></p>
+  <p class="fr">&copy; 2026 HEILLON &middot; <a href="https://vitrine.heillon.com" style="color:inherit;opacity:.6;text-decoration:none">Produto</a> &middot; <a href="https://hdr.heillon.com" style="color:inherit;opacity:.6;text-decoration:none">HDR</a> &middot; <a href="https://hpc.heillon.com" style="color:inherit;opacity:.6;text-decoration:none">HPC</a> &middot; <a href="/privacy.html" style="color:inherit;opacity:.6;text-decoration:none">Privacidade</a></p>
 </footer>
 
 <script>
