@@ -1,58 +1,149 @@
+
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Termos de Uso — HEILLON</title>
+<meta name="robots" content="noindex">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#080A14;color:#C8C4BC;font-family:'DM Sans',sans-serif;line-height:1.75;padding:4rem 2rem;max-width:760px;margin:0 auto}
-h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:300;color:#E8E4D9;margin-bottom:.5rem}
-h2{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(201,168,76,.75);margin:2.5rem 0 .75rem}
-p{margin-bottom:1rem;color:#8A95A8}
+body{background:#080A14;color:#C8C4BC;font-family:'DM Sans',sans-serif;line-height:1.8;padding:4rem 2rem;max-width:800px;margin:0 auto}
+h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:300;color:#E8E4D9;margin-bottom:.4rem}
+.subtitle{font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(201,168,76,.7);margin-bottom:3rem}
+h2{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(201,168,76,.85);margin:2.8rem 0 .9rem;border-bottom:1px solid rgba(201,168,76,.15);padding-bottom:.4rem}
+p{margin-bottom:1rem;color:#8A95A8;font-size:.92rem}
+ul,ol{margin:.5rem 0 1rem 1.4rem;color:#8A95A8;font-size:.92rem}
+li{margin-bottom:.4rem}
 a{color:rgba(123,127,196,.85);text-decoration:none}
 a:hover{text-decoration:underline}
-nav{margin-bottom:3rem;font-family:'DM Mono',monospace;font-size:.75rem}
-hr{border:none;border-top:1px solid rgba(255,255,255,.06);margin:2rem 0}
-strong{color:#C8C4BC}
+.box{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:1.2rem 1.5rem;margin:1rem 0}
+.box.alert{border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.05)}
+.tag{display:inline-block;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);color:#C9A84C;font-size:.65rem;letter-spacing:.1em;padding:.15rem .5rem;border-radius:3px;font-family:'DM Mono',monospace;margin-right:.3rem}
+.footer{margin-top:4rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,.07);font-size:.8rem;color:rgba(138,149,168,.6)}
 </style>
 </head>
 <body>
-<nav><a href="/">← heillon.com</a></nav>
-<p style="font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.2em;color:rgba(201,168,76,.65);margin-bottom:.75rem">TERMOS DE USO</p>
+<p style="margin-bottom:1.5rem"><a href="/">← heillon.com</a></p>
 <h1>Termos de Uso</h1>
-<p style="margin-bottom:2rem;color:#5A6478">Última actualização: Abril 2026 · Versão 1.0</p>
+<p class="subtitle">HEILLON · Versão 2.0 · Vigência: Abril 2026</p>
 
-<h2>1. Aceitação dos Termos</h2>
-<p>Ao aceder ou utilizar qualquer produto HEILLON — incluindo heillon.com, hdr.heillon.com, vitrine.heillon.com e hpc.heillon.com — concorda com estes Termos de Uso. Se não concordar, não utilize os serviços.</p>
+<div class="box alert">
+<p style="color:#C9A84C;font-size:.85rem">Ao utilizar qualquer produto ou serviço HEILLON — incluindo heillon.com, hpc.heillon.com, hdr.heillon.com, vitrine.heillon.com e a API HEILLON LC²S — o utilizador ou organização aceita integralmente estes Termos de Uso. Se não concordar com qualquer cláusula, interrompa imediatamente o uso dos serviços.</p>
+</div>
 
-<h2>2. Descrição do Serviço</h2>
-<p>A <strong>HEILLON</strong> fornece infraestrutura de legitimidade computacional. Os produtos incluem:</p>
-<p><strong>HEILLON LC²S:</strong> Motor de verificação constitucional de decisões (4 Gates). Gera HDRs (Heillon Decision Records) como prova criptográfica imutável de cada acção.</p>
-<p><strong>HEILLON HPC Personal Core:</strong> Agente local de monitorização de actividade de IA. Período de avaliação gratuita de 30 dias.</p>
-<p><strong>HDR Protocol:</strong> Protocolo aberto, gratuito, para verificação pública de decisões. A verificação é sempre gratuita e sem conta.</p>
+<h2>1. Definições</h2>
+<ul>
+<li><strong style="color:#E8E4D9">"HEILLON"</strong>: a empresa, seus produtos, APIs e infraestrutura de Legitimidade Computacional.</li>
+<li><strong style="color:#E8E4D9">"Utilizador"</strong>: qualquer pessoa física ou jurídica que acede ou utiliza produtos HEILLON.</li>
+<li><strong style="color:#E8E4D9">"LC²S"</strong>: Legitimidade Constitucional Computacional Soberana — kernel de decisão da HEILLON.</li>
+<li><strong style="color:#E8E4D9">"HDR"</strong>: Heillon Decision Record — registo criptográfico imutável de uma decisão.</li>
+<li><strong style="color:#E8E4D9">"Ledger"</strong>: base de dados imutável onde os HDRs são selados permanentemente.</li>
+<li><strong style="color:#E8E4D9">"HPC"</strong>: Heillon Personal Core — painel de monitorização de atividade de IA no dispositivo.</li>
+<li><strong style="color:#E8E4D9">"API Key / Chave Soberana"</strong>: credencial de autenticação atribuída ao utilizador.</li>
+</ul>
 
-<h2>3. Uso Aceitável</h2>
-<p>Concorda em não utilizar os serviços HEILLON para: violar leis ou regulamentos aplicáveis; tentar aceder indevidamente a sistemas, APIs ou dados de terceiros; reproduzir, vender ou licenciar os serviços sem autorização expressa; utilizar os serviços para fins de fraude, engano ou dano a terceiros.</p>
+<h2>2. Descrição dos Serviços</h2>
+<p>A HEILLON fornece infraestrutura de legitimidade computacional, incluindo:</p>
+<ul>
+<li>API LC²S para geração de HDRs com prova criptográfica de decisões</li>
+<li>Painel HPC para monitorização de atividade de IA com soberania computacional</li>
+<li>Verificador público de HDRs (sem conta, sem limite)</li>
+<li>Protocolo HDR v2.0 aberto (RFC-0001, RFC-0002, RFC-0003)</li>
+<li>HAV — Heillon Audit Vigil — agendador soberano de auditorias</li>
+</ul>
 
-<h2>4. Propriedade Intelectual</h2>
-<p>Todo o software, protocolos, documentação e marca HEILLON são propriedade da HEILLON e protegidos por leis de propriedade intelectual. O Protocolo HDR (RFC-0001, RFC-0002) é publicado como especificação aberta — qualquer implementação independente é bem-vinda desde que compatível com a especificação.</p>
+<h2>3. Elegibilidade e Conta</h2>
+<ul>
+<li>Os serviços destinam-se a <strong>pessoas maiores de 18 anos</strong> e organizações legalmente constituídas.</li>
+<li>O utilizador é responsável pela veracidade das informações fornecidas (e-mail, identificação).</li>
+<li>A HEILLON reserva-se o direito de revogar acessos que violem estes termos ou apresentem indício de fraude.</li>
+<li>O código de acesso HPC é pessoal e intransferível. O compartilhamento é proibido.</li>
+</ul>
 
-<h2>5. Limitação de Responsabilidade</h2>
-<p>Os serviços HEILLON são fornecidos "tal como estão" durante a fase beta. A HEILLON não garante disponibilidade ininterrupta, ausência de erros ou adequação para fins específicos regulatórios sem validação legal independente. Os HDRs gerados são evidência técnica — a sua validade jurídica depende da jurisdição e contexto.</p>
+<h2>4. Uso Permitido</h2>
+<p>O utilizador pode:</p>
+<ul>
+<li>Integrar a API LC²S em sistemas próprios para geração de HDRs</li>
+<li>Usar o painel HPC para monitorizar a atividade de IA no próprio dispositivo</li>
+<li>Verificar HDRs publicamente usando o verificador online ou via API pública</li>
+<li>Implementar o protocolo HDR v2.0 em sistemas próprios (protocolo aberto)</li>
+<li>Referenciar os RFCs HEILLON em documentação técnica e publicações</li>
+</ul>
 
-<h2>6. Dados e Privacidade</h2>
-<p>A recolha e tratamento de dados pessoais é regida pela nossa <a href="/privacy.html">Política de Privacidade</a>, em conformidade com a LGPD e, para utilizadores europeus, com o GDPR.</p>
+<h2>5. Uso Proibido</h2>
+<p>É expressamente proibido:</p>
+<ul>
+<li>Engenharia reversa, descompilação ou tentativa de extrair o código-fonte da HEILLON</li>
+<li>Tentativas de aceder a dados de outros utilizadores (violação de isolamento)</li>
+<li>Sobrecarga intencional da infraestrutura (ataques DDoS, scraping abusivo)</li>
+<li>Registrar dados falsos, enganosos ou de terceiros sem autorização no Ledger</li>
+<li>Usar a API para fins ilegais ou que violem direitos de terceiros</li>
+<li>Compartilhar, vender ou licenciar a chave soberana a terceiros</li>
+<li>Criar sistemas que afirmem falsamente ter certificação HEILLON</li>
+<li>Registrar dados pessoais de terceiros no Ledger sem base legal adequada</li>
+</ul>
 
-<h2>7. Alterações aos Termos</h2>
-<p>A HEILLON pode actualizar estes termos periodicamente. Alterações significativas serão comunicadas via email (se fornecido) ou publicadas nesta página com data de actualização.</p>
+<h2>6. Natureza Imutável do Ledger</h2>
+<div class="box alert">
+<p style="color:#C9A84C;font-size:.85rem"><strong>ATENÇÃO:</strong> Dados registrados no Ledger HEILLON são <strong>permanentes e irremovíveis</strong> por design arquitetural. A integridade da cadeia criptográfica depende desta imutabilidade. O utilizador é exclusivamente responsável por garantir que os dados inseridos nos campos de intenção, contexto e actor_id não contenham dados pessoais de terceiros sem base legal. A HEILLON não pode e não irá apagar registros individuais do Ledger.</p>
+</div>
 
-<h2>8. Contacto</h2>
-<p>Para questões sobre estes termos: <a href="mailto:legal@heillon.com">legal@heillon.com</a></p>
+<h2>7. Propriedade Intelectual</h2>
+<ul>
+<li>O software, design, marcas e documentação HEILLON são propriedade exclusiva da HEILLON.</li>
+<li>O <strong>protocolo HDR v2.0</strong> e as especificações RFC são <strong>abertos</strong> — qualquer sistema pode implementá-los sem licença.</li>
+<li>Os HDRs gerados pelo utilizador pertencem ao utilizador. A HEILLON mantém cópia no Ledger para fins de verificação.</li>
+<li>O utilizador concede à HEILLON licença não exclusiva para processar os dados necessários à prestação dos serviços.</li>
+</ul>
 
-<h2>9. Lei Aplicável</h2>
-<p>Estes Termos são regidos pelas leis da República Federativa do Brasil, com foro na comarca de Joinville, SC. Para clientes europeus, aplicam-se adicionalmente os regulamentos da UE relevantes (EU AI Act, GDPR).</p>
+<h2>8. Privacidade e LGPD</h2>
+<p>O tratamento de dados pessoais é regido pela <a href="/privacy.html">Política de Privacidade HEILLON</a>, em conformidade com a LGPD (Lei 13.709/2018), GDPR (Reg. 2016/679) e DIFC Data Protection Law 2020.</p>
+<p>O utilizador é considerado <strong>operador</strong> quando usa a API LC²S para processar dados de terceiros, sendo responsável por garantir base legal adequada para tal tratamento.</p>
 
-<hr/>
-<p style="font-family:'DM Mono',monospace;font-size:.72rem;color:#3D4A5C">HEILLON · Joinville, SC, Brasil · <a href="/privacy.html">Privacidade</a> · <a href="mailto:legal@heillon.com">legal@heillon.com</a></p>
+<h2>9. Disponibilidade e SLA</h2>
+<ul>
+<li>A HEILLON não garante disponibilidade ininterrupta do serviço durante o período beta/early access.</li>
+<li>Manutenções programadas serão comunicadas com antecedência razoável.</li>
+<li>Para acordos de SLA institucional: <a href="mailto:contact@heillon.com">contact@heillon.com</a></li>
+</ul>
+
+<h2>10. Limitação de Responsabilidade</h2>
+<p>Na máxima extensão permitida pela lei:</p>
+<ul>
+<li>A HEILLON não é responsável por decisões tomadas com base em HDRs gerados — a responsabilidade pela decisão permanece com o actor declarado.</li>
+<li>A HEILLON não garante que os HDRs satisfaçam os requisitos legais específicos de cada jurisdição sem análise jurídica complementar.</li>
+<li>Danos indiretos, lucros cessantes ou danos consequentes são excluídos da responsabilidade HEILLON, salvo dolo ou culpa grave.</li>
+</ul>
+
+<h2>11. Conformidade Regulatória do Utilizador</h2>
+<p>O utilizador é responsável por garantir que o uso da HEILLON está em conformidade com as leis aplicáveis à sua atividade, incluindo:</p>
+<ul>
+<li>LGPD — quando tratar dados pessoais de titulares brasileiros</li>
+<li>GDPR — quando tratar dados pessoais de residentes na UE/EEE</li>
+<li>BACEN 4.557 / CMN 4.966 — quando aplicável a instituições financeiras brasileiras</li>
+<li>DIFC Reg.10 — quando aplicável a operações no DIFC/UAE</li>
+</ul>
+
+<h2>12. Rescisão</h2>
+<p>Qualquer das partes pode rescindir o acesso com 30 dias de aviso prévio. A HEILLON pode suspender o acesso imediatamente em caso de violação grave destes termos. Dados no Ledger permanecem, por natureza imutável do sistema.</p>
+
+<h2>13. Lei Aplicável e Foro</h2>
+<p>Estes termos são regidos pelas leis da República Federativa do Brasil. O foro da comarca de Joinville, Santa Catarina, é eleito para dirimir quaisquer controvérsias, salvo legislação imperativa aplicável.</p>
+
+<h2>14. Alterações</h2>
+<p>A HEILLON pode atualizar estes Termos. Alterações materiais serão notificadas com 30 dias de antecedência. O uso continuado após o prazo implica aceitação.</p>
+
+<h2>15. Contato</h2>
+<div class="box">
+<p><strong style="color:#E8E4D9">Jurídico / Compliance:</strong> <a href="mailto:legal@heillon.com">legal@heillon.com</a><br>
+<strong style="color:#E8E4D9">DPO / LGPD:</strong> <a href="mailto:dpo@heillon.com">dpo@heillon.com</a><br>
+<strong style="color:#E8E4D9">Suporte:</strong> <a href="mailto:contact@heillon.com">contact@heillon.com</a></p>
+</div>
+
+<div class="footer">
+<p>HEILLON — Infraestrutura de Legitimidade Computacional · <a href="/terms.html">Termos de Uso</a> · <a href="/privacy.html">Privacidade</a></p>
+<p style="margin-top:.5rem">Versão 2.0 — Abril 2026 · Lei aplicável: Brasil · Foro: Joinville/SC</p>
+</div>
 </body>
 </html>
