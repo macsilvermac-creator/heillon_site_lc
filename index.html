@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR" translate="no">
 <head>
 <meta charset="UTF-8">
@@ -1630,8 +1630,9 @@ document.querySelectorAll('.gpanel').forEach(function(p){var hd=p.querySelector(
 
 
 <script>
-const BACKEND = 'https://heilloncommandcenter-production.up.railway.app';
-const CC_URL   = 'https://hdr.heillon.com/#verify';
+const BACKEND = 'https://api.heillon.com';
+const CC_URL   = 'https://heillon-command-center.vercel.app';
+const HDR_URL  = 'https://hdr.heillon.com';
 
 // ── Roles que ficam no portal do site ──────────────────────
 const PORTAL_ROLES = ['HEILLON_COMMERCIAL','CLIENT_ANALYST','HEILLON_STAFF','HEILLON_CEO'];
@@ -1678,7 +1679,7 @@ async function submitCode(){
     closePortal();
     const role = d.persona_code || '';
     // Redireciona para Command Center se role operacional
-    if(CC_ROLES.some(r=>role.includes(r))){ window.open(CC_URL+'?token='+d.access_token,'_blank'); return; }
+    if(CC_ROLES.some(r=>role.includes(r))){ window.open(CC_URL+'/cc?token='+d.access_token,'_blank'); return; }
     // Portal roles ficam no site
     renderDash();
   } catch(e){ showErr('Erro de conexão. Tente novamente.'); btn.disabled=false; btn.innerHTML='<span class="lang-pt">Entrar →</span><span class="lang-en" style="display:none">Sign In →</span>'; }
@@ -1694,7 +1695,8 @@ function logoutPortal(){
 
 function openCommandCenter(){
   const t = _session?.access_token||'';
-  window.open(CC_URL+(t?'?token='+t:''),'_blank');
+  const url = CC_URL + '/cc' + (t ? '?token='+t : '');
+  window.open(url,'_blank');
 }
 
 // ── Dashboard ───────────────────────────────────────────────
@@ -1727,7 +1729,7 @@ function renderDashContent(role, view, stats){
   } else if(role==='CLIENT_ANALYST'||view==='CLIENT'){
     body.innerHTML = clientAnalystDash(stats, pt);
   } else {
-    body.innerHTML = `<div class="dash-empty"><p style="font-size:1.5rem;margin-bottom:.5rem">⚑</p><p>${pt?'Acesso ativo. Role: '+role:'Access active. Role: '+role}</p><a href="${CC_URL}" target="_blank" class="dash-btn dash-btn-primary" style="margin-top:1rem;display:inline-block">Command Center ↗</a></div>`;
+    body.innerHTML = `<div class="dash-empty"><p style="font-size:1.5rem;margin-bottom:.5rem">⚑</p><p>${pt?'Acesso ativo. Role: '+role:'Access active. Role: '+role}</p><a href="${CC_URL}/cc" target="_blank" class="dash-btn dash-btn-primary" style="margin-top:1rem;display:inline-block">Command Center ↗</a></div>`;
   }
 }
 
@@ -1762,7 +1764,7 @@ function heilllonStaffDash(s, pt){
       <div class="dash-card-desc">${pt?'13 normas ativas — BR, UAE, EU.':'13 active norms — BR, UAE, EU.'}</div>
       <div class="dash-card-count">13</div>
     </div>
-    <div class="dash-card" style="border-top:2px solid var(--gold)" onclick="openCommandCenter()">
+    <div class="dash-card" style="border-top:2px solid var(--gold)" onclick="window.open('${HDR_URL}','_blank')">
       <div class="dash-card-icon">🔒</div>
       <div class="dash-card-title">${pt?'HCC · Custódia':'HCC · Custody'}</div>
       <div class="dash-card-desc">${pt?'Escopos de custódia histórica ativos. Ninguém altera o passado sem que se saiba.':'Active historical custody scopes. No one alters the past without it being known.'}</div>
@@ -1773,7 +1775,7 @@ function heilllonStaffDash(s, pt){
     <div style="display:flex;gap:.75rem;flex-wrap:wrap">
       <a href="mailto:contact@heillon.com" class="dash-btn">${pt?'Novo contato':'New contact'}</a>
       <button class="dash-btn" onclick="openCommandCenter()">${pt?'Abrir Command Center':'Open Command Center'}</button>
-      <a href="https://hdr.heillon.com" target="_blank" class="dash-btn">${pt?'Portal HDR':'HDR Portal'}</a>
+      <a href="${HDR_URL}" target="_blank" class="dash-btn">${pt?'Portal HDR':'HDR Portal'}</a>
     </div>
   </div>`;
 }
@@ -1809,7 +1811,7 @@ function clientAnalystDash(s, pt){
       <div class="dash-card-icon">🔒</div>
       <div class="dash-card-title">${pt?'Custódia HCC':'HCC Custody'}</div>
       <div class="dash-card-desc">${pt?'Integridade histórica dos seus dados. Nenhuma alteração retroativa passa despercebida.':'Historical data integrity. No retroactive change goes undetected.'}</div>
-      <a href="${CC_URL}" target="_blank" class="dash-btn dash-btn-secondary" style="margin-top:.75rem;font-size:.7rem;padding:5px 12px">${pt?'Ver Escopos HCC →':'View HCC Scopes →'}</a>
+      <a href="${HDR_URL}" target="_blank" class="dash-btn dash-btn-secondary" style="margin-top:.75rem;font-size:.7rem;padding:5px 12px">${pt?'Ver Escopos HCC →':'View HCC Scopes →'}</a>
     </div>
   </div>
   <div class="dash-section">
