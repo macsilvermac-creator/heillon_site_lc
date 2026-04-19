@@ -9,6 +9,28 @@
   <meta name="theme-color" content="#070C14"/>
   <title>HPC — HEILLON Personal Core · Legitimidade local no teu dispositivo</title>
   <link rel="apple-touch-icon" href="icons/pocket-icon-180.png"/>
+  <!-- GATE CHECK — redirecionar para registo se não registado -->
+  <script>
+  (function(){
+    var STORAGE_KEY = 'hpc_registered_v1';
+    var GATE_URL = '/hpc-gate.html';
+    var params = new URLSearchParams(window.location.search);
+    // Não redirecionar se vem de novo registo ou returning
+    if (params.get('new_user') === '1' || params.get('returning') === '1') return;
+    try {
+      var reg = localStorage.getItem(STORAGE_KEY);
+      if (!reg) { window.location.replace(GATE_URL); return; }
+      var d = JSON.parse(reg);
+      // Expirar após 90 dias
+      if (!d.ts_ms || (Date.now() - d.ts_ms) > 90 * 24 * 60 * 60 * 1000) {
+        localStorage.removeItem(STORAGE_KEY);
+        window.location.replace(GATE_URL);
+      }
+    } catch(e) {
+      window.location.replace(GATE_URL);
+    }
+  })();
+  </script>
   <link rel="manifest" href="pocket-manifest.json"/>
   <style>
     :root {

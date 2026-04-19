@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HPC — Heillon Personal Core · Acesso Gratuito</title>
+<meta name="description" content="Regista-te para aceder ao HPC — Heillon Personal Core. Legitimidade local no teu dispositivo. Gratuito para sempre na versão Observação.">
+<meta name="robots" content="noindex">
+<style>
+:root{
+  --void:#07090f;--depth:#0d0f18;--surface:#131522;--border:rgba(255,255,255,.07);
+  --gold:#C9A84C;--gold-d:#8a6f32;--gold-bg:rgba(201,168,76,.08);
+  --green:#2daa74;--green-bg:rgba(45,170,116,.09);
+  --blue:#4A9EBE;--blue-bg:rgba(74,158,190,.09);
+  --lav:#7b80c4;--lav-bg:rgba(123,128,196,.09);
+  --ink:#eae6da;--ink-d:rgba(234,230,218,.58);--ink-g:rgba(234,230,218,.22);
+  --mono:'JetBrains Mono','Fira Code','Courier New',monospace;
+  --r:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--void);color:var(--ink);font-family:'Inter',system-ui,sans-serif;
+  min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--gold);text-decoration:none}
+
+/* ── LAYOUT ── */
+.page{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+@media(max-width:860px){.page{grid-template-columns:1fr}}
+
+/* ── LEFT — produto ── */
+.left{background:linear-gradient(160deg,#0a0c18 0%,#070910 100%);
+  border-right:1px solid var(--border);padding:3rem 3.5rem;
+  display:flex;flex-direction:column;justify-content:space-between;position:sticky;top:0;height:100vh;overflow:hidden}
+@media(max-width:860px){.left{height:auto;position:relative;padding:2rem 1.5rem;border-right:none;border-bottom:1px solid var(--border)}}
+
+.logo{display:flex;align-items:center;gap:.75rem;margin-bottom:2.5rem}
+.logo-h{width:38px;height:38px;border:2px solid var(--gold);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:1.1rem;font-weight:700;color:var(--gold)}
+.logo-text{font-family:var(--mono);font-size:.75rem;letter-spacing:.18em;color:var(--ink-d)}
+
+.left-headline{font-family:'Georgia',serif;font-size:clamp(1.8rem,3.2vw,2.8rem);
+  font-weight:300;line-height:1.15;margin-bottom:1rem}
+.left-headline em{color:var(--gold);font-style:normal}
+.left-sub{font-size:.9rem;color:var(--ink-d);line-height:1.75;max-width:380px;margin-bottom:2.5rem}
+
+/* tiers */
+.tiers{display:flex;flex-direction:column;gap:.65rem}
+.tier{border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;
+  display:flex;align-items:center;justify-content:space-between;transition:.15s}
+.tier-active{border-color:rgba(45,170,116,.4);background:var(--green-bg)}
+.tier-gold{border-color:rgba(201,168,76,.3);background:var(--gold-bg)}
+.tier-blue{border-color:rgba(74,158,190,.25);background:var(--blue-bg)}
+.tier-lav{border-color:rgba(123,128,196,.2);background:var(--lav-bg);opacity:.7}
+.tier-left{}
+.tier-badge{font-family:var(--mono);font-size:.58rem;letter-spacing:.18em;
+  text-transform:uppercase;margin-bottom:.3rem}
+.tier-badge.free{color:var(--green)}
+.tier-badge.sovereign{color:var(--gold)}
+.tier-badge.council{color:var(--blue)}
+.tier-badge.core{color:var(--lav)}
+.tier-name{font-size:.88rem;color:var(--ink);font-weight:500}
+.tier-desc{font-size:.72rem;color:var(--ink-d);margin-top:.15rem}
+.tier-price{font-family:var(--mono);font-size:.8rem;text-align:right}
+.tier-price .amount{font-size:1rem;font-weight:700}
+.tier-price.free .amount{color:var(--green)}
+.tier-price.sovereign .amount{color:var(--gold)}
+.tier-price.council .amount{color:var(--blue)}
+.tier-price.core .amount{color:var(--lav)}
+.tier-price .period{font-size:.62rem;opacity:.6;display:block}
+
+.left-footer{margin-top:2rem}
+.live-chip{display:inline-flex;align-items:center;gap:.45rem;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;
+  color:var(--green);border:1px solid rgba(45,170,116,.25);
+  padding:.3rem .75rem;border-radius:20px;background:var(--green-bg)}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);
+  animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── RIGHT — formulário ── */
+.right{background:var(--depth);padding:3rem 3.5rem;
+  display:flex;flex-direction:column;justify-content:center}
+@media(max-width:860px){.right{padding:2rem 1.5rem}}
+
+.form-header{margin-bottom:2rem}
+.form-tag{font-family:var(--mono);font-size:.6rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:.6rem}
+.form-title{font-size:1.4rem;font-weight:300;color:var(--ink);margin-bottom:.35rem}
+.form-sub{font-size:.82rem;color:var(--ink-d);line-height:1.6}
+
+/* form fields */
+.field{margin-bottom:1.1rem}
+.field label{display:block;font-family:var(--mono);font-size:.62rem;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--ink-d);margin-bottom:.45rem}
+.field input,.field select{width:100%;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:.75rem 1rem;color:var(--ink);
+  font-family:'Inter',sans-serif;font-size:.88rem;outline:none;transition:.15s;
+  -webkit-appearance:none}
+.field input:focus,.field select:focus{border-color:rgba(201,168,76,.5);
+  box-shadow:0 0 0 3px rgba(201,168,76,.08)}
+.field input::placeholder{color:var(--ink-g)}
+.field select option{background:#131522;color:var(--ink)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+
+/* tier selector */
+.tier-selector{margin-bottom:1.5rem}
+.tier-selector label{display:block;font-family:var(--mono);font-size:.62rem;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--ink-d);margin-bottom:.6rem}
+.tier-opts{display:flex;flex-direction:column;gap:.4rem}
+.tier-opt{border:1px solid var(--border);border-radius:var(--r);padding:.75rem 1rem;
+  cursor:pointer;transition:.15s;display:flex;align-items:center;gap:.75rem}
+.tier-opt:hover{border-color:rgba(201,168,76,.25)}
+.tier-opt.selected{border-color:var(--gold);background:var(--gold-bg)}
+.tier-opt input[type=radio]{display:none}
+.tier-opt-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);
+  flex-shrink:0;transition:.15s}
+.tier-opt.selected .tier-opt-dot{border-color:var(--gold);background:var(--gold)}
+.tier-opt-label{font-size:.82rem;color:var(--ink);flex:1}
+.tier-opt-price{font-family:var(--mono);font-size:.72rem;color:var(--ink-d)}
+.tier-opt.selected .tier-opt-price{color:var(--gold)}
+
+/* checkbox */
+.check-row{display:flex;align-items:flex-start;gap:.65rem;margin-bottom:1.5rem;cursor:pointer}
+.check-box{width:18px;height:18px;border:2px solid var(--border);border-radius:4px;
+  flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;
+  transition:.15s;cursor:pointer}
+.check-box.checked{border-color:var(--gold);background:var(--gold)}
+.check-box.checked::after{content:'✓';font-size:10px;color:#000;font-weight:700}
+.check-label{font-size:.8rem;color:var(--ink-d);line-height:1.55}
+.check-label a{color:var(--gold)}
+
+/* CTA button */
+.btn-cta{width:100%;padding:1rem;border:none;border-radius:var(--r);cursor:pointer;
+  font-family:var(--mono);font-size:.82rem;letter-spacing:.12em;font-weight:600;
+  background:var(--gold);color:#000;transition:.15s;position:relative;overflow:hidden}
+.btn-cta:hover{background:var(--gold-d)}
+.btn-cta:disabled{opacity:.5;cursor:not-allowed}
+.btn-cta .btn-text{transition:.2s}
+.btn-cta.loading .btn-text{opacity:0}
+.btn-cta.loading::after{content:'';position:absolute;top:50%;left:50%;
+  width:18px;height:18px;border:2px solid rgba(0,0,0,.3);border-top-color:#000;
+  border-radius:50%;animation:spin .7s linear infinite;
+  transform:translate(-50%,-50%)}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+
+.btn-cta.success{background:var(--green);pointer-events:none}
+
+/* login link */
+.login-link{margin-top:1.25rem;text-align:center;font-size:.78rem;color:var(--ink-d)}
+.login-link a{color:var(--gold)}
+
+/* error / success messages */
+.msg{font-family:var(--mono);font-size:.72rem;padding:.6rem .9rem;
+  border-radius:4px;margin-bottom:1rem;display:none}
+.msg.error{background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.3);color:#e74c3c}
+.msg.success{background:var(--green-bg);border:1px solid rgba(45,170,116,.3);color:var(--green)}
+
+/* success screen */
+.success-screen{display:none;text-align:center;padding:2rem 0}
+.success-icon{font-size:3rem;margin-bottom:1rem}
+.success-title{font-size:1.5rem;font-weight:300;color:var(--green);margin-bottom:.5rem}
+.success-sub{font-size:.85rem;color:var(--ink-d);line-height:1.65;margin-bottom:2rem}
+.progress-bar{height:3px;background:var(--border);border-radius:3px;margin-bottom:.5rem;overflow:hidden}
+.progress-fill{height:100%;background:var(--green);border-radius:3px;
+  width:0%;transition:width 3s linear}
+.progress-text{font-family:var(--mono);font-size:.62rem;color:var(--green);letter-spacing:.1em}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- LEFT — posicionamento e tiers -->
+  <div class="left">
+    <div>
+      <div class="logo">
+        <div class="logo-h">H</div>
+        <div class="logo-text">HEILLON PERSONAL CORE</div>
+      </div>
+
+      <h1 class="left-headline">
+        As suas IAs trabalham.<br>
+        <em>Sabe o que tocam?</em>
+      </h1>
+      <p class="left-sub">
+        Legitimidade local no teu dispositivo. O mesmo kernel LC²S da infraestrutura enterprise — directamente no teu PC, notebook ou smartphone.
+      </p>
+
+      <div class="tiers">
+        <div class="tier tier-active">
+          <div class="tier-left">
+            <div class="tier-badge free">● Grátis para sempre</div>
+            <div class="tier-name">HPC Observação</div>
+            <div class="tier-desc">Monitorização · Alertas · Context Token</div>
+          </div>
+          <div class="tier-price free"><span class="amount">R$0</span><span class="period">para sempre</span></div>
+        </div>
+        <div class="tier tier-gold">
+          <div class="tier-left">
+            <div class="tier-badge sovereign">◆ Mais popular</div>
+            <div class="tier-name">HPC Sovereign</div>
+            <div class="tier-desc">HDR permanente · PDF exportável · 1 dispositivo</div>
+          </div>
+          <div class="tier-price sovereign"><span class="amount">R$29</span><span class="period">/mês</span></div>
+        </div>
+        <div class="tier tier-blue">
+          <div class="tier-left">
+            <div class="tier-badge council">◈ Equipa</div>
+            <div class="tier-name">HPC Council</div>
+            <div class="tier-desc">Prova em equipa · 5 dispositivos · Relatórios</div>
+          </div>
+          <div class="tier-price council"><span class="amount">R$149</span><span class="period">/mês</span></div>
+        </div>
+        <div class="tier tier-lav">
+          <div class="tier-left">
+            <div class="tier-badge core">▲ Enterprise</div>
+            <div class="tier-name">HEILLON Core</div>
+            <div class="tier-desc">Empresa inteira · Integração nativa · SLA</div>
+          </div>
+          <div class="tier-price core"><span class="amount">Consultar</span><span class="period">personalizado</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="left-footer">
+      <div class="live-chip">
+        <div class="live-dot"></div>
+        api.heillon.com · CONSTITUTIONAL_ACTIVE · LC²S v3.5.0
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT — formulário -->
+  <div class="right">
+    <!-- FORM SCREEN -->
+    <div id="formScreen">
+      <div class="form-header">
+        <div class="form-tag">Registo de acesso</div>
+        <h2 class="form-title">Criar conta gratuita</h2>
+        <p class="form-sub">Acesso imediato após o registo. Começa com a versão Observação gratuita — podes fazer upgrade a qualquer momento.</p>
+      </div>
+
+      <div id="msgBox" class="msg"></div>
+
+      <form id="hpcForm" onsubmit="return false">
+
+        <div class="field-row">
+          <div class="field">
+            <label>Nome completo *</label>
+            <input type="text" id="fNome" placeholder="Marcelo Silva" required autocomplete="name">
+          </div>
+          <div class="field">
+            <label>Telefone / WhatsApp *</label>
+            <input type="tel" id="fTelefone" placeholder="+55 47 99999-9999" required autocomplete="tel">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Email *</label>
+          <input type="email" id="fEmail" placeholder="marcelo@empresa.com" required autocomplete="email">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Cidade *</label>
+            <input type="text" id="fCidade" placeholder="Joinville" required>
+          </div>
+          <div class="field">
+            <label>Estado *</label>
+            <select id="fEstado" required>
+              <option value="">Selecionar</option>
+              <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+              <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+              <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+              <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+              <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+              <option>RS</option><option>RO</option><option>RR</option><option selected>SC</option>
+              <option>SP</option><option>SE</option><option>TO</option>
+              <option>Internacional</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- tier selector -->
+        <div class="tier-selector">
+          <label>Plano de interesse</label>
+          <div class="tier-opts">
+            <div class="tier-opt selected" onclick="selectTier(this,'observacao')">
+              <div class="tier-opt-dot"></div>
+              <span class="tier-opt-label">HPC Observação — Monitorização & alertas</span>
+              <span class="tier-opt-price">Grátis</span>
+            </div>
+            <div class="tier-opt" onclick="selectTier(this,'sovereign')">
+              <div class="tier-opt-dot"></div>
+              <span class="tier-opt-label">HPC Sovereign — HDR permanente + PDF</span>
+              <span class="tier-opt-price">R$29/mês</span>
+            </div>
+            <div class="tier-opt" onclick="selectTier(this,'council')">
+              <div class="tier-opt-dot"></div>
+              <span class="tier-opt-label">HPC Council — Equipa, 5 dispositivos</span>
+              <span class="tier-opt-price">R$149/mês</span>
+            </div>
+            <div class="tier-opt" onclick="selectTier(this,'enterprise')">
+              <div class="tier-opt-dot"></div>
+              <span class="tier-opt-label">HEILLON Core — Enterprise completo</span>
+              <span class="tier-opt-price">Consultar</span>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" id="fPlano" value="observacao">
+
+        <!-- opt-in -->
+        <div class="check-row" onclick="toggleCheck('check1')">
+          <div class="check-box" id="check1"></div>
+          <div class="check-label">Aceito receber novidades, actualizações e ofertas da HEILLON por email e WhatsApp. <a href="/privacy.html" target="_blank">Política de privacidade</a>.</div>
+        </div>
+
+        <button type="button" class="btn-cta" id="btnSubmit" onclick="submitForm()">
+          <span class="btn-text">ACESSAR HPC GRATUITAMENTE →</span>
+        </button>
+
+        <div class="login-link">
+          Já tens conta? <a href="#" onclick="checkExisting()">Entrar com o teu email</a>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- SUCCESS SCREEN -->
+    <div id="successScreen" class="success-screen">
+      <div class="success-icon">◈</div>
+      <h2 class="success-title">Acesso liberado!</h2>
+      <p class="success-sub">
+        Bem-vindo à HEILLON, <strong id="successName"></strong>.<br>
+        O teu registo foi guardado. A redirecionar para o HPC...
+      </p>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-text" id="progressText">A iniciar HPC...</div>
+    </div>
+
+  </div><!-- /right -->
+</div><!-- /page -->
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+// IMPORTANTE: Substitua este URL pelo URL do teu Google Apps Script após instalação
+// Ver: Drive > HPC LEADS — Apps Script Webhook (INSTALAR)
+const WEBHOOK_URL = 'PLACEHOLDER_APPS_SCRIPT_URL';
+
+// Para onde redirecionar após registo
+const APP_URL = '/pocket.html';
+const STORAGE_KEY = 'hpc_registered_v1';
+
+// ── Estado ────────────────────────────────────────────────────────────────────
+let optin = false;
+
+// ── Verificar se já está registado ────────────────────────────────────────────
+(function(){
+  const reg = localStorage.getItem(STORAGE_KEY);
+  if (reg) {
+    try {
+      const d = JSON.parse(reg);
+      // Se já está registado há menos de 90 dias, redirecionar directamente
+      if (d.ts && (Date.now() - d.ts) < 90 * 24 * 60 * 60 * 1000) {
+        window.location.href = APP_URL + '?returning=1';
+      }
+    } catch(e){}
+  }
+})();
+
+// ── Tier selector ─────────────────────────────────────────────────────────────
+function selectTier(el, value) {
+  document.querySelectorAll('.tier-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('fPlano').value = value;
+}
+
+// ── Opt-in checkbox ──────────────────────────────────────────────────────────
+function toggleCheck(id) {
+  const el = document.getElementById(id);
+  optin = !optin;
+  el.classList.toggle('checked', optin);
+}
+
+// ── Existing user login ───────────────────────────────────────────────────────
+function checkExisting() {
+  const email = prompt('Introduz o teu email de registo:');
+  if (!email) return;
+  const reg = localStorage.getItem(STORAGE_KEY);
+  if (reg) {
+    try {
+      const d = JSON.parse(reg);
+      if (d.email && d.email.toLowerCase() === email.toLowerCase().trim()) {
+        window.location.href = APP_URL + '?returning=1';
+        return;
+      }
+    } catch(e){}
+  }
+  showMsg('error', 'Email não encontrado neste dispositivo. Faz o registo completo.');
+}
+
+// ── Validação ─────────────────────────────────────────────────────────────────
+function validate() {
+  const fields = ['fNome','fEmail','fTelefone','fCidade','fEstado'];
+  for (const id of fields) {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) {
+      el.focus();
+      showMsg('error', 'Por favor preenche todos os campos obrigatórios.');
+      return false;
+    }
+  }
+  const email = document.getElementById('fEmail').value;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showMsg('error', 'Email inválido.');
+    return false;
+  }
+  return true;
+}
+
+// ── Submit ────────────────────────────────────────────────────────────────────
+async function submitForm() {
+  if (!validate()) return;
+
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  hideMsg();
+
+  const data = {
+    nome:      document.getElementById('fNome').value.trim(),
+    email:     document.getElementById('fEmail').value.trim().toLowerCase(),
+    telefone:  document.getElementById('fTelefone').value.trim(),
+    cidade:    document.getElementById('fCidade').value.trim(),
+    estado:    document.getElementById('fEstado').value,
+    plano:     document.getElementById('fPlano').value,
+    optin:     optin,
+    ts:        new Date().toISOString(),
+    origem:    window.location.href,
+    ua:        navigator.userAgent.substring(0,120),
+    tz:        Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+    lang:      navigator.language || ''
+  };
+
+  // Guardar localmente SEMPRE (mesmo se webhook falhar)
+  const localData = { ...data, ts_ms: Date.now() };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(localData));
+
+  // Tentar enviar ao webhook (não-bloqueante)
+  if (WEBHOOK_URL !== 'PLACEHOLDER_APPS_SCRIPT_URL') {
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+    } catch(e) {
+      // Falhou o webhook mas o lead está no localStorage
+      // Em produção, os dados estão guardados localmente
+      console.warn('Webhook offline, dados guardados localmente');
+    }
+  }
+
+  // Sucesso sempre (mesmo sem webhook)
+  btn.classList.remove('loading');
+  showSuccess(data.nome);
+}
+
+function showSuccess(nome) {
+  document.getElementById('formScreen').style.display = 'none';
+  const sc = document.getElementById('successScreen');
+  sc.style.display = 'block';
+  document.getElementById('successName').textContent = nome.split(' ')[0];
+
+  // Progress bar animation
+  const fill = document.getElementById('progressFill');
+  const text = document.getElementById('progressText');
+  const msgs = ['A iniciar kernel LC²S...','A verificar legitimidade local...','Acesso GRANTED...'];
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i < msgs.length) { text.textContent = msgs[i++]; }
+  }, 900);
+  setTimeout(() => { fill.style.width = '100%'; }, 100);
+  setTimeout(() => {
+    clearInterval(interval);
+    window.location.href = APP_URL + '?new_user=1';
+  }, 3000);
+}
+
+// ── UI helpers ────────────────────────────────────────────────────────────────
+function showMsg(type, text) {
+  const el = document.getElementById('msgBox');
+  el.className = 'msg ' + type;
+  el.textContent = text;
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function hideMsg() {
+  const el = document.getElementById('msgBox');
+  el.style.display = 'none';
+}
+</script>
+</body>
+</html>
