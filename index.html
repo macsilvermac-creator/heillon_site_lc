@@ -904,7 +904,7 @@ async function hlnSubmit(e){
   var b=document.getElementById("hcb"),s=document.getElementById("hcs");
   b.disabled=true; b.textContent="Enviando...";
   try{
-    var r=await fetch("https://heilloncommandcenter-production.up.railway.app/contact",
+    var r=await fetch("https://api.heillon.com/contact",
       {method:"POST",headers:{"Content-Type":"application/json"},
        body:JSON.stringify({name:document.getElementById("hcn").value,company:document.getElementById("hcc").value,
          email:document.getElementById("hce").value,context:document.getElementById("hcx").value,message:""})
@@ -1619,7 +1619,7 @@ document.querySelectorAll('.gpanel').forEach(function(p){var hd=p.querySelector(
 (function(){
   var el = document.getElementById('live-events-count');
   if(!el) return;
-  fetch('https://heilloncommandcenter-production.up.railway.app/health')
+  fetch('https://api.heillon.com/health')
     .then(function(r){ return r.json(); })
     .then(function(d){
       var n = (d.statistics && d.statistics.total_events) ? d.statistics.total_events : null;
