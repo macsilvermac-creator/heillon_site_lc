@@ -692,7 +692,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
 <section id="corpus" style="padding:var(--spad) var(--pad);background:rgba(8,10,20,0.8);">
   <div class="rv">
     <p class="lbl">07 — Corpus Normativo · Dimensão 3</p>
-    <h2 class="stitle"><strong>13 normas. 3 jurisdições.</strong><br>Vinculadas automaticamente.</h2>
+    <h2 class="stitle"><strong>35 normas. 9 jurisdições.</strong><br>Vinculadas automaticamente.</h2>
     <p style="font-size:var(--body);color:var(--ink-d);line-height:1.8;max-width:640px;margin-top:1rem;">
       <span class="lang-pt">Cada decisão selada pela HEILLON carrega o contexto normativo exato em vigor naquele timestamp — verificável retroativamente, para sempre.</span>
       <span class="lang-en" style="display:none;">Every decision sealed by HEILLON carries the exact normative context in force at that timestamp — retroactively verifiable, forever.</span>
@@ -931,7 +931,7 @@ async function hlnSubmit(e){
         <div class="sr"><span class="sk">Status</span><span class="sv live"><span class="ldot"></span><span id="live-phase">CONSTITUTIONAL_ACTIVE</span></span></div>
         <div class="sr"><span class="sk">Version</span><span class="sv">v3.5.0</span></div>
         <div class="sr"><span class="sk">Protocol</span><span class="sv">HDR v2.0 · Open</span></div>
-        <div class="sr"><span class="sk">Corpus</span><span class="sv" style="color:rgba(188,140,255,0.8);">13 normas · BR+UAE+EU</span></div>
+        <div class="sr"><span class="sk">Corpus</span><span class="sv" style="color:rgba(188,140,255,0.8);">35 normas · 9 jurisdições</span></div>
         <div class="sr"><span class="sk">Ledger Events</span><span class="sv" id="cta-events">—</span></div>
         <div class="sr"><span class="sk">Active Clients</span><span class="sv" id="cta-clients">—</span></div>
       </div>
@@ -1820,7 +1820,7 @@ function heilllonStaffDash(s, pt){
     <div class="dash-card">
       <div class="dash-card-icon">🌍</div>
       <div class="dash-card-title">${pt?'Corpus Normativo':'Normative Corpus'}</div>
-      <div class="dash-card-desc">${pt?'13 normas ativas — BR, UAE, EU.':'13 active norms — BR, UAE, EU.'}</div>
+      <div class="dash-card-desc">${pt?'35 normas ativas — BR, EU, UAE e mais.':'35 active norms — 9 jurisdictions.'}</div>
       <div class="dash-card-count">13</div>
     </div>
     <div class="dash-card" style="border-top:2px solid var(--gold)" onclick="window.open('${HDR_URL}','_blank')">
