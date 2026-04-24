@@ -2,8 +2,9 @@
 {
   "version": 2,
   "rewrites": [
-    { "source": "/hpc", "destination": "/hpc-gate.html" },
-    { "source": "/planos", "destination": "/planos.html" }
+    { "source": "/hpc", "destination": "/hpc-index.html" },
+    { "source": "/planos", "destination": "/planos.html" },
+    { "source": "/dashboard", "destination": "/pocket.html" }
   ],
   "headers": [
     {
