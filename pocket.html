@@ -1,816 +1,761 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-  <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="HEILLON"/>
-  <meta name="theme-color" content="#070C14"/>
-  <title>HPC — HEILLON Personal Core · Legitimidade local no teu dispositivo</title>
-  <link rel="apple-touch-icon" href="icons/pocket-icon-180.png"/>
-  <!-- GATE CHECK — redirecionar para registo se não registado -->
-  <script>
-  (function(){
-    var STORAGE_KEY = 'hpc_registered_v1';
-    var GATE_URL = '/hpc-gate.html';
-    var params = new URLSearchParams(window.location.search);
-    // Não redirecionar se vem de novo registo ou returning
-    if (params.get('new_user') === '1' || params.get('returning') === '1') return;
-    try {
-      var reg = localStorage.getItem(STORAGE_KEY);
-      if (!reg) { window.location.replace(GATE_URL); return; }
-      var d = JSON.parse(reg);
-      // Expirar após 90 dias
-      if (!d.ts_ms || (Date.now() - d.ts_ms) > 90 * 24 * 60 * 60 * 1000) {
-        localStorage.removeItem(STORAGE_KEY);
-        window.location.replace(GATE_URL);
-      }
-    } catch(e) {
-      window.location.replace(GATE_URL);
-    }
-  })();
-  </script>
-  <link rel="manifest" href="pocket-manifest.json"/>
-  <style>
-    :root {
-      --gold: #C9A84C;
-      --green: #22C55E;
-      --red: #EF4444;
-      --orange: #E08855;
-      --blue: #4A9EBE;
-      --bg: #070C14;
-      --surface: #0D1520;
-      --border: rgba(201,168,76,0.18);
-      --text: #F0EBE0;
-      --dim: rgba(160,168,179,0.55);
-      --mono: 'SF Mono', 'Fira Code', 'Courier New', monospace;
-    }
-    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
-    html, body {
-      width:100%; min-height:100vh; min-height:100dvh;
-      background:var(--bg); color:var(--text);
-      font-family:var(--mono); font-size:13px;
-      overflow-x:hidden;
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="HPC"/>
+<meta name="theme-color" content="#030712"/>
+<title>HEILLON HPC — Personal Core</title>
+<link rel="manifest" href="pocket-manifest.json"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@400;700;800&display=swap"/>
+<script>
+(function(){
+  var KEY='hpc_registered_v1', GATE='/hpc-gate.html';
+  var p=new URLSearchParams(window.location.search);
+  if(p.get('new_user')==='1'||p.get('returning')==='1') return;
+  try{
+    var r=localStorage.getItem(KEY);
+    if(!r){window.location.replace(GATE);return;}
+    var d=JSON.parse(r);
+    if(!d.ts_ms||(Date.now()-d.ts_ms)>90*864e5){localStorage.removeItem(KEY);window.location.replace(GATE);}
+  }catch(e){window.location.replace(GATE);}
+})();
+</script>
+<style>
+/* ── RESET ── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;min-height:100vh;min-height:100dvh;overflow-x:hidden}
 
-    /* ── Safe area ── */
-    .safe-top    { height: env(safe-area-inset-top, 0px); }
-    .safe-bottom { height: env(safe-area-inset-bottom, 0px); }
+/* ── TEMAS (4 profiles) ── */
+[data-theme="classic"]{
+  --bg:#030712;--surface:rgba(15,23,42,0.98);--card:rgba(20,30,50,0.9);
+  --border:rgba(99,102,241,0.2);--accent:#6366F1;--accent2:#818CF8;
+  --gold:#C9A84C;--green:#10B981;--red:#F43F5E;--orange:#F59E0B;
+  --text:#F1F5F9;--dim:#94A3B8;--dimmer:rgba(148,163,184,0.45);
+  --font-ui:'Space Grotesk',sans-serif;--font-mono:'JetBrains Mono',monospace;
+  --glow:rgba(99,102,241,0.4);--card-glow:rgba(99,102,241,0.08);
+}
+[data-theme="nerd"]{
+  --bg:#000;--surface:rgba(0,10,2,0.99);--card:rgba(0,18,5,0.95);
+  --border:rgba(0,255,65,0.25);--accent:#00FF41;--accent2:#39FF14;
+  --gold:#00FF41;--green:#00FF41;--red:#FF0040;--orange:#FF8C00;
+  --text:#C8FFCE;--dim:#4ADE80;--dimmer:rgba(74,222,128,0.35);
+  --font-ui:'JetBrains Mono',monospace;--font-mono:'JetBrains Mono',monospace;
+  --glow:rgba(0,255,65,0.5);--card-glow:rgba(0,255,65,0.05);
+}
+[data-theme="young"]{
+  --bg:#0F0A1E;--surface:rgba(20,14,40,0.98);--card:rgba(30,20,60,0.9);
+  --border:rgba(168,85,247,0.3);--accent:#A855F7;--accent2:#E879F9;
+  --gold:#FBBF24;--green:#34D399;--red:#F87171;--orange:#FB923C;
+  --text:#F5F3FF;--dim:#C084FC;--dimmer:rgba(192,132,252,0.4);
+  --font-ui:'Plus Jakarta Sans',sans-serif;--font-mono:'JetBrains Mono',monospace;
+  --glow:rgba(168,85,247,0.5);--card-glow:rgba(168,85,247,0.08);
+}
+[data-theme="purist"]{
+  --bg:#09090B;--surface:rgba(12,12,14,0.99);--card:rgba(18,18,22,0.95);
+  --border:rgba(201,168,76,0.15);--accent:#C9A84C;--accent2:#E8C97A;
+  --gold:#C9A84C;--green:#A3A3A3;--red:#DC2626;--orange:#C9A84C;
+  --text:#FAFAFA;--dim:#71717A;--dimmer:rgba(113,113,122,0.4);
+  --font-ui:'Syne',sans-serif;--font-mono:'JetBrains Mono',monospace;
+  --glow:rgba(201,168,76,0.3);--card-glow:rgba(201,168,76,0.05);
+}
 
-    /* ── Header ── */
-    .header {
-      position:sticky; top:0; z-index:100;
-      background:rgba(7,12,20,0.95);
-      border-bottom:1px solid var(--border);
-      backdrop-filter:blur(12px);
-      -webkit-backdrop-filter:blur(12px);
-      padding:14px 20px 12px;
-      display:flex; align-items:center; justify-content:space-between;
-    }
-    .brand { display:flex; align-items:center; gap:10px; }
-    .brand-h {
-      width:34px; height:34px;
-      border:2px solid var(--gold); border-radius:8px;
-      display:flex; align-items:center; justify-content:center;
-      font-size:16px; font-weight:700; color:var(--gold);
-    }
-    .brand-text .name { font-size:15px; color:var(--gold); letter-spacing:0.12em; }
-    .brand-text .tier { font-size:9px; color:var(--dim); letter-spacing:0.2em; }
-    .status-pill {
-      display:flex; align-items:center; gap:5px;
-      background:rgba(34,197,94,0.1);
-      border:1px solid rgba(34,197,94,0.3);
-      border-radius:20px; padding:4px 10px;
-      font-size:10px; color:var(--green); letter-spacing:0.1em;
-    }
-    .status-pill .dot {
-      width:6px; height:6px; border-radius:50%;
-      background:var(--green);
-      box-shadow:0 0 6px rgba(34,197,94,0.7);
-      animation:pulse 2s ease-in-out infinite;
-    }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+html,body{background:var(--bg);color:var(--text);font-family:var(--font-ui);}
 
-    /* ── Sections ── */
-    .section { padding:16px 20px; }
-    .section-title {
-      font-size:9px; letter-spacing:0.22em; color:var(--dim);
-      text-transform:uppercase; margin-bottom:12px;
-    }
+/* ── SCANLINES (nerd only) ── */
+[data-theme="nerd"] body::before{
+  content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px);
+}
+[data-theme="nerd"] body::after{
+  content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;
+  animation:flicker 8s infinite;
+  background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.4) 100%);
+}
+@keyframes flicker{0%,98%{opacity:1}99%{opacity:.97}100%{opacity:1}}
 
-    /* ── Intent card ── */
-    .intent-card {
-      background:var(--surface);
-      border:1px solid var(--border); border-radius:10px;
-      overflow:hidden;
-    }
-    .intent-input {
-      width:100%; padding:14px 16px;
-      background:transparent; border:none; outline:none;
-      color:var(--text); font-family:var(--mono); font-size:13px;
-      line-height:1.5; resize:none; min-height:80px;
-    }
-    .intent-input::placeholder { color:var(--dim); }
-    .intent-footer {
-      padding:10px 16px;
-      border-top:1px solid rgba(255,255,255,0.05);
-      display:flex; align-items:center; justify-content:space-between;
-    }
-    .intent-hdr { font-size:9px; color:var(--dim); }
-    .intent-hdr span { color:var(--gold); }
-    .btn-declare {
-      background:rgba(201,168,76,0.15);
-      border:1px solid rgba(201,168,76,0.4); border-radius:6px;
-      color:var(--gold); font-family:var(--mono); font-size:11px;
-      letter-spacing:0.1em; padding:8px 16px; cursor:pointer;
-      transition:background 0.2s;
-    }
-    .btn-declare:active { background:rgba(201,168,76,0.25); }
-    .btn-declare:disabled { opacity:0.4; cursor:default; }
-
-    /* ── Session info ── */
-    .session-box {
-      background:rgba(201,168,76,0.05);
-      border:1px solid rgba(201,168,76,0.2); border-radius:10px;
-      padding:14px 16px;
-    }
-    .session-row {
-      display:flex; justify-content:space-between; align-items:center;
-      margin-bottom:6px;
-    }
-    .session-row:last-child { margin-bottom:0; }
-    .sess-label { font-size:10px; color:var(--dim); }
-    .sess-value { font-size:11px; color:var(--text); }
-    .sess-value.gold { color:var(--gold); }
-    .sess-value.green { color:var(--green); }
-    .sess-value.red { color:var(--red); }
-    .score-bar-wrap {
-      height:4px; background:rgba(255,255,255,0.08);
-      border-radius:2px; overflow:hidden; margin-top:10px;
-    }
-    .score-bar {
-      height:100%; border-radius:2px;
-      background:linear-gradient(90deg, var(--green), var(--gold));
-      transition:width 0.5s ease;
-    }
-
-    /* ── Filtros ── */
-    .filters-grid {
-      display:grid; grid-template-columns:1fr 1fr;
-      gap:8px;
-    }
-    .filter-card {
-      background:var(--surface);
-      border:1px solid rgba(255,255,255,0.07); border-radius:10px;
-      padding:12px 14px;
-      display:flex; align-items:center; justify-content:space-between;
-      cursor:pointer; transition:border-color 0.15s;
-      -webkit-user-select:none; user-select:none;
-    }
-    .filter-card.active { border-color:rgba(201,168,76,0.35); background:rgba(201,168,76,0.06); }
-    .filter-left { display:flex; align-items:center; gap:8px; }
-    .filter-emoji { font-size:18px; }
-    .filter-name { font-size:11px; color:rgba(240,235,224,0.85); }
-    /* Toggle switch */
-    .toggle {
-      width:36px; height:20px; border-radius:10px;
-      background:#1A2333; border:1px solid rgba(255,255,255,0.1);
-      position:relative; transition:background 0.2s, border-color 0.2s;
-      flex-shrink:0;
-    }
-    .toggle.on { background:rgba(201,168,76,0.5); border-color:rgba(201,168,76,0.7); }
-    .toggle::after {
-      content:''; position:absolute;
-      width:14px; height:14px; border-radius:50%;
-      background:rgba(160,168,179,0.6);
-      top:2px; left:2px; transition:left 0.2s, background 0.2s;
-    }
-    .toggle.on::after { left:18px; background:var(--gold); }
-
-    /* ── Alertas ── */
-    .alert-item {
-      border-radius:8px; padding:12px 14px; margin-bottom:8px;
-      display:flex; gap:10px; align-items:flex-start;
-    }
-    .alert-item.high   { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.25); }
-    .alert-item.medium { background:rgba(224,136,85,0.08); border:1px solid rgba(224,136,85,0.22); }
-    .alert-item.info   { background:rgba(74,158,190,0.08); border:1px solid rgba(74,158,190,0.2); }
-    .alert-icon { font-size:18px; flex-shrink:0; }
-    .alert-content .alert-msg { font-size:12px; line-height:1.4; margin-bottom:3px; }
-    .alert-content .alert-meta { font-size:9px; color:var(--dim); letter-spacing:0.08em; }
-    .no-alerts { font-size:11px; color:var(--dim); text-align:center; padding:16px 0; }
-
-    /* ── Context token ── */
-    .context-box {
-      background:var(--surface); border:1px solid var(--border); border-radius:10px;
-      padding:14px 16px;
-    }
-    .context-token {
-      font-size:10px; color:var(--gold); line-height:1.6; word-break:break-all;
-      background:rgba(201,168,76,0.05); border-radius:6px; padding:10px;
-      margin-bottom:10px;
-    }
-    .btn-copy {
-      width:100%; padding:12px; border-radius:8px; cursor:pointer;
-      background:rgba(74,158,190,0.15); border:1px solid rgba(74,158,190,0.35);
-      color:var(--blue); font-family:var(--mono); font-size:11px; letter-spacing:0.1em;
-      transition:background 0.2s;
-    }
-    .btn-copy:active { background:rgba(74,158,190,0.25); }
-
-    /* ── Upgrade banner ── */
-    .upgrade-banner {
-      margin:16px 20px 0;
-      background:rgba(201,168,76,0.06);
-      border:1px solid rgba(201,168,76,0.25); border-radius:12px;
-      padding:16px; text-align:center;
-    }
-    .upgrade-title { font-size:14px; color:var(--gold); margin-bottom:4px; }
-    .upgrade-sub { font-size:10px; color:var(--dim); margin-bottom:12px; line-height:1.5; }
-    .btn-upgrade {
-      display:block; width:100%; padding:13px;
-      background:linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.08));
-      border:1px solid rgba(201,168,76,0.5); border-radius:8px;
-      color:var(--gold); font-family:var(--mono); font-size:12px;
-      letter-spacing:0.15em; text-decoration:none; cursor:pointer;
-      transition:background 0.2s;
-    }
-    .btn-upgrade:active { background:rgba(201,168,76,0.2); }
-
-    /* ── Tabs ── */
-    .tabs {
-      display:flex; gap:0;
-      background:var(--surface); border-radius:10px; overflow:hidden;
-      border:1px solid rgba(255,255,255,0.07); margin-bottom:16px;
-    }
-    .tab {
-      flex:1; padding:11px 4px; text-align:center; cursor:pointer;
-      font-size:10px; letter-spacing:0.1em; color:var(--dim);
-      transition:background 0.15s, color 0.15s;
-      -webkit-user-select:none; user-select:none;
-    }
-    .tab.active { background:rgba(201,168,76,0.1); color:var(--gold); }
-
-    /* ── Toast ── */
-    .toast {
-      position:fixed; bottom:calc(20px + env(safe-area-inset-bottom));
-      left:50%; transform:translateX(-50%) translateY(80px);
-      background:rgba(13,21,32,0.95); border:1px solid var(--border);
-      border-radius:20px; padding:10px 20px;
-      font-size:11px; color:var(--text); letter-spacing:0.08em;
-      backdrop-filter:blur(12px); z-index:999;
-      transition:transform 0.3s ease;
-      white-space:nowrap;
-    }
-    .toast.show { transform:translateX(-50%) translateY(0); }
-  </style>
+/* ── NOISE (young) ── */
+[data-theme="young"] body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+}
+</style>
 </head>
-<body>
+<body data-theme="classic">
 
-<div class="safe-top"></div>
-
-<!-- HPC intro strip -->
-<div style="background:rgba(201,168,76,0.07);border-bottom:1px solid rgba(201,168,76,0.18);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px">
-  <span style="font-family:var(--mono);font-size:9px;color:rgba(201,168,76,0.75);letter-spacing:0.15em">HPC — HEILLON PERSONAL CORE &middot; Legitimidade local no teu dispositivo</span>
-  <a href="https://heillon.com" style="font-family:var(--mono);font-size:8px;color:rgba(201,168,76,0.5);text-decoration:none;letter-spacing:0.1em">heillon.com</a>
-</div>
-
-<!-- Header -->
-<div class="header">
-  <div class="brand">
-    <div class="brand-h">H</div>
-    <div class="brand-text">
-      <div class="name">HEILLON</div>
-      <div class="tier">PERSONAL CORE · HPC</div>
-    </div>
-  </div>
-  <div class="status-pill">
-    <div class="dot"></div>
-    <span id="statusLabel">ACTIVO</span>
-  </div>
-</div>
-
-<!-- Tabs de navegação -->
-<div class="section" style="padding-bottom:0">
-  <div class="tabs">
-    <div class="tab active" data-tab="intenção" onclick="switchTab('intenção')">⚡ Intenção</div>
-    <div class="tab" data-tab="radar"     onclick="switchTab('radar')">📡 Radar</div>
-    <div class="tab" data-tab="filtros"   onclick="switchTab('filtros')">🛡 Filtros</div>
-    <div class="tab" data-tab="alertas"   onclick="switchTab('alertas')">🔔 Alertas</div>
-    <div class="tab" data-tab="contexto"  onclick="switchTab('contexto')">◈ Contexto</div>
-    <div class="tab" data-tab="planos"    onclick="switchTab('planos')">💎 Planos</div>
-  </div>
-</div>
-
-<!-- ── TAB: INTENÇÃO ── -->
-<div id="tab-intenção" class="tab-content">
-  <div class="section">
-    <div class="section-title">DECLARE A TUA INTENÇÃO</div>
-    <div class="intent-card">
-      <textarea class="intent-input" id="intentInput"
-        placeholder="O que queres fazer com a AI hoje? Ex: 'Quero rever o contrato com o fornecedor X antes de assinar'"
-        rows="4"></textarea>
-      <div class="intent-footer">
-        <div class="intent-hdr" id="intentHdrLabel">HDR: <span>—</span></div>
-        <button class="btn-declare" id="btnDeclare" onclick="declareIntent()">Declarar ◈</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="section" id="sessionSection" style="display:none">
-    <div class="section-title">SESSÃO ACTIVA</div>
-    <div class="session-box">
-      <div class="session-row">
-        <span class="sess-label">HDR ID</span>
-        <span class="sess-value gold" id="sessHdrId">—</span>
-      </div>
-      <div class="session-row">
-        <span class="sess-label">Intenção</span>
-        <span class="sess-value" id="sessIntent" style="font-size:10px;max-width:180px;text-align:right">—</span>
-      </div>
-      <div class="session-row">
-        <span class="sess-label">Alinhamento</span>
-        <span class="sess-value green" id="sessScore">100%</span>
-      </div>
-      <div class="session-row">
-        <span class="sess-label">Alertas</span>
-        <span class="sess-value" id="sessAlerts">0</span>
-      </div>
-      <div class="session-row">
-        <span class="sess-label">Duração</span>
-        <span class="sess-value" id="sessDuration">0 min</span>
-      </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar" id="scoreBar" style="width:100%"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ── TAB: FILTROS ── -->
-<!-- ── TAB: RADAR ── -->
-<div id="tab-radar" class="tab-content" style="display:none">
-
-  <!-- AI Rastreadas -->
-  <div class="section">
-    <div class="section-title" style="display:flex;justify-content:space-between;align-items:center">
-      <span>IAs DETECTADAS NESTA SESSÃO</span>
-      <span id="aiCount" style="font-size:10px;color:var(--gold)">0 activas</span>
-    </div>
-    <div id="aiRadarList" style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
-      <div class="no-alerts" id="aiNoActivity">
-        Nenhuma IA detectada ainda.<br/>
-        <span style="font-size:9px;color:var(--dim);margin-top:4px;display:block">
-          Instala a extensão <strong style="color:var(--gold)">HEILLON Sentinel</strong> para rastreio automático.
-        </span>
-      </div>
-    </div>
-    <!-- Extensão não instalada: botão de instalar -->
-    <div id="sentinelBanner" style="margin-top:14px;padding:12px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:8px">
-      <div style="font-size:10px;letter-spacing:.12em;color:var(--gold);margin-bottom:6px">🔭 BROWSER SENTINEL</div>
-      <div style="font-size:11px;color:var(--dim);line-height:1.6;margin-bottom:10px">
-        Instala a extensão para detectar automaticamente quais IAs usas e registar cada decisão com timestamp soberano.
-      </div>
-      <button onclick="window.open('https://heillon.com','_blank')" style="background:none;border:1px solid rgba(201,168,76,0.4);color:var(--gold);padding:7px 16px;border-radius:5px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;cursor:pointer">
-        INSTALAR EXTENSÃO →
-      </button>
-    </div>
-  </div>
-
-  <!-- Economia Verificada -->
-  <div class="section" style="margin-top:12px">
-    <div class="section-title">ECONOMIA VERIFICADA</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
-      <div style="padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
-        <div style="font-size:9px;color:var(--dim);letter-spacing:.12em;margin-bottom:6px">TOKENS POUPADOS</div>
-        <div id="tokensSaved" style="font-size:22px;font-weight:700;font-family:var(--mono);color:var(--green)">0</div>
-        <div style="font-size:9px;color:var(--dim);margin-top:2px">nesta sessão</div>
-      </div>
-      <div style="padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
-        <div style="font-size:9px;color:var(--dim);letter-spacing:.12em;margin-bottom:6px">DERIVE BLOQUEADO</div>
-        <div id="driftBlocked" style="font-size:22px;font-weight:700;font-family:var(--mono);color:var(--gold)">0%</div>
-        <div style="font-size:9px;color:var(--dim);margin-top:2px">alinhamento médio</div>
-      </div>
-      <div style="padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
-        <div style="font-size:9px;color:var(--dim);letter-spacing:.12em;margin-bottom:6px">HDRs GERADOS</div>
-        <div id="hdrsGenerated" style="font-size:22px;font-weight:700;font-family:var(--mono);color:var(--blue)">0</div>
-        <div style="font-size:9px;color:var(--dim);margin-top:2px">total no dispositivo</div>
-      </div>
-      <div style="padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
-        <div style="font-size:9px;color:var(--dim);letter-spacing:.12em;margin-bottom:6px">SESSÕES SOBERANAS</div>
-        <div id="sovereignSessions" style="font-size:22px;font-weight:700;font-family:var(--mono);color:var(--gold)">0</div>
-        <div style="font-size:9px;color:var(--dim);margin-top:2px">com intenção declarada</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Histórico de Decisões -->
-  <div class="section" style="margin-top:12px">
-    <div class="section-title">ÚLTIMAS DECISÕES REGISTADAS</div>
-    <div id="decisionsHistory" style="margin-top:8px">
-      <div class="no-alerts">Sem decisões registadas ainda.<br/>
-        <span style="font-size:9px;color:var(--dim);margin-top:4px;display:block">Declara uma intenção na tab ⚡ para começar.</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="tab-filtros" class="tab-content" style="display:none">
-  <div class="section">
-    <div class="section-title">O QUE QUERES MONITORIZAR</div>
-    <div class="filters-grid" id="filtersGrid"></div>
-  </div>
-</div>
-
-<!-- ── TAB: ALERTAS ── -->
-<div id="tab-alertas" class="tab-content" style="display:none">
-  <div class="section">
-    <div class="section-title">ALERTAS DA SESSÃO</div>
-    <div id="alertsList"><div class="no-alerts">Nenhum alerta ainda ✓</div></div>
-  </div>
-</div>
-
-<!-- ── TAB: CONTEXTO ── -->
-<div id="tab-contexto" class="tab-content" style="display:none">
-  <div class="section">
-    <div class="section-title">TOKEN DE CONTEXTO SOBERANO</div>
-    <div class="context-box">
-      <div class="context-token" id="contextToken">
-        Declara uma intenção primeiro para gerar o token de contexto.
-      </div>
-      <button class="btn-copy" onclick="copyContext()">Copiar e colar no início da conversa com AI</button>
-    </div>
-    <div style="margin-top:12px; font-size:10px; color:var(--dim); line-height:1.6">
-      Cola este token no início de qualquer conversa com qualquer AI (ChatGPT, Claude, Gemini, hub).
-      A AI ficará ancorada na tua intenção — menos deriva, menos tokens desperdiçados.
-    </div>
-  </div>
-</div>
-
-<!-- Upgrade banner (substituído por tab Planos) -->
-
-<!-- ── TAB PLANOS — secção de pagamento completa ── -->
-<div class="section tab-content" data-tab-content="planos" style="display:none">
-
-  <!-- Toggle mensal/anual -->
-  <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px">
-    <span id="lm2" style="font-size:11px;letter-spacing:.1em;color:var(--gold);font-family:var(--mono)">MENSAL</span>
-    <div id="btog2" onclick="toggleBilling2()" style="width:42px;height:22px;border-radius:11px;background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);cursor:pointer;position:relative;transition:.3s">
-      <div id="btog2-knob" style="position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--gold);transition:.3s"></div>
-    </div>
-    <span id="la2" style="font-size:11px;letter-spacing:.1em;color:rgba(160,168,179,0.5);font-family:var(--mono)">ANUAL
-      <span id="savt2" style="display:none;background:rgba(34,197,94,0.15);color:#22C55E;border-radius:4px;padding:1px 5px;font-size:9px;margin-left:4px">-17%</span>
-    </span>
-  </div>
-
-  <!-- Plano Witness (grátis) -->
-  <div style="border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:16px;margin-bottom:12px;background:rgba(34,197,94,0.04)">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+<!-- ── HEADER STRIP ── -->
+<div id="topStrip" style="position:fixed;top:0;left:0;right:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:env(safe-area-inset-top,0) 0 0">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;gap:8px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--bg);letter-spacing:-.02em;box-shadow:0 0 12px var(--glow)">H</div>
       <div>
-        <div style="font-size:9px;letter-spacing:.18em;color:#22C55E;font-family:var(--mono);margin-bottom:4px">● GRÁTIS PARA SEMPRE</div>
-        <div style="font-size:15px;font-weight:600;color:var(--ink)">HPC Observação</div>
-        <div style="font-size:11px;color:var(--dim);margin-top:4px">Monitorização · Alertas · Context Token</div>
-      </div>
-      <div style="text-align:right">
-        <div style="font-size:22px;font-weight:700;color:#22C55E;font-family:var(--mono)">R$0</div>
-        <div style="font-size:9px;color:var(--dim)">para sempre</div>
+        <div style="font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--text)" id="brandTitle">HEILLON HPC</div>
+        <div style="font-size:9px;color:var(--dimmer);letter-spacing:.1em;text-transform:uppercase" id="brandSub">Personal Core</div>
       </div>
     </div>
-    <div style="margin-top:12px;font-size:10px;color:var(--dim);padding:8px 10px;background:rgba(34,197,94,0.04);border-radius:6px">✓ Plano actual activo</div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <!-- Status pill -->
+      <div id="statusPill" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;border:1px solid rgba(16,185,129,0.3);background:rgba(16,185,129,0.08);cursor:default">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite"></div>
+        <span id="statusText" style="font-size:9px;font-weight:600;letter-spacing:.12em;color:var(--green)">ACTIVO</span>
+      </div>
+      <!-- Mode toggle button -->
+      <button onclick="openModeSelector()" style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--dim);font-family:var(--font-mono);font-size:9px;padding:4px 8px;cursor:pointer;letter-spacing:.08em" id="modeBtn">CLASSIC</button>
+    </div>
   </div>
-
-  <!-- Plano Sovereign -->
-  <div style="border:1px solid rgba(201,168,76,0.35);border-radius:10px;padding:16px;margin-bottom:12px;background:rgba(201,168,76,0.05)">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start">
-      <div>
-        <div style="font-size:9px;letter-spacing:.18em;color:var(--gold);font-family:var(--mono);margin-bottom:4px">◆ MAIS POPULAR</div>
-        <div style="font-size:15px;font-weight:600;color:var(--ink)">HPC Sovereign</div>
-        <div style="font-size:11px;color:var(--dim);margin-top:4px">HDR permanente · PDF exportável · 1 dispositivo</div>
-      </div>
-      <div style="text-align:right">
-        <div id="ps2" style="font-size:22px;font-weight:700;color:var(--gold);font-family:var(--mono)">R$19,90</div>
-        <div id="pp2" style="font-size:9px;color:var(--dim)">/mês</div>
-      </div>
-    </div>
-    <div style="margin-top:10px;font-size:10px;color:var(--dim);line-height:1.8">
-      ✓ HDR guardado para sempre &nbsp;·&nbsp; ✓ PDF para auditor &nbsp;·&nbsp; ✓ Suporte prioritário
-    </div>
-    <button onclick="startCheckout('sovereign')" id="bS2" style="margin-top:12px;width:100%;padding:11px 0;font-size:12px;font-weight:700;letter-spacing:.08em;font-family:var(--mono);background:linear-gradient(170deg,rgba(201,168,76,.96),rgba(148,115,38,.96));color:#070B12;border:none;border-radius:7px;cursor:pointer">
-      ASSINAR SOVEREIGN →
-    </button>
+  <!-- Tabs -->
+  <div style="display:flex;border-top:1px solid var(--border);overflow-x:auto;scrollbar-width:none" id="tabBar">
+    <button class="tab-btn active" onclick="switchTab('radar')" data-tab="radar" id="tBtn-radar">📡 <span class="tab-label">Radar</span></button>
+    <button class="tab-btn" onclick="switchTab('intent')" data-tab="intent" id="tBtn-intent">⚡ <span class="tab-label">Intenção</span></button>
+    <button class="tab-btn" onclick="switchTab('filters')" data-tab="filters" id="tBtn-filters">🛡 <span class="tab-label">Filtros</span></button>
+    <button class="tab-btn" onclick="switchTab('alerts')" data-tab="alerts" id="tBtn-alerts">🔔 <span class="tab-label">Alertas</span></button>
+    <button class="tab-btn" onclick="switchTab('context')" data-tab="context" id="tBtn-context">◈ <span class="tab-label">Contexto</span></button>
+    <button class="tab-btn" onclick="switchTab('plans')" data-tab="plans" id="tBtn-plans">💎 <span class="tab-label">Planos</span></button>
   </div>
-
-  <!-- Plano Council -->
-  <div style="border:1px solid rgba(74,158,190,0.25);border-radius:10px;padding:16px;margin-bottom:12px;background:rgba(74,158,190,0.04)">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start">
-      <div>
-        <div style="font-size:9px;letter-spacing:.18em;color:#4A9EBE;font-family:var(--mono);margin-bottom:4px">◈ EQUIPA</div>
-        <div style="font-size:15px;font-weight:600;color:var(--ink)">HPC Council</div>
-        <div style="font-size:11px;color:var(--dim);margin-top:4px">Prova em equipa · 5 dispositivos · Relatórios</div>
-      </div>
-      <div style="text-align:right">
-        <div id="pc2" style="font-size:22px;font-weight:700;color:#4A9EBE;font-family:var(--mono)">R$149,90</div>
-        <div id="pcp2" style="font-size:9px;color:var(--dim)">/mês</div>
-      </div>
-    </div>
-    <div style="margin-top:10px;font-size:10px;color:var(--dim);line-height:1.8">
-      ✓ Tudo do Sovereign &nbsp;·&nbsp; ✓ 5 dispositivos &nbsp;·&nbsp; ✓ Relatórios semanais &nbsp;·&nbsp; ✓ API access
-    </div>
-    <button onclick="startCheckout('council')" id="bC2" style="margin-top:12px;width:100%;padding:11px 0;font-size:12px;font-weight:700;letter-spacing:.08em;font-family:var(--mono);background:linear-gradient(170deg,rgba(74,158,190,.9),rgba(45,110,145,.9));color:#fff;border:none;border-radius:7px;cursor:pointer">
-      ASSINAR COUNCIL →
-    </button>
-  </div>
-
-  <!-- Nota segurança -->
-  <div style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:9px;color:var(--dim);letter-spacing:.08em;margin-top:8px">
-    <span>🔒</span> <span>Stripe · PCI DSS · Cancela a qualquer momento</span>
-  </div>
-
-  <!-- Toast de erro/loading checkout -->
-  <div id="checkoutMsg" style="display:none;margin-top:10px;padding:10px;border-radius:6px;font-size:11px;text-align:center"></div>
 </div>
 
-<div class="safe-bottom" style="height:calc(env(safe-area-inset-bottom, 0px) + 20px)"></div>
+<!-- SPACER -->
+<div style="height:98px"></div>
 
-<!-- Toast -->
-<div class="toast" id="toast"></div>
+<!-- ── MODE SELECTOR OVERLAY ── -->
+<div id="modeOverlay" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);align-items:center;justify-content:center">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:340px;width:calc(100% - 32px);box-shadow:0 0 40px var(--glow)">
+    <div style="font-size:11px;letter-spacing:.15em;color:var(--dim);margin-bottom:16px;text-transform:uppercase">Escolhe o teu perfil</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="modeGrid"></div>
+    <button onclick="closeModeSelector()" style="margin-top:16px;width:100%;padding:10px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--dim);font-family:var(--font-ui);font-size:11px;cursor:pointer">Cancelar</button>
+  </div>
+</div>
+
+
+<!-- ── TABS CONTENT ── -->
+<div id="content" style="padding:0 0 80px">
+
+<!-- RADAR TAB -->
+<div class="tab-pane active" id="pane-radar">
+  <!-- AI Activity grid -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <span class="section-title" id="label-ai-activity">IAs DETECTADAS</span>
+      <span id="aiCount" style="font-size:10px;color:var(--accent)">0 ativas</span>
+    </div>
+    <div id="aiGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+      <div id="aiEmpty" style="grid-column:1/-1;padding:20px;text-align:center;border:1px dashed var(--border);border-radius:8px">
+        <div style="font-size:22px;margin-bottom:8px">🔭</div>
+        <div style="font-size:11px;color:var(--dim)" id="label-no-ai">Nenhuma IA detectada ainda</div>
+        <div style="font-size:9px;color:var(--dimmer);margin-top:6px" id="label-install-ext">Instala a extensão Sentinel para rastreio automático</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Economy -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <span class="section-title" id="label-economy">ECONOMIA VERIFICADA</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+      <div class="metric-card">
+        <div class="metric-label" id="label-tokens">TOKENS POUPADOS</div>
+        <div class="metric-value green" id="metTokens">0</div>
+        <div class="metric-sub" id="label-session">nesta sessão</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label" id="label-align">ALINHAMENTO</div>
+        <div class="metric-value accent" id="metAlign">100%</div>
+        <div class="metric-sub" id="label-avg">média</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label" id="label-hdrs">HDRs GERADOS</div>
+        <div class="metric-value" style="color:var(--accent2)" id="metHdrs">0</div>
+        <div class="metric-sub" id="label-device">no dispositivo</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label" id="label-sessions">SESSÕES SOBERANAS</div>
+        <div class="metric-value gold" id="metSessions">0</div>
+        <div class="metric-sub" id="label-declared">com intenção</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Decisions history -->
+  <div class="section-card">
+    <div class="section-hdr">
+      <span class="section-title" id="label-decisions">ÚLTIMAS DECISÕES</span>
+    </div>
+    <div id="decisionsHistory" style="margin-top:10px">
+      <div style="text-align:center;padding:20px;color:var(--dimmer);font-size:11px" id="label-no-decisions">Sem decisões registadas ainda</div>
+    </div>
+  </div>
+
+  <!-- Sentinel banner -->
+  <div class="section-card" style="border-color:var(--accent);background:var(--card-glow)">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <div style="font-size:28px;flex-shrink:0">🌐</div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.1em;margin-bottom:4px">BROWSER SENTINEL</div>
+        <div style="font-size:11px;color:var(--dim);line-height:1.6" id="label-sentinel-desc">Detecta IAs automaticamente e regista cada decisão com timestamp soberano.</div>
+        <button onclick="window.open('https://heillon.com','_blank')" class="btn-accent" style="margin-top:10px">
+          <span id="label-install-btn">Instalar extensão →</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INTENT TAB -->
+<div class="tab-pane" id="pane-intent" style="display:none">
+  <div class="section-card">
+    <div class="section-title" id="label-declare-title" style="margin-bottom:10px">DECLARA A TUA INTENÇÃO</div>
+    <textarea id="intentInput" class="intent-input" rows="4" id="label-intent-ph"></textarea>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+      <div style="font-size:10px;color:var(--dimmer)">HDR: <span id="intentHdrLabel" style="color:var(--accent)">—</span></div>
+      <button class="btn-accent" onclick="declareIntent()" id="btnDeclare">Declarar ◈</button>
+    </div>
+  </div>
+  <div class="section-card" id="sessionSection" style="display:none">
+    <div class="section-title" style="margin-bottom:10px" id="label-session-title">SESSÃO ACTIVA</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="session-row"><span class="sess-label">HDR ID</span><span class="sess-value accent" id="sessHdrId">—</span></div>
+      <div class="session-row"><span class="sess-label" id="label-intent-l">Intenção</span><span class="sess-value" id="sessIntent" style="font-size:10px;max-width:180px;text-align:right">—</span></div>
+      <div class="session-row"><span class="sess-label" id="label-align-l">Alinhamento</span><span class="sess-value green" id="sessScore">100%</span></div>
+      <div class="session-row"><span class="sess-label" id="label-alerts-l">Alertas</span><span class="sess-value" id="sessAlerts">0</span></div>
+      <div style="height:4px;border-radius:2px;background:var(--border);margin-top:4px;overflow:hidden">
+        <div id="scoreBar" style="height:100%;background:var(--green);width:100%;transition:width .5s;box-shadow:0 0 8px var(--green)"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTERS TAB -->
+<div class="tab-pane" id="pane-filters" style="display:none">
+  <div class="section-card">
+    <div class="section-title" id="label-monitor-title" style="margin-bottom:12px">O QUE MONITORIZAR</div>
+    <div id="filtersGrid" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+</div>
+
+<!-- ALERTS TAB -->
+<div class="tab-pane" id="pane-alerts" style="display:none">
+  <div class="section-card">
+    <div class="section-hdr">
+      <span class="section-title" id="label-alerts-title">ALERTAS DA SESSÃO</span>
+      <button onclick="clearAlerts()" style="font-size:9px;color:var(--dimmer);background:none;border:none;cursor:pointer" id="label-clear">Limpar</button>
+    </div>
+    <div id="alertsList" style="margin-top:10px">
+      <div style="text-align:center;padding:24px;color:var(--green);font-size:11px" id="label-no-alerts">✓ Nenhum alerta</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTEXT TAB -->
+<div class="tab-pane" id="pane-context" style="display:none">
+  <div class="section-card">
+    <div class="section-title" id="label-ctx-title" style="margin-bottom:10px">TOKEN SOBERANO</div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:var(--font-mono);font-size:10px;color:var(--dim);line-height:1.7;min-height:80px" id="contextToken">Declara uma intenção primeiro.</div>
+    <button class="btn-accent" onclick="copyContext()" style="margin-top:10px;width:100%" id="label-copy-ctx">Copiar e colar na AI →</button>
+    <div style="margin-top:10px;font-size:10px;color:var(--dimmer);line-height:1.6" id="label-ctx-desc">Cola este token no início de qualquer conversa — ChatGPT, Claude, Gemini. A AI fica ancorada na tua intenção.</div>
+  </div>
+</div>
+
+<!-- PLANS TAB -->
+<div class="tab-pane" id="pane-plans" style="display:none">
+  <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin:16px">
+    <span id="lm" style="font-size:11px;color:var(--accent)">MENSAL</span>
+    <div id="billingToggle" onclick="toggleBilling()" style="width:44px;height:24px;border-radius:12px;background:rgba(99,102,241,0.15);border:1px solid var(--border);cursor:pointer;position:relative;transition:.3s">
+      <div id="billingThumb" style="position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--glow);transition:.3s"></div>
+    </div>
+    <span id="la" style="font-size:11px;color:var(--dimmer)">ANUAL <span id="saveBadge" style="display:none;font-size:9px;background:rgba(16,185,129,.15);color:var(--green);border-radius:4px;padding:1px 5px">-17%</span></span>
+  </div>
+  <div id="plansGrid" style="padding:0 12px 20px;display:flex;flex-direction:column;gap:10px"></div>
+</div>
+
+</div><!-- end content -->
+
+
+<!-- ── BOTTOM NAV (mobile) ── -->
+<div style="position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;padding:0 0 env(safe-area-inset-bottom,0);backdrop-filter:blur(20px);z-index:100">
+  <button class="bnav-btn active" onclick="switchTab('radar')" data-bnav="radar">📡</button>
+  <button class="bnav-btn" onclick="switchTab('intent')" data-bnav="intent">⚡</button>
+  <button class="bnav-btn" onclick="switchTab('filters')" data-bnav="filters">🛡</button>
+  <button class="bnav-btn" onclick="switchTab('alerts')" data-bnav="alerts">🔔</button>
+  <button class="bnav-btn" onclick="switchTab('context')" data-bnav="context">◈</button>
+  <button class="bnav-btn" onclick="switchTab('plans')" data-bnav="plans">💎</button>
+</div>
+
+<div id="toast" style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:12px;padding:10px 18px;border-radius:8px;opacity:0;transition:.3s;pointer-events:none;z-index:999;white-space:nowrap;box-shadow:0 0 20px var(--glow)"></div>
+
+<style>
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes slideUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+.tab-btn{
+  flex:1;min-width:60px;padding:8px 4px;background:none;border:none;border-bottom:2px solid transparent;
+  color:var(--dimmer);font-family:var(--font-ui);font-size:10px;font-weight:500;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:1px;transition:.2s;white-space:nowrap;
+}
+.tab-btn .tab-label{font-size:9px;letter-spacing:.04em}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+.bnav-btn{
+  flex:1;padding:10px 0;background:none;border:none;font-size:18px;cursor:pointer;
+  color:var(--dimmer);transition:.2s;
+}
+.bnav-btn.active{color:var(--accent);filter:drop-shadow(0 0 6px var(--glow))}
+
+.section-card{
+  margin:12px;padding:14px;background:var(--card);border:1px solid var(--border);
+  border-radius:12px;animation:slideUp .3s ease;box-shadow:0 0 20px var(--card-glow);
+}
+.section-hdr{display:flex;align-items:center;justify-content:space-between}
+.section-title{font-size:9px;font-weight:700;letter-spacing:.18em;color:var(--dim);text-transform:uppercase}
+.metric-card{
+  padding:12px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:8px;
+}
+.metric-label{font-size:8px;letter-spacing:.15em;color:var(--dimmer);margin-bottom:4px;text-transform:uppercase}
+.metric-value{font-size:24px;font-weight:700;font-family:var(--font-mono);line-height:1}
+.metric-value.green{color:var(--green);text-shadow:0 0 12px var(--green)}
+.metric-value.accent{color:var(--accent);text-shadow:0 0 12px var(--glow)}
+.metric-value.gold{color:var(--gold);text-shadow:0 0 12px rgba(201,168,76,.5)}
+.metric-sub{font-size:9px;color:var(--dimmer);margin-top:2px}
+
+.intent-input{
+  width:100%;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-family:var(--font-mono);font-size:12px;resize:none;line-height:1.6;
+  transition:.2s;
+}
+.intent-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+.intent-input::placeholder{color:var(--dimmer)}
+
+.session-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
+.sess-label{font-size:10px;color:var(--dimmer)}
+.sess-value{font-size:11px;font-family:var(--font-mono);color:var(--text)}
+.sess-value.accent{color:var(--accent)}
+.sess-value.green{color:var(--green)}
+
+.btn-accent{
+  padding:8px 16px;background:var(--accent);color:var(--bg);border:none;border-radius:7px;
+  font-family:var(--font-ui);font-size:11px;font-weight:700;letter-spacing:.06em;cursor:pointer;
+  box-shadow:0 0 14px var(--glow);transition:.2s;
+}
+.btn-accent:hover{opacity:.88}
+.btn-accent:disabled{opacity:.4;cursor:wait}
+
+.filter-toggle{
+  display:flex;justify-content:space-between;align-items:center;padding:11px 14px;
+  background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:8px;cursor:pointer;
+}
+.filter-toggle input[type="checkbox"]{
+  width:18px;height:18px;accent-color:var(--accent);cursor:pointer;
+}
+
+.alert-item{
+  padding:10px;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.2);border-radius:8px;
+  margin-bottom:6px;animation:slideUp .25s ease;
+}
+.alert-item .alert-msg{font-size:11px;color:var(--text)}
+.alert-item .alert-ts{font-size:9px;color:var(--dimmer);margin-top:2px}
+
+.plan-card{
+  padding:16px;background:var(--card);border:1px solid var(--border);border-radius:12px;
+  transition:.2s;box-shadow:0 0 16px var(--card-glow);
+}
+.plan-card.featured{border-color:var(--accent);box-shadow:0 0 24px var(--glow)}
+</style>
 
 <script>
-// ── Config ────────────────────────────────────────────────────────────────────
-const FILTERS_DEF = [
-  { id:'financas',    emoji:'💰', name:'Finanças',    on:true  },
-  { id:'delete',      emoji:'🗑️', name:'Eliminação',  on:true  },
-  { id:'ataques',     emoji:'⚠️', name:'Ataques',     on:true  },
-  { id:'docs',        emoji:'📄', name:'Documentos',  on:true  },
-  { id:'acordos',     emoji:'🤝', name:'Acordos',     on:false },
-  { id:'privacidade', emoji:'🔒', name:'Privacidade', on:false },
-]
-
-const RISK_PATTERNS = {
-  financas:    { kws:['transferir','pagar','investir','bitcoin','pix','saldo','payment','transfer','invest'], sev:'HIGH',   msg:'Intenção financeira detectada.' },
-  delete:      { kws:['deletar','apagar','excluir','remover','delete','erase','wipe'],                       sev:'HIGH',   msg:'Instrução de eliminação detectada.' },
-  ataques:     { kws:['ignore previous','forget your','pretend you','jailbreak','bypass','ignora','finge'],   sev:'HIGH',   msg:'Possível manipulação da AI.' },
-  docs:        { kws:['contrato','acordo','assinar','sign','contract','agreement','cláusula'],               sev:'MEDIUM', msg:'Conversa envolve documentos legais.' },
-  acordos:     { kws:['eu concordo','aceito','i agree','deal','combinado','trato feito'],                    sev:'MEDIUM', msg:'Possível compromisso detectado.' },
-  privacidade: { kws:['cpf','senha','password','dados pessoais','card number','cvv'],                        sev:'HIGH',   msg:'Dados sensíveis na conversa.' },
-}
-
-// ── Estado ────────────────────────────────────────────────────────────────────
-let filters = {}
-let session = null
-let alerts  = []
-let sessionTimer = null
-
-// ── Init ──────────────────────────────────────────────────────────────────────
-function init() {
-  const saved = JSON.parse(localStorage.getItem('h_filters') || '{}')
-  FILTERS_DEF.forEach(f => { filters[f.id] = f.id in saved ? saved[f.id] : f.on })
-  renderFilters()
-  const savedSession = sessionStorage.getItem('h_session')
-  if (savedSession) {
-    session = JSON.parse(savedSession)
-    renderSessionInfo()
-    renderContextToken()
+// ═══ PERFIS ═══════════════════════════════════════════════════════════════════
+const MODES = {
+  classic: {
+    label:'Classic',emoji:'💼',
+    vocab:{
+      ai_activity:'IAs DETECTADAS',no_ai:'Nenhuma IA detectada',install_ext:'Instala a extensão Sentinel para rastreio',
+      economy:'ECONOMIA VERIFICADA',tokens:'TOKENS POUPADOS',align:'ALINHAMENTO',hdrs:'HDRs GERADOS',sessions_label:'SESSÕES SOBERANAS',
+      session:'nesta sessão',avg:'média',device:'no dispositivo',declared:'com intenção',
+      decisions:'ÚLTIMAS DECISÕES',no_decisions:'Sem decisões registadas ainda',
+      sentinel_desc:'Detecta IAs automaticamente e regista cada decisão com timestamp soberano.',install_btn:'Instalar extensão →',
+      declare_title:'DECLARA A TUA INTENÇÃO',intent_ph:'O que queres fazer com a AI hoje?',
+      session_title:'SESSÃO ACTIVA',intent_l:'Intenção',align_l:'Alinhamento',alerts_l:'Alertas',
+      monitor_title:'O QUE MONITORIZAR',alerts_title:'ALERTAS DA SESSÃO',clear:'Limpar',no_alerts:'✓ Nenhum alerta',
+      ctx_title:'TOKEN SOBERANO',copy_ctx:'Copiar e colar na AI →',ctx_desc:'Cola este token no início de qualquer conversa.',
+      brand:'HEILLON HPC',brand_sub:'Personal Core',status:'ACTIVO',
+    }
+  },
+  nerd: {
+    label:'Dev',emoji:'💻',
+    vocab:{
+      ai_activity:'AI ACTIVITY — LIVE',no_ai:'No AI detected. Awaiting extension data.',install_ext:'Install HEILLON Sentinel extension for auto-detection.',
+      economy:'TOKEN ECONOMY',tokens:'TOKENS_SAVED',align:'AVG_ALIGNMENT',hdrs:'HDR_COUNT',sessions_label:'SOVEREIGN_SESSIONS',
+      session:'this session',avg:'rolling avg',device:'local ledger',declared:'w/ declared intent',
+      decisions:'DECISION LOG',no_decisions:'Empty. Declare an intent to begin.',
+      sentinel_desc:'Auto-detect AI agents. Append sovereign timestamp + HDR to every decision.',install_btn:'$ install sentinel →',
+      declare_title:'DECLARE INTENT // BEFORE EXECUTION',intent_ph:'intent := "I want to review contract X before signing"',
+      session_title:'ACTIVE SESSION',intent_l:'intent',align_l:'alignment',alerts_l:'alerts',
+      monitor_title:'MONITOR RULESET',alerts_title:'ALERT STREAM',clear:'clear()',no_alerts:'// no alerts — ✓ clean',
+      ctx_title:'SOVEREIGN CONTEXT TOKEN',copy_ctx:'copy() → paste at conversation start',ctx_desc:'Paste at the top of any AI conversation. Anchors the model to your declared intent.',
+      brand:'HPC // HEILLON',brand_sub:'sovereign kernel',status:'RUNNING',
+    }
+  },
+  young: {
+    label:'Jovem',emoji:'🚀',
+    vocab:{
+      ai_activity:'IAs A FUNCIONAR NO TEU PC 👾',no_ai:'Nenhuma IA encontrada ainda!',install_ext:'Instala a extensão para ver as tuas IAs em tempo real ✨',
+      economy:'O QUE POUPASTE 💰',tokens:'CRÉDITOS POUPADOS',align:'SCORE DE CONTROLO',hdrs:'PROVAS GERADAS',sessions_label:'SESSÕES PROTEGIDAS',
+      session:'hoje',avg:'média geral',device:'no teu PC',declared:'com intenção',
+      decisions:'AS TUAS ÚLTIMAS DECISÕES 📋',no_decisions:'Ainda nada! Faz a tua primeira declaração 👆',
+      sentinel_desc:'Vê em tempo real o que as tuas IAs andam a fazer no browser. De graça. 🔭',install_btn:'Instalar agora — é grátis ✨',
+      declare_title:'O QUE VAIS FAZER COM A IA HOJE? 🎯',intent_ph:'Ex: "Quero usar o ChatGPT para escrever um email importante"',
+      session_title:'SESSÃO ACTIVA 🔥',intent_l:'Intenção',align_l:'Score',alerts_l:'Alertas',
+      monitor_title:'O QUE QUERES VIGIAR? 🛡',alerts_title:'ALERTAS ⚠️',clear:'limpar',no_alerts:'✅ Tudo bem!',
+      ctx_title:'O TEU TOKEN ESPECIAL 🔑',copy_ctx:'Copiar e colar no início da conversa 📋',ctx_desc:'Cola este código antes de falar com qualquer IA. Fica mais controlado!',
+      brand:'HPC 🛡',brand_sub:'O teu PC, as tuas regras',status:'PROTEGIDO ✓',
+    }
+  },
+  purist: {
+    label:'Purist',emoji:'◆',
+    vocab:{
+      ai_activity:'AI ACTIVITY',no_ai:'No AI activity detected.',install_ext:'Deploy sentinel extension for autonomous tracking.',
+      economy:'TOKEN LEDGER',tokens:'TOKENS CONSERVED',align:'MANDATE INTEGRITY',hdrs:'HDR RECORDS',sessions_label:'SOVEREIGN SESSIONS',
+      session:'session',avg:'mean',device:'local chain',declared:'with mandate',
+      decisions:'DECISION CHAIN',no_decisions:'Ledger empty. Declare mandate to initiate.',
+      sentinel_desc:'Zero-trust AI execution layer. Cryptographic proof. Immutable HDR.',install_btn:'Deploy →',
+      declare_title:'MANDATE DECLARATION',intent_ph:'mandate := declare before execution',
+      session_title:'ACTIVE MANDATE',intent_l:'Mandate',align_l:'Integrity',alerts_l:'Violations',
+      monitor_title:'ENFORCEMENT SCOPE',alerts_title:'VIOLATION LOG',clear:'purge',no_alerts:'Clean. No violations.',
+      ctx_title:'SOVEREIGN TOKEN',copy_ctx:'Copy → inject at conversation boundary',ctx_desc:'Inject at conversation initiation. Forces model alignment with declared mandate.',
+      brand:'HEILLON',brand_sub:'Constitutional Layer',status:'SOVEREIGN',
+    }
   }
-  const savedAlerts = JSON.parse(sessionStorage.getItem('h_alerts') || '[]')
-  alerts = savedAlerts
-  renderAlerts()
 }
 
-// ── Tabs ──────────────────────────────────────────────────────────────────────
+let currentMode = localStorage.getItem('hpc_mode') || 'classic'
+let annualBilling = false
+let alerts = []
+let sessions = JSON.parse(localStorage.getItem('h_sessions')||'[]')
+let hdrs = JSON.parse(localStorage.getItem('h_hdrs')||'[]')
+let detectedAIs = JSON.parse(localStorage.getItem('h_detected_ais')||'{}')
+const API = 'https://api.heillon.com'
+
+// ═══ INIT ═════════════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  applyMode(currentMode)
+  loadRadar()
+  loadFilters()
+  loadPlans()
+  renderDecisions()
+  checkApiHealth()
+})
+
+// ═══ MODE ═════════════════════════════════════════════════════════════════════
+function applyMode(mode) {
+  currentMode = mode
+  localStorage.setItem('hpc_mode', mode)
+  document.body.setAttribute('data-theme', mode)
+  const v = MODES[mode].vocab
+  document.getElementById('modeBtn').textContent = MODES[mode].label.toUpperCase()
+  document.getElementById('brandTitle').textContent = v.brand
+  document.getElementById('brandSub').textContent = v.brand_sub
+  document.getElementById('statusText').textContent = v.status
+
+  const map = [
+    ['label-ai-activity',v.ai_activity],['label-no-ai',v.no_ai],['label-install-ext',v.install_ext],
+    ['label-economy',v.economy],['label-tokens',v.tokens],['label-align',v.align],
+    ['label-hdrs',v.hdrs],['label-sessions',v.sessions_label],
+    ['label-session',v.session],['label-avg',v.avg],['label-device',v.device],['label-declared',v.declared],
+    ['label-decisions',v.decisions],['label-no-decisions',v.no_decisions],
+    ['label-sentinel-desc',v.sentinel_desc],['label-install-btn',v.install_btn],
+    ['label-declare-title',v.declare_title],['label-session-title',v.session_title],
+    ['label-intent-l',v.intent_l],['label-align-l',v.align_l],['label-alerts-l',v.alerts_l],
+    ['label-monitor-title',v.monitor_title],['label-alerts-title',v.alerts_title],
+    ['label-clear',v.clear],['label-no-alerts',v.no_alerts],
+    ['label-ctx-title',v.ctx_title],['label-copy-ctx',v.copy_ctx],['label-ctx-desc',v.ctx_desc],
+  ]
+  map.forEach(([id,txt])=>{ const el=document.getElementById(id); if(el&&txt!==undefined) el.textContent=txt })
+  const ph = document.getElementById('intentInput')
+  if(ph) ph.placeholder = v.intent_ph
+}
+
+function openModeSelector() {
+  const grid = document.getElementById('modeGrid')
+  grid.innerHTML = Object.entries(MODES).map(([k,v])=>`
+    <button onclick="applyMode('${k}');closeModeSelector()" style="padding:14px;border-radius:10px;border:2px solid ${k===currentMode?'var(--accent)':'var(--border)'};background:${k===currentMode?'var(--card-glow)':'none'};cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-family:var(--font-ui)">
+      <span style="font-size:22px">${v.emoji}</span>
+      <span style="font-size:11px;font-weight:700;color:var(--text)">${v.label}</span>
+    </button>`).join('')
+  const ov = document.getElementById('modeOverlay')
+  ov.style.display='flex'
+}
+function closeModeSelector() { document.getElementById('modeOverlay').style.display='none' }
+</script>
+
+<script>
+// ═══ TABS ════════════════════════════════════════════════════════════════════
 function switchTab(tab) {
-  document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none')
-  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'))
-  document.getElementById(`tab-${tab}`).style.display = 'block'
-  document.querySelector(`[data-tab="${tab}"]`).classList.add('active')
-  if (tab === 'radar') loadRadar()
+  document.querySelectorAll('.tab-pane').forEach(p=>p.style.display='none')
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'))
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'))
+  const pane = document.getElementById('pane-'+tab)
+  if(pane) pane.style.display='block'
+  const btn = document.getElementById('tBtn-'+tab)
+  if(btn) btn.classList.add('active')
+  document.querySelectorAll(`[data-bnav="${tab}"]`).forEach(b=>b.classList.add('active'))
+  if(tab==='radar') loadRadar()
 }
 
-// ── Filtros ───────────────────────────────────────────────────────────────────
-function renderFilters() {
-  const grid = document.getElementById('filtersGrid')
-  grid.innerHTML = FILTERS_DEF.map(f => `
-    <div class="filter-card ${filters[f.id] ? 'active' : ''}" onclick="toggleFilter('${f.id}')">
-      <div class="filter-left">
-        <span class="filter-emoji">${f.emoji}</span>
-        <span class="filter-name">${f.name}</span>
-      </div>
-      <div class="toggle ${filters[f.id] ? 'on' : ''}" data-id="${f.id}"></div>
-    </div>
-  `).join('')
+// ═══ RADAR ════════════════════════════════════════════════════════════════════
+const AI_DEFS = {
+  chatgpt:{name:'ChatGPT',color:'#10A37F',icon:'🤖'},
+  claude:{name:'Claude',color:'#C9A84C',icon:'🌊'},
+  gemini:{name:'Gemini',color:'#4A9EBE',icon:'💫'},
+  copilot:{name:'Copilot',color:'#0078D4',icon:'🪟'},
+  grok:{name:'Grok',color:'#E08855',icon:'⚡'},
+  perplexity:{name:'Perplexity',color:'#9B59B6',icon:'🔍'},
+  mistral:{name:'Mistral',color:'#EF4444',icon:'🌪'},
 }
 
-function toggleFilter(id) {
-  filters[id] = !filters[id]
-  localStorage.setItem('h_filters', JSON.stringify(filters))
-  renderFilters()
-  showToast(filters[id] ? `${id} activado` : `${id} desactivado`)
-}
-
-// ── Declarar intenção ─────────────────────────────────────────────────────────
-function declareIntent() {
-  const text = document.getElementById('intentInput').value.trim()
-  if (!text || text.length < 5) { showToast('Escreve a tua intenção primeiro'); return }
-
-  const hdrId = 'HDR-POCKET-' + Date.now().toString(36).toUpperCase()
-  session = {
-    hdrId, intent:text, startedAt:Date.now(),
-    intentScore:100, alertCount:0,
+function loadRadar() {
+  const aiKeys = Object.keys(detectedAIs)
+  document.getElementById('aiCount').textContent = aiKeys.length + (currentMode==='nerd'?' active':' ativas')
+  const aiGrid = document.getElementById('aiGrid')
+  const aiEmpty = document.getElementById('aiEmpty')
+  if(aiKeys.length>0) {
+    aiEmpty.style.display='none'
+    aiGrid.innerHTML = ''
+    aiKeys.forEach(key=>{
+      const def = AI_DEFS[key]||{name:key,color:'#888',icon:'🤖'}
+      const data = detectedAIs[key]||{}
+      const last = data.last ? new Date(data.last).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '—'
+      const div = document.createElement('div')
+      div.style.cssText=`padding:12px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-left:3px solid ${def.color};border-radius:8px;animation:slideUp .3s ease`
+      div.innerHTML=`<div style="font-size:14px;margin-bottom:3px">${def.icon}</div>
+        <div style="font-size:11px;font-weight:700;color:var(--text)">${def.name}</div>
+        <div style="font-size:9px;color:var(--dimmer);margin-top:2px">${last}</div>
+        <div style="font-size:16px;font-weight:700;color:${def.color};font-family:var(--font-mono);margin-top:4px">${data.sessions||0}</div>`
+      aiGrid.appendChild(div)
+    })
   }
-  sessionStorage.setItem('h_session', JSON.stringify(session))
-
-  document.getElementById('intentHdrLabel').innerHTML = `HDR: <span>${hdrId}</span>`
-  document.getElementById('btnDeclare').textContent = '◈ Declarado'
-  document.getElementById('btnDeclare').disabled = true
-  document.getElementById('sessionSection').style.display = 'block'
-  renderSessionInfo()
-  renderContextToken()
-  startTimer()
-  showToast('Intenção declarada — HDR efémero criado ◈')
+  // Economy
+  const totalHdrs = hdrs.length
+  const sovSess = sessions.filter(s=>s.intent).length
+  const tokens = totalHdrs*120
+  const avgAlign = sessions.length ? Math.round(sessions.reduce((a,s)=>a+(s.score||100),0)/sessions.length) : 100
+  document.getElementById('metTokens').textContent = tokens.toLocaleString('pt-BR')
+  document.getElementById('metAlign').textContent = avgAlign+'%'
+  document.getElementById('metHdrs').textContent = totalHdrs
+  document.getElementById('metSessions').textContent = sovSess
 }
 
-function renderSessionInfo() {
-  if (!session) return
-  document.getElementById('sessHdrId').textContent = session.hdrId
-  document.getElementById('sessIntent').textContent =
-    session.intent.length > 40 ? session.intent.slice(0,40)+'…' : session.intent
-  const score = session.intentScore || 100
-  document.getElementById('sessScore').textContent = score + '%'
-  document.getElementById('sessScore').className = 'sess-value ' + (score > 70 ? 'green' : score > 40 ? '' : 'red')
-  document.getElementById('sessAlerts').textContent = alerts.length
-  document.getElementById('scoreBar').style.width = score + '%'
-  const mins = Math.round((Date.now() - session.startedAt) / 60000)
-  document.getElementById('sessDuration').textContent = mins + ' min'
-  document.getElementById('sessionSection').style.display = 'block'
+function renderDecisions() {
+  const el = document.getElementById('decisionsHistory')
+  if(!sessions.length) return
+  el.innerHTML = sessions.slice(-5).reverse().map(s=>`
+    <div style="padding:10px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;animation:slideUp .25s ease">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <div style="font-size:10px;color:var(--text);flex:1">${s.intent||'—'}</div>
+        <div style="font-size:10px;font-family:var(--font-mono);color:${(s.score||100)>=80?'var(--green)':'var(--orange)'}">${s.score||100}%</div>
+      </div>
+      <div style="font-size:9px;color:var(--dimmer);margin-top:4px">${s.ts?new Date(s.ts).toLocaleString('pt-BR'):'—'}</div>
+    </div>`).join('')
 }
 
-function startTimer() {
-  if (sessionTimer) clearInterval(sessionTimer)
-  sessionTimer = setInterval(() => { if (session) renderSessionInfo() }, 30000)
-}
-
-// ── Token de contexto ─────────────────────────────────────────────────────────
-function renderContextToken() {
-  if (!session) return
-  const token = `[HEILLON CONTEXT v1.0]
-Intenção: ${session.intent}
-HDR: ${session.hdrId}
-Timestamp: ${new Date(session.startedAt).toISOString()}
-Alinhamento: ${session.intentScore}%
-Instrução: Mantém-te alinhado com a intenção declarada. Não desvies sem aviso explícito.`
-  document.getElementById('contextToken').textContent = token
+// ═══ INTENT ═══════════════════════════════════════════════════════════════════
+async function declareIntent() {
+  const input = document.getElementById('intentInput')
+  const text = (input.value||'').trim()
+  if(!text) { showToast('Escreve a tua intenção primeiro'); return }
+  const btn = document.getElementById('btnDeclare')
+  btn.disabled=true; btn.textContent='⟳'
+  const hdrId = 'HDR-'+Date.now()+'-'+Math.random().toString(36).substr(2,6).toUpperCase()
+  document.getElementById('intentHdrLabel').textContent = hdrId
+  const session = { intent:text, hdr:hdrId, ts:Date.now(), score:100, alerts:0 }
+  sessions.unshift(session)
+  if(sessions.length>20) sessions.pop()
+  localStorage.setItem('h_sessions',JSON.stringify(sessions))
+  hdrs.unshift(hdrId)
+  localStorage.setItem('h_hdrs',JSON.stringify(hdrs))
+  document.getElementById('sessHdrId').textContent = hdrId.substring(0,18)+'…'
+  document.getElementById('sessIntent').textContent = text.substring(0,40)+'…'
+  document.getElementById('sessScore').textContent = '100%'
+  document.getElementById('sessAlerts').textContent = '0'
+  document.getElementById('scoreBar').style.width='100%'
+  document.getElementById('sessionSection').style.display='block'
+  const ctx = `[HEILLON HPC — Intenção Soberana]\nHDR: ${hdrId}\nIntenção: ${text}\nTimestamp: ${new Date().toISOString()}\nPor favor mantém as tuas respostas alinhadas com esta intenção declarada.`
+  document.getElementById('contextToken').textContent = ctx
+  localStorage.setItem('hpc_last_session',JSON.stringify(session))
+  try {
+    const reg = JSON.parse(localStorage.getItem('hpc_registered_v1')||'{}')
+    const ck = localStorage.getItem('hpc_sovereign_code')||reg.demo_code||''
+    if(ck) {
+      await fetch(API+'/pulse/declare',{
+        method:'POST',headers:{'Content-Type':'application/json','X-Heillon-Key':ck},
+        body:JSON.stringify({actor_id:reg.email||'HPC_USER',action:'intent_declared',subject_id:text.substring(0,60)})
+      })
+    }
+  } catch(e) { /* non-blocking */ }
+  renderDecisions()
+  showToast('✓ Intenção declarada — HDR registado')
+  btn.disabled=false; btn.textContent='Declarar ◈'
 }
 
 function copyContext() {
-  const text = document.getElementById('contextToken').textContent
-  if (!session) { showToast('Declara uma intenção primeiro'); return }
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('✓ Copiado — cola no início da conversa com AI')
-  }).catch(() => {
-    // Fallback para mobile sem clipboard API
-    const el = document.createElement('textarea')
-    el.value = text; el.style.position='fixed'; el.style.opacity='0'
-    document.body.appendChild(el); el.select()
-    document.execCommand('copy'); document.body.removeChild(el)
-    showToast('✓ Copiado — cola no início da conversa')
-  })
+  const t = document.getElementById('contextToken').textContent
+  if(t && t.length>10) {
+    navigator.clipboard.writeText(t).then(()=>showToast('✓ Copiado!')).catch(()=>showToast('Copia manual: selecciona o texto'))
+  } else { showToast('Declara uma intenção primeiro') }
+}
+</script>
+
+<script>
+// ═══ FILTERS ══════════════════════════════════════════════════════════════════
+const FILTER_DEFS = [
+  {id:'finance',emoji:'💰',pt:'Finanças',en:'Finance',saved:true},
+  {id:'delete',emoji:'🗑',pt:'Eliminação',en:'Deletion',saved:true},
+  {id:'attack',emoji:'⚠️',pt:'Ataques',en:'Attacks',saved:true},
+  {id:'docs',emoji:'📄',pt:'Documentos',en:'Documents',saved:true},
+  {id:'agreements',emoji:'🤝',pt:'Acordos',en:'Agreements',saved:false},
+  {id:'privacy',emoji:'🔒',pt:'Privacidade',en:'Privacy',saved:false},
+]
+let filterState = JSON.parse(localStorage.getItem('hpc_filters')||'null') ||
+  Object.fromEntries(FILTER_DEFS.map(f=>[f.id,f.saved]))
+
+function loadFilters() {
+  const grid = document.getElementById('filtersGrid')
+  grid.innerHTML = FILTER_DEFS.map(f=>`
+    <div class="filter-toggle" onclick="toggleFilter('${f.id}')">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:18px">${f.emoji}</span>
+        <span style="font-size:12px;font-weight:600;color:var(--text)">${currentMode==='nerd'||currentMode==='purist'?f.en:f.pt}</span>
+      </div>
+      <input type="checkbox" id="flt-${f.id}" ${filterState[f.id]?'checked':''} onclick="event.stopPropagation()"/>
+    </div>`).join('')
 }
 
-// ── Análise de texto (análise manual pelo utilizador) ─────────────────────────
-function analyseText(text) {
-  if (!session || !text) return
-  const lower = text.toLowerCase()
-  Object.entries(RISK_PATTERNS).forEach(([cat, p]) => {
-    if (!filters[cat]) return
-    const found = p.kws.some(kw => lower.includes(kw))
-    if (!found) return
-    const alert = { cat, sev:p.sev, msg:p.msg, ts:Date.now() }
-    alerts.unshift(alert)
-    alerts = alerts.slice(0, 50)
-    sessionStorage.setItem('h_alerts', JSON.stringify(alerts))
-    // Reduzir score
-    const penalty = p.sev === 'HIGH' ? 15 : 8
-    session.intentScore = Math.max(0, (session.intentScore||100) - penalty)
-    session.alertCount = (session.alertCount||0) + 1
-    sessionStorage.setItem('h_session', JSON.stringify(session))
-    renderAlerts(); renderSessionInfo()
-    showToast(`⚠ ${p.msg}`, 3000)
-  })
+function toggleFilter(id) {
+  filterState[id] = !filterState[id]
+  const cb = document.getElementById('flt-'+id)
+  if(cb) cb.checked = filterState[id]
+  localStorage.setItem('hpc_filters',JSON.stringify(filterState))
+  showToast(filterState[id]?'✓ Filtro activado':'Filtro desactivado')
 }
 
-// ── Alertas ───────────────────────────────────────────────────────────────────
+// ═══ ALERTS ═══════════════════════════════════════════════════════════════════
 function renderAlerts() {
-  const list = document.getElementById('alertsList')
-  if (!alerts.length) {
-    list.innerHTML = '<div class="no-alerts">Nenhum alerta ainda ✓</div>'
+  const el = document.getElementById('alertsList')
+  if(!alerts.length) {
+    el.innerHTML=`<div style="text-align:center;padding:24px;color:var(--green);font-size:11px" id="label-no-alerts">${MODES[currentMode].vocab.no_alerts}</div>`
     return
   }
-  const sevClass = { HIGH:'high', MEDIUM:'medium', LOW:'info' }
-  const sevIcon  = { HIGH:'🚨', MEDIUM:'⚠️', LOW:'ℹ️' }
-  list.innerHTML = alerts.slice(0,10).map(a => `
-    <div class="alert-item ${sevClass[a.sev]||'info'}">
-      <span class="alert-icon">${sevIcon[a.sev]||'ℹ️'}</span>
-      <div class="alert-content">
-        <div class="alert-msg">${a.msg}</div>
-        <div class="alert-meta">${a.cat?.toUpperCase()} · ${new Date(a.ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div>
-      </div>
-    </div>
-  `).join('')
+  el.innerHTML = alerts.map(a=>`
+    <div class="alert-item">
+      <div class="alert-msg">⚠️ ${a.msg}</div>
+      <div class="alert-ts">${new Date(a.ts).toLocaleTimeString('pt-BR')}</div>
+    </div>`).join('')
 }
+function clearAlerts() { alerts=[]; renderAlerts(); showToast('Alertas limpos') }
 
-// ── Toast ─────────────────────────────────────────────────────────────────────
-let toastTimer = null
-function showToast(msg, dur=2000) {
-  const t = document.getElementById('toast')
-  t.textContent = msg; t.classList.add('show')
-  clearTimeout(toastTimer)
-  toastTimer = setTimeout(() => t.classList.remove('show'), dur)
-}
+// ═══ PLANS ════════════════════════════════════════════════════════════════════
+const PLANS = [
+  {id:'free',color:'var(--green)',label:'GRÁTIS',name:'HPC Observação',
+   pt:'Monitorização · Alertas · Context Token',en:'Monitoring · Alerts · Context Token',
+   priceM:0,priceA:0,features:{pt:['3 IAs monitorizadas','Alertas locais','1 dispositivo'],en:['3 AIs monitored','Local alerts','1 device']}},
+  {id:'sovereign',featured:true,color:'var(--accent)',label:'SOVEREIGN',name:'HPC Sovereign',
+   pt:'HDR permanente · PDF exportável',en:'Permanent HDR · exportable PDF',
+   priceM:1990,priceA:19990,features:{pt:['Tudo do Observação','HDR permanente (PDF)','Timestamp soberano','Suporte prioritário'],en:['All of Observation','Permanent HDR (PDF)','Sovereign timestamp','Priority support']}},
+  {id:'council',color:'#4A9EBE',label:'COUNCIL',name:'HPC Council',
+   pt:'Até 5 dispositivos · equipa',en:'Up to 5 devices · team',
+   priceM:14990,priceA:149900,features:{pt:['Tudo do Sovereign','5 dispositivos','Relatórios de equipa','SLA de suporte'],en:['All of Sovereign','5 devices','Team reports','Support SLA']}},
+]
 
-// ── Radar: IAs + Economia ─────────────────────────────────────────────────────
-const AI_LABELS = {
-  'chatgpt': {name:'ChatGPT', color:'#19C37D'},
-  'claude':  {name:'Claude (Anthropic)', color:'#C9A84C'},
-  'gemini':  {name:'Gemini (Google)', color:'#4A9EBE'},
-  'copilot': {name:'Copilot (Microsoft)', color:'#0078D4'},
-  'grok':    {name:'Grok (xAI)', color:'#E08855'},
-  'perplexity': {name:'Perplexity', color:'#9B59B6'},
-  'mistral': {name:'Mistral', color:'#EF4444'},
-}
-function loadRadar() {
-  // Ler dados guardados localmente
-  const sessions = JSON.parse(localStorage.getItem('h_sessions') || '[]')
-  const detectedAIs = JSON.parse(localStorage.getItem('h_detected_ais') || '{}')
-  const hdrs = JSON.parse(localStorage.getItem('h_hdrs') || '[]')
-
-  // Economia
-  let totalHdrs = hdrs.length
-  let sovereignCount = sessions.filter(s => s.intent).length
-  let tokensSaved = totalHdrs * 120 // estimativa conservadora
-  let avgAlign = sessions.length > 0
-    ? Math.round(sessions.reduce((a,s) => a + (s.score||100), 0) / sessions.length)
-    : 100
-
-  document.getElementById('hdrsGenerated').textContent = totalHdrs
-  document.getElementById('sovereignSessions').textContent = sovereignCount
-  document.getElementById('tokensSaved').textContent = tokensSaved.toLocaleString('pt-BR')
-  document.getElementById('driftBlocked').textContent = avgAlign + '%'
-
-  // IAs detectadas
-  const aiList = document.getElementById('aiRadarList')
-  const aiKeys = Object.keys(detectedAIs)
-  document.getElementById('aiCount').textContent = aiKeys.length + ' activas'
-
-  if (aiKeys.length > 0) {
-    document.getElementById('aiNoActivity').style.display = 'none'
-    aiList.innerHTML = ''
-    aiKeys.forEach(key => {
-      const info = AI_LABELS[key] || {name: key, color: '#888'}
-      const sessions_count = detectedAIs[key]?.sessions || 0
-      const last = detectedAIs[key]?.last ? new Date(detectedAIs[key].last).toLocaleString('pt-BR') : '—'
-      const div = document.createElement('div')
-      div.style = `display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-left:3px solid ${info.color};border-radius:6px`
-      div.innerHTML = `
+function loadPlans() {
+  const grid = document.getElementById('plansGrid')
+  grid.innerHTML = PLANS.map(p=>{
+    const price = annualBilling ? p.priceA : p.priceM
+    const priceStr = price===0 ? (currentMode==='nerd'||currentMode==='purist'?'$0/free':'R$0') :
+      (currentMode==='nerd'||currentMode==='purist'?`$${(price/100).toFixed(2)}`:`R$${(price/100).toFixed(2).replace('.',',')}`)
+    const period = price===0 ? (currentMode==='nerd'?'forever':currentMode==='purist'?'∞':'para sempre') :
+      (annualBilling?(currentMode==='nerd'?'/yr':'/ano'):(currentMode==='nerd'?'/mo':'/mês'))
+    const features = (currentMode==='nerd'||currentMode==='purist') ? p.features.en : p.features.pt
+    const desc = (currentMode==='nerd'||currentMode==='purist') ? p.en : p.pt
+    return `<div class="plan-card ${p.featured?'featured':''}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div>
-          <div style="font-size:12px;font-weight:600;color:var(--text)">${info.name}</div>
-          <div style="font-size:9px;color:var(--dim);margin-top:2px">Última sessão: ${last}</div>
+          <div style="font-size:8px;letter-spacing:.18em;color:${p.color};margin-bottom:4px">${p.label}</div>
+          <div style="font-size:15px;font-weight:700;color:var(--text)">${p.name}</div>
+          <div style="font-size:10px;color:var(--dimmer);margin-top:3px">${desc}</div>
         </div>
         <div style="text-align:right">
-          <div style="font-size:14px;font-weight:700;color:${info.color};font-family:var(--mono)">${sessions_count}</div>
-          <div style="font-size:9px;color:var(--dim)">sessões</div>
-        </div>`
-      aiList.appendChild(div)
-    })
-  }
-
-  // Histórico decisões
-  const hist = document.getElementById('decisionsHistory')
-  if (sessions.length > 0) {
-    hist.innerHTML = sessions.slice(-5).reverse().map(s => `
-      <div style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:6px;margin-bottom:8px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-          <div style="font-size:10px;color:var(--text);flex:1">${s.intent || '—'}</div>
-          <div style="font-size:9px;color:${(s.score||100)>=80?'var(--green)':'var(--orange)'};font-family:var(--mono);white-space:nowrap">${s.score||100}%</div>
+          <div style="font-size:22px;font-weight:700;font-family:var(--font-mono);color:${p.color}">${priceStr}</div>
+          <div style="font-size:9px;color:var(--dimmer)">${period}</div>
         </div>
-        <div style="font-size:9px;color:var(--dim);margin-top:4px">${s.ts ? new Date(s.ts).toLocaleString('pt-BR') : '—'}</div>
-      </div>`).join('')
-  }
+      </div>
+      <div style="margin:12px 0;border-top:1px solid var(--border)"></div>
+      <div style="margin-bottom:12px">${features.map(f=>`<div style="font-size:10px;color:var(--dim);padding:3px 0;display:flex;align-items:center;gap:6px"><span style="color:${p.color}">✓</span>${f}</div>`).join('')}</div>
+      ${price===0
+        ? `<button onclick="window.location.href='/hpc-gate.html'" style="width:100%;padding:11px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:8px;color:var(--green);font-family:var(--font-ui);font-size:11px;font-weight:700;cursor:pointer">${currentMode==='nerd'?'ACTIVE':'Plano actual ✓'}</button>`
+        : `<button onclick="startCheckout('${p.id}')" style="width:100%;padding:11px;background:${p.color};border:none;border-radius:8px;color:var(--bg);font-family:var(--font-ui);font-size:11px;font-weight:700;cursor:pointer;box-shadow:0 0 14px var(--glow)">${currentMode==='nerd'?`SUBSCRIBE ${p.label} →`:currentMode==='purist'?`ACTIVATE ${p.label} →`:`Assinar ${p.name} →`}</button>`
+      }
+    </div>`
+  }).join('')
+}
 
-  // Registar AI actual no radar quando o utilizador usa (do extension data ou URL)
-  const url = window.location.hostname
-  for (const [key] of Object.entries(AI_LABELS)) {
-    if (url.includes(key)) {
-      const existing = JSON.parse(localStorage.getItem('h_detected_ais') || '{}')
-      existing[key] = existing[key] || {sessions: 0, last: null}
-      existing[key].sessions++; existing[key].last = Date.now()
-      localStorage.setItem('h_detected_ais', JSON.stringify(existing))
+function toggleBilling() {
+  annualBilling = !annualBilling
+  const t = document.getElementById('billingToggle')
+  const th = document.getElementById('billingThumb')
+  const la = document.getElementById('la')
+  const lm = document.getElementById('lm')
+  const sb = document.getElementById('saveBadge')
+  th.style.left = annualBilling?'23px':'3px'
+  la.style.color = annualBilling?'var(--accent)':'var(--dimmer)'
+  lm.style.color = annualBilling?'var(--dimmer)':'var(--accent)'
+  if(sb) sb.style.display = annualBilling?'inline':'none'
+  loadPlans()
+}
+
+async function startCheckout(tier) {
+  const reg = JSON.parse(localStorage.getItem('hpc_registered_v1')||'{}')
+  let email = reg.email||''
+  if(!email) email = prompt(currentMode==='nerd'?'Enter email:':'Introduz o teu email:')||''
+  if(!email) return
+  const fullTier = tier+(annualBilling?'_annual':'_monthly')
+  try {
+    const r = await fetch(API+'/payments/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tier:fullTier,email})})
+    const d = await r.json()
+    if(d.checkout_url) { showToast('→ Pagamento seguro…'); setTimeout(()=>{window.location.href=d.checkout_url},600) }
+    else throw new Error(d.detail||'error')
+  } catch(e) { showToast('Erro: '+e.message,'err') }
+}
+
+// ═══ API HEALTH ═══════════════════════════════════════════════════════════════
+async function checkApiHealth() {
+  try {
+    const r = await fetch(API+'/health')
+    const d = await r.json()
+    if(d.constitutional_phase==='CONSTITUTIONAL_ACTIVE') {
+      document.getElementById('statusPill').style.borderColor='rgba(16,185,129,.3)'
+      document.getElementById('statusText').textContent = MODES[currentMode].vocab.status
     }
+  } catch(e) {
+    document.getElementById('statusPill').style.borderColor='rgba(244,63,94,.3)'
+    document.getElementById('statusText').textContent = 'OFFLINE'
+    document.getElementById('statusText').style.color='var(--red)'
   }
 }
 
+// ═══ UTILS ════════════════════════════════════════════════════════════════════
+let toastT = null
+function showToast(msg) {
+  const t = document.getElementById('toast')
+  t.textContent=msg; t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)'
+  clearTimeout(toastT)
+  toastT = setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(20px)'},2500)
+}
 
-init()
+// Params check
+const params = new URLSearchParams(window.location.search)
+if(params.get('success')==='true'){showToast('✓ Subscrição activa!');history.replaceState({},'',location.pathname)}
+if(params.get('cancelled')==='true'){showToast('Pagamento cancelado');history.replaceState({},'',location.pathname)}
 </script>
 </body>
 </html>
