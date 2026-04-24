@@ -344,11 +344,7 @@ a{color:var(--gold);text-decoration:none}
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────────
-// IMPORTANTE: Substitua este URL pelo URL do teu Google Apps Script após instalação
-// Ver: Drive > HPC LEADS — Apps Script Webhook (INSTALAR)
-const WEBHOOK_URL = 'PLACEHOLDER_APPS_SCRIPT_URL';
-
-// Para onde redirecionar após registo
+const API_BASE = 'https://api.heillon.com';
 const APP_URL = '/pocket.html';
 const STORAGE_KEY = 'hpc_registered_v1';
 
@@ -443,27 +439,44 @@ async function submitForm() {
     lang:      navigator.language || ''
   };
 
-  // Guardar localmente SEMPRE (mesmo se webhook falhar)
+  // Guardar localmente SEMPRE
   const localData = { ...data, ts_ms: Date.now() };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(localData));
 
-  // Tentar enviar ao webhook (não-bloqueante)
-  if (WEBHOOK_URL !== 'PLACEHOLDER_APPS_SCRIPT_URL') {
-    try {
-      await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-    } catch(e) {
-      // Falhou o webhook mas o lead está no localStorage
-      // Em produção, os dados estão guardados localmente
-      console.warn('Webhook offline, dados guardados localmente');
+  // Enviar ao backend HEILLON — regista lead e gera código soberano
+  try {
+    const resp = await fetch(API_BASE + '/hpc/v1/access/demo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: data.email,
+        nome: data.nome,
+        telefone: data.telefone,
+        cidade: data.cidade,
+        estado: data.estado,
+        plano: data.plano,
+        optin: data.optin,
+        origem: data.origem,
+        ua: data.ua,
+        lang: data.lang || 'pt',
+        profile: 'classic'
+      })
+    });
+    if (resp.ok) {
+      const d = await resp.json();
+      if (d.code) {
+        // Guardar código soberano localmente
+        localData.demo_code = d.code;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(localData));
+        localStorage.setItem('hpc_sovereign_code', d.code);
+      }
     }
+  } catch(e) {
+    // Backend offline — dados ficam no localStorage
+    console.warn('Backend offline, dados guardados localmente');
   }
-
-  // Sucesso sempre (mesmo sem webhook)
+      });
+  // Sucesso
   btn.classList.remove('loading');
   showSuccess(data.nome);
 }
