@@ -295,6 +295,7 @@
 <div class="section" style="padding-bottom:0">
   <div class="tabs">
     <div class="tab active" data-tab="intenção" onclick="switchTab('intenção')">⚡ Intenção</div>
+    <div class="tab" data-tab="radar"     onclick="switchTab('radar')">📡 Radar</div>
     <div class="tab" data-tab="filtros"   onclick="switchTab('filtros')">🛡 Filtros</div>
     <div class="tab" data-tab="alertas"   onclick="switchTab('alertas')">🔔 Alertas</div>
     <div class="tab" data-tab="contexto"  onclick="switchTab('contexto')">◈ Contexto</div>
@@ -348,6 +349,73 @@
 </div>
 
 <!-- ── TAB: FILTROS ── -->
+<!-- ── TAB: RADAR ── -->
+<div id="tab-radar" class="tab-content" style="display:none">
+
+  <!-- AI Rastreadas -->
+  <div class="section">
+    <div class="section-title" style="display:flex;justify-content:space-between;align-items:center">
+      <span>IAs DETECTADAS NESTA SESSÃO</span>
+      <span id="aiCount" style="font-size:10px;color:var(--gold)">0 activas</span>
+    </div>
+    <div id="aiRadarList" style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+      <div class="no-alerts" id="aiNoActivity">
+        Nenhuma IA detectada ainda.<br/>
+        <span style="font-size:9px;color:var(--dim);margin-top:4px;display:block">
+          Instala a extensão <strong style="color:var(--gold)">HEILLON Sentinel</strong> para rastreio automático.
+        </span>
+      </div>
+    </div>
+    <!-- Extensão não instalada: botão de instalar -->
+    <div id="sentinelBanner" style="margin-top:14px;padding:12px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:8px">
+      <div style="font-size:10px;letter-spacing:.12em;color:var(--gold);margin-bottom:6px">🔭 BROWSER SENTINEL</div>
+      <div style="font-size:11px;color:var(--dim);line-height:1.6;margin-bottom:10px">
+        Instala a extensão para detectar automaticamente quais IAs usas e registar cada decisão com timestamp soberano.
+      </div>
+      <button onclick="window.open('https://heillon.com','_blank')" style="background:none;border:1px solid rgba(201,168,76,0.4);color:var(--gold);padding:7px 16px;border-radius:5px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;cursor:pointer">
+        INSTALAR EXTENSÃO →
+      </button>
+    </div>
+  </div>
+
+  <!-- Economia Verificada -->
+  <div class="section" style="margin-top:12px">
+    <div class="section-title">ECONOMIA VERIFICADA</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+      <div style="padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+        <div style="font-size:9px;color:var(--dim);letter-spacing:.12em;margin-bottom:6px">TOKENS POUPADOS</div>
+        <div id="tokensSaved" style="font-size:22px;font-weight:700;font-family:var(--mono);color:var(--green)">0</div>
+        <div style="font-size:9px;color:var(--dim);margin-top:2px">nesta sessão</div>
+      </div>
+      <div style="padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+        <div style="font-size:9px;color:var(--dim);letter-spacing:.12em;margin-bottom:6px">DERIVE BLOQUEADO</div>
+        <div id="driftBlocked" style="font-size:22px;font-weight:700;font-family:var(--mono);color:var(--gold)">0%</div>
+        <div style="font-size:9px;color:var(--dim);margin-top:2px">alinhamento médio</div>
+      </div>
+      <div style="padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+        <div style="font-size:9px;color:var(--dim);letter-spacing:.12em;margin-bottom:6px">HDRs GERADOS</div>
+        <div id="hdrsGenerated" style="font-size:22px;font-weight:700;font-family:var(--mono);color:var(--blue)">0</div>
+        <div style="font-size:9px;color:var(--dim);margin-top:2px">total no dispositivo</div>
+      </div>
+      <div style="padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+        <div style="font-size:9px;color:var(--dim);letter-spacing:.12em;margin-bottom:6px">SESSÕES SOBERANAS</div>
+        <div id="sovereignSessions" style="font-size:22px;font-weight:700;font-family:var(--mono);color:var(--gold)">0</div>
+        <div style="font-size:9px;color:var(--dim);margin-top:2px">com intenção declarada</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Histórico de Decisões -->
+  <div class="section" style="margin-top:12px">
+    <div class="section-title">ÚLTIMAS DECISÕES REGISTADAS</div>
+    <div id="decisionsHistory" style="margin-top:8px">
+      <div class="no-alerts">Sem decisões registadas ainda.<br/>
+        <span style="font-size:9px;color:var(--dim);margin-top:4px;display:block">Declara uma intenção na tab ⚡ para começar.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="tab-filtros" class="tab-content" style="display:none">
   <div class="section">
     <div class="section-title">O QUE QUERES MONITORIZAR</div>
@@ -516,6 +584,7 @@ function switchTab(tab) {
   document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'))
   document.getElementById(`tab-${tab}`).style.display = 'block'
   document.querySelector(`[data-tab="${tab}"]`).classList.add('active')
+  if (tab === 'radar') loadRadar()
 }
 
 // ── Filtros ───────────────────────────────────────────────────────────────────
@@ -658,6 +727,88 @@ function showToast(msg, dur=2000) {
   clearTimeout(toastTimer)
   toastTimer = setTimeout(() => t.classList.remove('show'), dur)
 }
+
+// ── Radar: IAs + Economia ─────────────────────────────────────────────────────
+const AI_LABELS = {
+  'chatgpt': {name:'ChatGPT', color:'#19C37D'},
+  'claude':  {name:'Claude (Anthropic)', color:'#C9A84C'},
+  'gemini':  {name:'Gemini (Google)', color:'#4A9EBE'},
+  'copilot': {name:'Copilot (Microsoft)', color:'#0078D4'},
+  'grok':    {name:'Grok (xAI)', color:'#E08855'},
+  'perplexity': {name:'Perplexity', color:'#9B59B6'},
+  'mistral': {name:'Mistral', color:'#EF4444'},
+}
+function loadRadar() {
+  // Ler dados guardados localmente
+  const sessions = JSON.parse(localStorage.getItem('h_sessions') || '[]')
+  const detectedAIs = JSON.parse(localStorage.getItem('h_detected_ais') || '{}')
+  const hdrs = JSON.parse(localStorage.getItem('h_hdrs') || '[]')
+
+  // Economia
+  let totalHdrs = hdrs.length
+  let sovereignCount = sessions.filter(s => s.intent).length
+  let tokensSaved = totalHdrs * 120 // estimativa conservadora
+  let avgAlign = sessions.length > 0
+    ? Math.round(sessions.reduce((a,s) => a + (s.score||100), 0) / sessions.length)
+    : 100
+
+  document.getElementById('hdrsGenerated').textContent = totalHdrs
+  document.getElementById('sovereignSessions').textContent = sovereignCount
+  document.getElementById('tokensSaved').textContent = tokensSaved.toLocaleString('pt-BR')
+  document.getElementById('driftBlocked').textContent = avgAlign + '%'
+
+  // IAs detectadas
+  const aiList = document.getElementById('aiRadarList')
+  const aiKeys = Object.keys(detectedAIs)
+  document.getElementById('aiCount').textContent = aiKeys.length + ' activas'
+
+  if (aiKeys.length > 0) {
+    document.getElementById('aiNoActivity').style.display = 'none'
+    aiList.innerHTML = ''
+    aiKeys.forEach(key => {
+      const info = AI_LABELS[key] || {name: key, color: '#888'}
+      const sessions_count = detectedAIs[key]?.sessions || 0
+      const last = detectedAIs[key]?.last ? new Date(detectedAIs[key].last).toLocaleString('pt-BR') : '—'
+      const div = document.createElement('div')
+      div.style = `display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-left:3px solid ${info.color};border-radius:6px`
+      div.innerHTML = `
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text)">${info.name}</div>
+          <div style="font-size:9px;color:var(--dim);margin-top:2px">Última sessão: ${last}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:14px;font-weight:700;color:${info.color};font-family:var(--mono)">${sessions_count}</div>
+          <div style="font-size:9px;color:var(--dim)">sessões</div>
+        </div>`
+      aiList.appendChild(div)
+    })
+  }
+
+  // Histórico decisões
+  const hist = document.getElementById('decisionsHistory')
+  if (sessions.length > 0) {
+    hist.innerHTML = sessions.slice(-5).reverse().map(s => `
+      <div style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:6px;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+          <div style="font-size:10px;color:var(--text);flex:1">${s.intent || '—'}</div>
+          <div style="font-size:9px;color:${(s.score||100)>=80?'var(--green)':'var(--orange)'};font-family:var(--mono);white-space:nowrap">${s.score||100}%</div>
+        </div>
+        <div style="font-size:9px;color:var(--dim);margin-top:4px">${s.ts ? new Date(s.ts).toLocaleString('pt-BR') : '—'}</div>
+      </div>`).join('')
+  }
+
+  // Registar AI actual no radar quando o utilizador usa (do extension data ou URL)
+  const url = window.location.hostname
+  for (const [key] of Object.entries(AI_LABELS)) {
+    if (url.includes(key)) {
+      const existing = JSON.parse(localStorage.getItem('h_detected_ais') || '{}')
+      existing[key] = existing[key] || {sessions: 0, last: null}
+      existing[key].sessions++; existing[key].last = Date.now()
+      localStorage.setItem('h_detected_ais', JSON.stringify(existing))
+    }
+  }
+}
+
 
 init()
 </script>
