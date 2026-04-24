@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HEILLON HPC — Planos e Assinaturas</title>
+<meta name="description" content="Escolha o plano HPC e active a legitimidade soberana no seu dispositivo."/>
+<meta name="robots" content="index, follow"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Mono:wght@300;400;500&display=swap"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+  :root {
+    --bg:       #070B12;
+    --bg-card:  #0C1018;
+    --bg-hover: #111822;
+    --border:   rgba(160,168,179,0.1);
+    --gold:     #C9A84C;
+    --gold-dim: rgba(201,168,76,0.15);
+    --blue:     #4A9EBE;
+    --blue-dim: rgba(74,158,190,0.12);
+    --green:    #22C55E;
+    --green-dim:rgba(34,197,94,0.08);
+    --ink:      rgba(220,228,240,0.85);
+    --ink-d:    rgba(160,168,179,0.55);
+    --mono:     'DM Mono', monospace;
+    --serif:    'Cormorant Garamond', serif;
+    --r:        8px;
+  }
+  html, body { background: var(--bg); color: var(--ink); font-family: var(--mono); min-height: 100vh }
+  /* ── Header ── */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px; border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; background: rgba(7,11,18,0.97); backdrop-filter: blur(12px); z-index: 100;
+  }
+  .header-logo { display: flex; align-items: center; gap: 10px; text-decoration: none }
+  .logo-icon {
+    width: 32px; height: 32px; border-radius: 6px;
+    background: linear-gradient(135deg,rgba(201,168,76,0.9),rgba(148,115,38,0.9));
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif); font-size: 16px; color: var(--bg); font-weight: 600;
+  }
+  .logo-text { font-family: var(--serif); font-size: 18px; color: var(--gold); letter-spacing: .06em }
+  .logo-sub { font-size: 9px; letter-spacing: .15em; color: var(--ink-d); text-transform: uppercase }
+  .header-nav { display: flex; gap: 12px; align-items: center }
+  .btn-nav { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 5px; border: 1px solid var(--border); background: none;
+    color: var(--ink-d); cursor: pointer; text-decoration: none; transition: all .2s }
+  .btn-nav:hover { border-color: var(--gold); color: var(--gold) }
+  /* ── Hero ── */
+  .hero { text-align: center; padding: 64px 24px 48px; max-width: 680px; margin: 0 auto }
+  .hero-tag {
+    display: inline-block; font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--gold); border: 1px solid rgba(201,168,76,0.2); padding: 5px 14px;
+    border-radius: 20px; margin-bottom: 20px;
+  }
+  .hero h1 { font-family: var(--serif); font-size: clamp(2rem,5vw,2.8rem); font-weight: 300;
+    line-height: 1.2; color: var(--ink); margin-bottom: 14px }
+  .hero h1 strong { color: var(--gold); font-weight: 600 }
+  .hero p { font-size: 13px; color: var(--ink-d); line-height: 1.8; max-width: 520px; margin: 0 auto }
+  /* ── Toggle mensal/anual ── */
+  .billing-toggle {
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    padding: 12px 0 40px; font-size: 11px; color: var(--ink-d);
+  }
+  .toggle-track {
+    width: 44px; height: 24px; border-radius: 12px; background: var(--bg-card);
+    border: 1px solid var(--border); cursor: pointer; position: relative; transition: background .2s;
+  }
+  .toggle-track.on { background: rgba(201,168,76,0.2); border-color: rgba(201,168,76,0.3) }
+  .toggle-thumb {
+    position: absolute; top: 3px; left: 3px; width: 16px; height: 16px;
+    border-radius: 50%; background: var(--ink-d); transition: all .2s;
+  }
+  .toggle-track.on .toggle-thumb { left: 23px; background: var(--gold) }
+  .save-badge {
+    font-size: 9px; background: rgba(34,197,94,0.12); color: var(--green);
+    border: 1px solid rgba(34,197,94,0.2); padding: 2px 8px; border-radius: 10px;
+    display: none;
+  }
+  .toggle-track.on ~ .save-badge { display: inline-block }
+  /* ── Cards ── */
+  .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px; max-width: 980px; margin: 0 auto; padding: 0 24px 64px }
+  .plan-card {
+    border: 1px solid var(--border); border-radius: var(--r); padding: 28px 24px;
+    background: var(--bg-card); position: relative; transition: border-color .2s, transform .2s;
+    display: flex; flex-direction: column;
+  }
+  .plan-card:hover { border-color: rgba(160,168,179,0.25); transform: translateY(-2px) }
+  .plan-card.featured { border-color: rgba(201,168,76,0.35); background: rgba(12,16,24,0.98) }
+  .plan-card.featured::before {
+    content: 'MAIS POPULAR'; position: absolute; top: -11px; left: 20px;
+    font-size: 8px; letter-spacing: .2em; padding: 3px 10px; border-radius: 10px;
+    background: var(--gold); color: var(--bg); font-weight: 600;
+  }
+  .plan-badge { font-size: 9px; letter-spacing: .18em; text-transform: uppercase;
+    margin-bottom: 12px; }
+  .plan-badge.free { color: var(--green) }
+  .plan-badge.sovereign { color: var(--gold) }
+  .plan-badge.council { color: var(--blue) }
+  .plan-name { font-family: var(--serif); font-size: 1.5rem; font-weight: 400;
+    color: var(--ink); margin-bottom: 6px }
+  .plan-desc { font-size: 11px; color: var(--ink-d); line-height: 1.6; margin-bottom: 20px }
+  .plan-price { margin-bottom: 20px }
+  .price-amount { font-family: var(--serif); font-size: 2.4rem; font-weight: 300 }
+  .price-amount.free { color: var(--green) }
+  .price-amount.sovereign { color: var(--gold) }
+  .price-amount.council { color: var(--blue) }
+  .price-old { font-size: 11px; color: var(--ink-d); text-decoration: line-through; margin-left: 4px }
+  .price-period { font-size: 10px; color: var(--ink-d); display: block; margin-top: 2px }
+  .plan-features { flex: 1; list-style: none; margin-bottom: 24px }
+  .plan-features li { font-size: 11px; color: var(--ink-d); padding: 5px 0;
+    border-bottom: 1px solid rgba(160,168,179,0.05); display: flex; align-items: flex-start; gap: 8px }
+  .plan-features li::before { flex-shrink: 0; margin-top: 1px }
+  .fi-green::before { content: '✓'; color: var(--green) }
+  .fi-gold::before { content: '◆'; color: var(--gold); font-size: 9px }
+  .fi-blue::before { content: '◈'; color: var(--blue); font-size: 9px }
+  .btn-plan {
+    width: 100%; padding: 13px 0; border-radius: 6px; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+    font-weight: 500; transition: all .2s;
+  }
+  .btn-free { background: rgba(34,197,94,0.08); color: var(--green);
+    border: 1px solid rgba(34,197,94,0.2) }
+  .btn-free:hover { background: rgba(34,197,94,0.15) }
+  .btn-sovereign { background: linear-gradient(170deg,rgba(201,168,76,0.9),rgba(148,115,38,0.85));
+    color: var(--bg) }
+  .btn-sovereign:hover { opacity: .9 }
+  .btn-council { background: rgba(74,158,190,0.1); color: var(--blue);
+    border: 1px solid rgba(74,158,190,0.25) }
+  .btn-council:hover { background: rgba(74,158,190,0.18) }
+  .btn-plan:disabled { opacity: .5; cursor: wait }
+  /* ── Status bar ── */
+  .status-bar {
+    display: flex; align-items: center; gap: 8px; justify-content: center;
+    font-size: 9px; letter-spacing: .12em; color: var(--ink-d); padding: 12px 24px;
+    border-top: 1px solid var(--border); margin-top: 0;
+  }
+  .dot-green { width: 6px; height: 6px; border-radius: 50%; background: var(--green) }
+  /* ── Stripe badge ── */
+  .stripe-row { display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 20px 0 48px; font-size: 9px; color: var(--ink-d); letter-spacing: .1em }
+  /* ── FAQ ── */
+  .faq { max-width: 680px; margin: 0 auto 64px; padding: 0 24px }
+  .faq h2 { font-family: var(--serif); font-size: 1.4rem; font-weight: 300; color: var(--ink);
+    margin-bottom: 24px; text-align: center }
+  .faq-item { border-bottom: 1px solid var(--border); padding: 14px 0 }
+  .faq-q { font-size: 12px; color: var(--ink); cursor: pointer; display: flex;
+    justify-content: space-between; align-items: center; gap: 12px }
+  .faq-a { font-size: 11px; color: var(--ink-d); line-height: 1.7; padding-top: 10px;
+    display: none }
+  .faq-item.open .faq-a { display: block }
+  .faq-item.open .faq-arrow { transform: rotate(180deg) }
+  .faq-arrow { font-size: 10px; transition: transform .2s; flex-shrink: 0; color: var(--ink-d) }
+  /* ── Toast ── */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: #111822; border: 1px solid var(--border); color: var(--ink); font-size: 12px;
+    padding: 12px 20px; border-radius: 8px; transition: transform .3s; z-index: 200;
+    white-space: nowrap }
+  .toast.show { transform: translateX(-50%) translateY(0) }
+  .toast.ok { border-color: rgba(34,197,94,0.3); color: var(--green) }
+  .toast.err { border-color: rgba(239,68,68,0.3); color: #EF4444 }
+  @media (max-width: 600px) {
+    .plans { grid-template-columns: 1fr }
+    .hero { padding: 40px 16px 32px }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <a href="/" class="header-logo">
+    <div class="logo-icon">H</div>
+    <div>
+      <div class="logo-text">HEILLON</div>
+      <div class="logo-sub">Personal Core</div>
+    </div>
+  </a>
+  <nav class="header-nav">
+    <a href="/hpc-gate.html" class="btn-nav">Registar</a>
+    <a href="https://api.heillon.com/health" target="_blank" class="btn-nav" id="btnStatus">● API</a>
+  </nav>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-tag">Legitimidade Soberana Local</div>
+  <h1>A IA age.<br><strong>Tu decides o que ela prova.</strong></h1>
+  <p>O HPC instala o kernel LC²S directamente no teu dispositivo. Cada decisão da IA é registada, assinada e irrefutável — antes de acontecer.</p>
+</section>
+
+<!-- Billing toggle -->
+<div class="billing-toggle">
+  <span id="lbl-monthly" style="color:var(--ink)">Mensal</span>
+  <div class="toggle-track" id="billingToggle" onclick="toggleBilling()">
+    <div class="toggle-thumb"></div>
+  </div>
+  <span id="lbl-annual">Anual</span>
+  <span class="save-badge" id="saveBadge">Poupa 2 meses</span>
+</div>
+
+<!-- Plans -->
+<div class="plans">
+
+  <!-- Free -->
+  <div class="plan-card">
+    <div class="plan-badge free">● Grátis para sempre</div>
+    <div class="plan-name">HPC Observação</div>
+    <div class="plan-desc">Monitorização em tempo real das tuas IAs. Alertas locais, Context Token e regras básicas de protecção.</div>
+    <div class="plan-price">
+      <span class="price-amount free">R$0</span>
+      <span class="price-period">para sempre · sem cartão</span>
+    </div>
+    <ul class="plan-features">
+      <li class="fi-green">Monitorização de 3 IAs activas</li>
+      <li class="fi-green">Alertas locais em tempo real</li>
+      <li class="fi-green">Context Token básico</li>
+      <li class="fi-green">Browser Sentinel (extensão)</li>
+      <li class="fi-green">1 dispositivo</li>
+    </ul>
+    <button class="btn-plan btn-free" onclick="window.location.href='/hpc-gate.html'">
+      Começar grátis →
+    </button>
+  </div>
+
+  <!-- Sovereign -->
+  <div class="plan-card featured">
+    <div class="plan-badge sovereign">◆ Sovereign</div>
+    <div class="plan-name">HPC Sovereign</div>
+    <div class="plan-desc">HDR permanente e exportável. Cada decisão da IA selada com assinatura criptográfica e timestamp soberano.</div>
+    <div class="plan-price">
+      <span class="price-amount sovereign" id="sovereign-price">R$19,90</span>
+      <span class="price-old" id="sovereign-old" style="display:none">R$238,80</span>
+      <span class="price-period" id="sovereign-period">/mês · 1 dispositivo</span>
+    </div>
+    <ul class="plan-features">
+      <li class="fi-gold">Tudo do plano Observação</li>
+      <li class="fi-gold">HDR permanente exportável (PDF)</li>
+      <li class="fi-gold">Timestamp soberano irrefutável</li>
+      <li class="fi-gold">Assinatura SHA-256 em cada decisão</li>
+      <li class="fi-gold">Suporte prioritário por email</li>
+      <li class="fi-gold">Histórico ilimitado de decisões</li>
+    </ul>
+    <button class="btn-plan btn-sovereign" id="btn-sovereign" onclick="checkout('sovereign')">
+      Assinar Sovereign →
+    </button>
+  </div>
+
+  <!-- Council -->
+  <div class="plan-card">
+    <div class="plan-badge council">◈ Council</div>
+    <div class="plan-name">HPC Council</div>
+    <div class="plan-desc">Para equipas. Até 5 dispositivos com relatórios consolidados, auditoria multi-agente e acesso ao painel enterprise.</div>
+    <div class="plan-price">
+      <span class="price-amount council" id="council-price">R$149,90</span>
+      <span class="price-old" id="council-old" style="display:none">R$1.798,80</span>
+      <span class="price-period" id="council-period">/mês · até 5 dispositivos</span>
+    </div>
+    <ul class="plan-features">
+      <li class="fi-blue">Tudo do plano Sovereign</li>
+      <li class="fi-blue">Até 5 dispositivos na mesma conta</li>
+      <li class="fi-blue">Relatórios consolidados de equipa</li>
+      <li class="fi-blue">Auditoria multi-agente</li>
+      <li class="fi-blue">Painel enterprise com analytics</li>
+      <li class="fi-blue">SLA de suporte</li>
+    </ul>
+    <button class="btn-plan btn-council" id="btn-council" onclick="checkout('council')">
+      Assinar Council →
+    </button>
+  </div>
+
+</div>
+
+<!-- Stripe row -->
+<div class="stripe-row">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(160,168,179,0.4)" stroke-width="2">
+    <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+  </svg>
+  <span>Pagamento seguro · Stripe · PCI DSS · Cancela quando quiseres</span>
+</div>
+
+<!-- FAQ -->
+<section class="faq">
+  <h2>Perguntas frequentes</h2>
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">O que é o HPC Sovereign? <span class="faq-arrow">▾</span></div>
+    <div class="faq-a">O HPC Sovereign instala o kernel LC²S no teu dispositivo e gera um HDR — Heillon Decision Record — para cada decisão da IA. É uma assinatura criptográfica irrefutável que prova o que a IA fez, quando fez e com que intenção declarada.</div>
+  </div>
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">Posso cancelar a qualquer momento? <span class="faq-arrow">▾</span></div>
+    <div class="faq-a">Sim. Não há compromisso mínimo. Cancela directamente no portal de subscrição — acesso em qualquer momento a partir do dashboard HPC. O plano Observação continua disponível gratuitamente após o cancelamento.</div>
+  </div>
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">Os HDRs continuam acessíveis se cancelar? <span class="faq-arrow">▾</span></div>
+    <div class="faq-a">Sim. Os HDRs já gerados ficam permanentemente no teu dispositivo. São imutáveis por design — o backend não pode apagá-los nem modificá-los. Apenas a geração de novos HDRs é descontinuada com o cancelamento.</div>
+  </div>
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">O Council suporta equipas remotas? <span class="faq-arrow">▾</span></div>
+    <div class="faq-a">Sim. Os 5 dispositivos do plano Council podem estar em qualquer localização geográfica. O painel enterprise consolida a actividade de todos os dispositivos num relatório unificado com timestamp soberano.</div>
+  </div>
+  <div class="faq-item" onclick="toggleFaq(this)">
+    <div class="faq-q">Precisei de instalar algum software? <span class="faq-arrow">▾</span></div>
+    <div class="faq-a">Para a monitorização do browser, instala a extensão HEILLON Sentinel (Chrome). Para o kernel LC²S completo com HDR, o agente local está disponível após a subscrição. O registo é feito aqui no browser — sem necessidade de software para começar.</div>
+  </div>
+</section>
+
+<!-- Status bar -->
+<div class="status-bar">
+  <div class="dot-green"></div>
+  <span>HEILLON CONSTITUTIONAL_ACTIVE · AWS sa-east-1 · api.heillon.com</span>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'https://api.heillon.com';
+let annual = false;
+
+function toggleBilling() {
+  annual = !annual;
+  const track = document.getElementById('billingToggle');
+  track.classList.toggle('on', annual);
+  document.getElementById('saveBadge').style.display = annual ? 'inline-block' : 'none';
+  document.getElementById('lbl-monthly').style.color = annual ? 'var(--ink-d)' : 'var(--ink)';
+  document.getElementById('lbl-annual').style.color = annual ? 'var(--ink)' : 'var(--ink-d)';
+  // Sovereign
+  document.getElementById('sovereign-price').textContent = annual ? 'R$199,90' : 'R$19,90';
+  document.getElementById('sovereign-old').style.display = annual ? 'inline' : 'none';
+  document.getElementById('sovereign-old').textContent = annual ? '12×R$19,90' : '';
+  document.getElementById('sovereign-period').textContent = annual ? '/ano · = R$16,66/mês' : '/mês · 1 dispositivo';
+  // Council
+  document.getElementById('council-price').textContent = annual ? 'R$1.499,00' : 'R$149,90';
+  document.getElementById('council-old').style.display = annual ? 'inline' : 'none';
+  document.getElementById('council-old').textContent = annual ? '12×R$149,90' : '';
+  document.getElementById('council-period').textContent = annual ? '/ano · = R$124,92/mês' : '/mês · até 5 dispositivos';
+}
+
+function showToast(msg, type = 'ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+async function checkout(product) {
+  const btnId = product === 'sovereign' ? 'btn-sovereign' : 'btn-council';
+  const btn = document.getElementById(btnId);
+  btn.disabled = true;
+  btn.textContent = '…';
+
+  // Email do utilizador (localStorage do registo)
+  let email = '';
+  try {
+    const reg = JSON.parse(localStorage.getItem('hpc_registered_v1') || '{}');
+    email = reg.email || '';
+  } catch {}
+
+  if (!email) {
+    // Pedir email inline
+    email = prompt('Introduz o teu email para continuar:');
+    if (!email) {
+      btn.disabled = false;
+      btn.textContent = product === 'sovereign' ? 'Assinar Sovereign →' : 'Assinar Council →';
+      return;
+    }
+  }
+
+  const tier = product + (annual ? '_annual' : '_monthly');
+
+  try {
+    const resp = await fetch(API + '/payments/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tier, email })
+    });
+    const data = await resp.json();
+    if (data.checkout_url) {
+      showToast('A redirecionar para pagamento seguro…');
+      setTimeout(() => { window.location.href = data.checkout_url }, 800);
+    } else {
+      throw new Error(data.detail || 'Erro ao criar sessão de pagamento');
+    }
+  } catch (e) {
+    showToast('Erro: ' + (e.message || 'tente novamente'), 'err');
+    btn.disabled = false;
+    btn.textContent = product === 'sovereign' ? 'Assinar Sovereign →' : 'Assinar Council →';
+  }
+}
+
+function toggleFaq(el) { el.classList.toggle('open') }
+
+// Verificar API status
+(async function() {
+  try {
+    const r = await fetch(API + '/health');
+    const d = await r.json();
+    const btn = document.getElementById('btnStatus');
+    if (d.constitutional_phase === 'CONSTITUTIONAL_ACTIVE') {
+      btn.style.color = 'var(--green)';
+      btn.textContent = '● API ACTIVA';
+    }
+  } catch {}
+})();
+
+// Verificar se veio de pagamento bem-sucedido
+const params = new URLSearchParams(window.location.search);
+if (params.get('success') === 'true') {
+  showToast('✓ Subscrição activa — bem-vindo ao HPC!');
+  // Limpar URL
+  history.replaceState({}, '', window.location.pathname);
+}
+if (params.get('cancelled') === 'true') {
+  showToast('Pagamento cancelado. Podes tentar novamente.', 'err');
+  history.replaceState({}, '', window.location.pathname);
+}
+</script>
+</body>
+</html>

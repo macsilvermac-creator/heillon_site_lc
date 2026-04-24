@@ -298,6 +298,7 @@
     <div class="tab" data-tab="filtros"   onclick="switchTab('filtros')">🛡 Filtros</div>
     <div class="tab" data-tab="alertas"   onclick="switchTab('alertas')">🔔 Alertas</div>
     <div class="tab" data-tab="contexto"  onclick="switchTab('contexto')">◈ Contexto</div>
+    <div class="tab" data-tab="planos"    onclick="switchTab('planos')">💎 Planos</div>
   </div>
 </div>
 
@@ -379,16 +380,87 @@
   </div>
 </div>
 
-<!-- Upgrade banner -->
-<div class="upgrade-banner">
-  <div class="upgrade-title">HPC Sovereign · Heillon Personal Core</div>
-  <div class="upgrade-sub">
-    Legitimidade local permanente no teu dispositivo.<br/>
-    HDR guardado para sempre · PDF exportável · prova verificável por qualquer auditor
+<!-- Upgrade banner (substituído por tab Planos) -->
+
+<!-- ── TAB PLANOS — secção de pagamento completa ── -->
+<div class="section tab-content" data-tab-content="planos" style="display:none">
+
+  <!-- Toggle mensal/anual -->
+  <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px">
+    <span id="lm2" style="font-size:11px;letter-spacing:.1em;color:var(--gold);font-family:var(--mono)">MENSAL</span>
+    <div id="btog2" onclick="toggleBilling2()" style="width:42px;height:22px;border-radius:11px;background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);cursor:pointer;position:relative;transition:.3s">
+      <div id="btog2-knob" style="position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--gold);transition:.3s"></div>
+    </div>
+    <span id="la2" style="font-size:11px;letter-spacing:.1em;color:rgba(160,168,179,0.5);font-family:var(--mono)">ANUAL
+      <span id="savt2" style="display:none;background:rgba(34,197,94,0.15);color:#22C55E;border-radius:4px;padding:1px 5px;font-size:9px;margin-left:4px">-17%</span>
+    </span>
   </div>
-  <a class="btn-upgrade" href="https://heillon.com/#hpc" target="_blank">
-    SABER MAIS → R$29/mês
-  </a>
+
+  <!-- Plano Witness (grátis) -->
+  <div style="border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:16px;margin-bottom:12px;background:rgba(34,197,94,0.04)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <div style="font-size:9px;letter-spacing:.18em;color:#22C55E;font-family:var(--mono);margin-bottom:4px">● GRÁTIS PARA SEMPRE</div>
+        <div style="font-size:15px;font-weight:600;color:var(--ink)">HPC Observação</div>
+        <div style="font-size:11px;color:var(--dim);margin-top:4px">Monitorização · Alertas · Context Token</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:22px;font-weight:700;color:#22C55E;font-family:var(--mono)">R$0</div>
+        <div style="font-size:9px;color:var(--dim)">para sempre</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:10px;color:var(--dim);padding:8px 10px;background:rgba(34,197,94,0.04);border-radius:6px">✓ Plano actual activo</div>
+  </div>
+
+  <!-- Plano Sovereign -->
+  <div style="border:1px solid rgba(201,168,76,0.35);border-radius:10px;padding:16px;margin-bottom:12px;background:rgba(201,168,76,0.05)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <div style="font-size:9px;letter-spacing:.18em;color:var(--gold);font-family:var(--mono);margin-bottom:4px">◆ MAIS POPULAR</div>
+        <div style="font-size:15px;font-weight:600;color:var(--ink)">HPC Sovereign</div>
+        <div style="font-size:11px;color:var(--dim);margin-top:4px">HDR permanente · PDF exportável · 1 dispositivo</div>
+      </div>
+      <div style="text-align:right">
+        <div id="ps2" style="font-size:22px;font-weight:700;color:var(--gold);font-family:var(--mono)">R$19,90</div>
+        <div id="pp2" style="font-size:9px;color:var(--dim)">/mês</div>
+      </div>
+    </div>
+    <div style="margin-top:10px;font-size:10px;color:var(--dim);line-height:1.8">
+      ✓ HDR guardado para sempre &nbsp;·&nbsp; ✓ PDF para auditor &nbsp;·&nbsp; ✓ Suporte prioritário
+    </div>
+    <button onclick="startCheckout('sovereign')" id="bS2" style="margin-top:12px;width:100%;padding:11px 0;font-size:12px;font-weight:700;letter-spacing:.08em;font-family:var(--mono);background:linear-gradient(170deg,rgba(201,168,76,.96),rgba(148,115,38,.96));color:#070B12;border:none;border-radius:7px;cursor:pointer">
+      ASSINAR SOVEREIGN →
+    </button>
+  </div>
+
+  <!-- Plano Council -->
+  <div style="border:1px solid rgba(74,158,190,0.25);border-radius:10px;padding:16px;margin-bottom:12px;background:rgba(74,158,190,0.04)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <div style="font-size:9px;letter-spacing:.18em;color:#4A9EBE;font-family:var(--mono);margin-bottom:4px">◈ EQUIPA</div>
+        <div style="font-size:15px;font-weight:600;color:var(--ink)">HPC Council</div>
+        <div style="font-size:11px;color:var(--dim);margin-top:4px">Prova em equipa · 5 dispositivos · Relatórios</div>
+      </div>
+      <div style="text-align:right">
+        <div id="pc2" style="font-size:22px;font-weight:700;color:#4A9EBE;font-family:var(--mono)">R$149,90</div>
+        <div id="pcp2" style="font-size:9px;color:var(--dim)">/mês</div>
+      </div>
+    </div>
+    <div style="margin-top:10px;font-size:10px;color:var(--dim);line-height:1.8">
+      ✓ Tudo do Sovereign &nbsp;·&nbsp; ✓ 5 dispositivos &nbsp;·&nbsp; ✓ Relatórios semanais &nbsp;·&nbsp; ✓ API access
+    </div>
+    <button onclick="startCheckout('council')" id="bC2" style="margin-top:12px;width:100%;padding:11px 0;font-size:12px;font-weight:700;letter-spacing:.08em;font-family:var(--mono);background:linear-gradient(170deg,rgba(74,158,190,.9),rgba(45,110,145,.9));color:#fff;border:none;border-radius:7px;cursor:pointer">
+      ASSINAR COUNCIL →
+    </button>
+  </div>
+
+  <!-- Nota segurança -->
+  <div style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:9px;color:var(--dim);letter-spacing:.08em;margin-top:8px">
+    <span>🔒</span> <span>Stripe · PCI DSS · Cancela a qualquer momento</span>
+  </div>
+
+  <!-- Toast de erro/loading checkout -->
+  <div id="checkoutMsg" style="display:none;margin-top:10px;padding:10px;border-radius:6px;font-size:11px;text-align:center"></div>
 </div>
 
 <div class="safe-bottom" style="height:calc(env(safe-area-inset-bottom, 0px) + 20px)"></div>
