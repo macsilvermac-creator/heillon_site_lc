@@ -151,9 +151,9 @@ section{position:relative;z-index:10}
 .btn-s{font-family:'DM Mono',monospace;font-size:var(--sm);letter-spacing:.1em;text-transform:uppercase;color:var(--lav);text-decoration:none;padding:.9rem 2rem;border:1px solid rgba(123,127,196,0.24);transition:all .3s;display:inline-block}
 .btn-s:hover{border-color:rgba(123,127,196,0.58);color:var(--lav-b)}
 
-.hero-vis{position:absolute;right:var(--pad);top:50%;transform:translateY(-50%);width:min(46%,600px);z-index:4;opacity:0;animation:fadeIn 2s ease forwards 1.2s}
+.hero-vis{position:absolute;right:var(--pad);top:50%;transform:translateY(-50%);width:min(46%,600px);z-index:4;opacity:0;animation:fadeIn 2s ease forwards 1.2s;pointer-events:none;-webkit-mask-image:linear-gradient(to right,transparent 0%,black 24%,black 76%,transparent 100%),linear-gradient(to bottom,transparent 0%,black 16%,black 84%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to right,transparent 0%,black 24%,black 76%,transparent 100%),linear-gradient(to bottom,transparent 0%,black 16%,black 84%,transparent 100%);mask-composite:intersect}
 .hero-vis canvas{width:100%;display:block}
-.hero-vis::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,var(--void) 0%,transparent 18%);pointer-events:none;z-index:2}
+.hero-vis::after{display:none}
 
 .beam{position:absolute;top:0;width:2px;height:100%;pointer-events:none;z-index:6;background:linear-gradient(to bottom,transparent,rgba(168,171,223,0.18) 30%,rgba(168,171,223,0.35) 50%,rgba(168,171,223,0.18) 70%,transparent);animation:beamGo 10s ease-in-out infinite 3.5s;left:-5%}
 @keyframes beamGo{0%{left:-5%}100%{left:110%}}
@@ -911,11 +911,6 @@ document.querySelectorAll('.gpanel').forEach(function(p){var hd=p.querySelector(
   function frameHero(){
     T+=0.016;
     ctx.clearRect(0,0,W,H);
-
-    // Background
-    var bg=ctx.createRadialGradient(W*0.4,H*0.5,0,W*0.4,H*0.5,W*0.8);
-    bg.addColorStop(0,'rgba(10,12,38,0.98)');bg.addColorStop(1,'rgba(3,3,10,1)');
-    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
 
     // Linha de eixo central
     var p0=tunnelCoord(0),p1=tunnelCoord(1);
