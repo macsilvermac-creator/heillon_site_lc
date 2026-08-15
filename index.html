@@ -148,6 +148,25 @@ section{position:relative;z-index:10}
 .hero-cta{margin-top:3.2rem;display:flex;gap:1.4rem;align-items:center;position:relative;z-index:5;opacity:0;animation:fadeUp 1s ease forwards 2s}
 .btn-p{font-family:'DM Mono',monospace;font-size:var(--sm);letter-spacing:.1em;text-transform:uppercase;color:var(--void);background:var(--lav-b);text-decoration:none;padding:.9rem 2rem;transition:all .3s;display:inline-block}
 .btn-p:hover{background:var(--lav-g);transform:translateY(-2px);box-shadow:0 14px 35px rgba(168,171,223,0.22)}
+.corridor-bridge{position:relative;z-index:12;padding:clamp(4rem,8vw,7rem) var(--pad);background:linear-gradient(180deg,rgba(6,8,22,0.1),rgba(12,14,36,0.38),rgba(6,8,22,0.12));overflow:hidden}
+.corridor-bridge::before{content:"";position:absolute;inset:8% 5%;background:radial-gradient(circle at 70% 45%,rgba(168,171,223,0.16),transparent 38%),radial-gradient(circle at 28% 60%,rgba(208,184,248,0.1),transparent 34%);filter:blur(6px);opacity:.58;pointer-events:none}
+.corridor-grid{position:relative;display:grid;grid-template-columns:minmax(0,.86fr) minmax(360px,1.14fr);gap:clamp(2rem,5vw,5rem);align-items:center;max-width:1180px;margin:0 auto}
+.corridor-copy{max-width:560px}.corridor-copy .stitle{margin-top:.85rem;margin-bottom:1rem}.corridor-copy p:not(.lbl){font-size:var(--body);line-height:1.8;color:var(--ink-d)}
+.corridor-actions{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem}
+.corridor-preview{position:relative;min-height:420px;border:1px solid rgba(168,171,223,0.14);background:linear-gradient(135deg,rgba(7,9,24,.92),rgba(13,15,42,.72));box-shadow:0 30px 90px rgba(0,0,0,.35),inset 0 0 0 1px rgba(255,255,255,.025);overflow:hidden}
+.corridor-preview::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(168,171,223,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(168,171,223,.035) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(circle at center,#000 0 58%,transparent 82%)}
+.corridor-preview::after{content:"INTENÇÃO · FOUNDATION · CORE · SEAL";position:absolute;right:1.2rem;top:1rem;font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.22em;color:rgba(168,171,223,.42)}
+.corridor-orbit{position:absolute;left:50%;top:50%;width:310px;height:310px;transform:translate(-50%,-50%);border:1px solid rgba(168,171,223,.18);border-radius:50%;box-shadow:0 0 70px rgba(168,171,223,.08)}
+.corridor-orbit::before,.corridor-orbit::after{content:"";position:absolute;border:1px solid rgba(208,184,248,.16);border-radius:50%;inset:34px}.corridor-orbit::after{inset:78px;border-color:rgba(123,127,196,.18)}
+.corridor-gate{position:absolute;left:50%;top:50%;width:230px;height:230px;transform:translate(-50%,-50%)}
+.corridor-pillar{position:absolute;top:14px;width:42px;height:202px;background:linear-gradient(90deg,#f2f1e9,#b9b7aa);clip-path:polygon(0 16%,100% 0,100% 100%,0 84%);box-shadow:0 0 26px rgba(255,255,255,.08)}
+.corridor-pillar.left{left:12px}.corridor-pillar.right{right:12px;transform:scaleX(-1)}
+.corridor-core{position:absolute;left:50%;top:50%;width:48px;height:28px;transform:translate(-50%,-50%);background:linear-gradient(90deg,#9a86d9,#e8e2ff,#9a86d9);box-shadow:0 0 32px rgba(168,171,223,.35)}
+.corridor-step{position:absolute;font-family:'DM Mono',monospace;font-size:.64rem;letter-spacing:.16em;color:rgba(226,228,255,.72);border:1px solid rgba(168,171,223,.13);background:rgba(8,10,24,.58);padding:.58rem .72rem;backdrop-filter:blur(8px)}
+.corridor-step.s1{left:7%;top:28%}.corridor-step.s2{left:12%;bottom:22%}.corridor-step.s3{right:9%;top:30%}.corridor-step.s4{right:12%;bottom:21%;color:rgba(208,184,248,.82)}
+.corridor-proofline{position:absolute;left:9%;right:9%;bottom:3rem;height:1px;background:linear-gradient(90deg,transparent,rgba(208,184,248,.48),transparent)}
+.corridor-caption{position:absolute;left:50%;bottom:1.25rem;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.18em;color:rgba(208,184,248,.58);white-space:nowrap}
+
 .btn-s{font-family:'DM Mono',monospace;font-size:var(--sm);letter-spacing:.1em;text-transform:uppercase;color:var(--lav);text-decoration:none;padding:.9rem 2rem;border:1px solid rgba(123,127,196,0.24);transition:all .3s;display:inline-block}
 .btn-s:hover{border-color:rgba(123,127,196,0.58);color:var(--lav-b)}
 
@@ -269,6 +288,9 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
   nav{padding:1.2rem 1.5rem}.nm{display:none}
   .cat-grid{grid-template-columns:1fr}
   .hero-cta{flex-direction:column}
+  .corridor-grid{grid-template-columns:1fr}
+  .corridor-preview{min-height:360px}
+  .corridor-step{font-size:.56rem}
 }
 
 /* ── PORTAL MODAL ──────────────────────────────────────────── */
@@ -354,7 +376,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
 <nav>
   <a href="#" class="nl">HEILLON</a>
   <ul class="nm">
-    <li><a href="/cinematic">Corredor</a></li>
+    <li><a href="#corredor">Corredor</a></li>
     <li><a href="#mechanism">Como funciona</a></li>
     <li><a href="#proof">Provas</a></li>
     <li><a href="https://vitrine.heillon.com">Produto</a></li>
@@ -395,13 +417,43 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
     <span style="font-family:'DM Mono',monospace;font-size:.62rem;padding:.2rem .55rem;border:1px solid rgba(208,184,248,0.25);color:#BC8CFF;background:rgba(208,184,248,0.06);">✓ reconstrução verificável, não verdade universal</span>
   </div>
   <div class="hero-cta">
-    <a href="/cinematic" class="btn-p"><span class="lang-pt">Ver o corredor HEILLON</span><span class="lang-en" style="display:none;">View the HEILLON corridor</span></a>
+    <a href="#corredor" class="btn-p"><span class="lang-pt">Ver o corredor HEILLON</span><span class="lang-en" style="display:none;">View the HEILLON corridor</span></a>
     <a href="https://vitrine.heillon.com" class="btn-s"><span class="lang-pt">Conhecer a superfície comercial →</span><span class="lang-en" style="display:none;">View the commercial surface →</span></a>
   </div>
   <p class="hero-anc" style="font-family:'Cormorant Garamond',serif;font-size:1.02rem;font-style:italic;color:var(--lav);opacity:0.72;letter-spacing:0.04em;margin-top:1.75rem;">
     Capacidade técnica não cria autoridade. Evidência não vira verdade universal.
   </p>
   <div class="hero-sc"><div class="sc-line"></div><span class="sc-t">Scroll</span></div>
+</section>
+<div class="sdiv"></div>
+
+<section id="corredor" class="corridor-bridge">
+  <div class="corridor-grid rv">
+    <div class="corridor-copy">
+      <p class="lbl">Corredor HEILLON · experiência oficial</p>
+      <h2 class="stitle">Da intenção ao Decision Seal,<br><strong>antes da consequência.</strong></h2>
+      <p>A home explica a infraestrutura. O corredor mostra a passagem: intenção governada, Foundation e Lastro, decisão CORE, evidência e HDR reconstruível por escopo.</p>
+      <p>É uma demonstração visual do princípio central da HEILLON: capacidade técnica não cria autoridade; a prova nasce do caminho governado.</p>
+      <div class="corridor-actions">
+        <a href="/cinematic" class="btn-p"><span class="lang-pt">Abrir experiência completa</span><span class="lang-en" style="display:none;">Open full experience</span></a>
+        <a href="#mechanism" class="btn-s"><span class="lang-pt">Entender o mecanismo →</span><span class="lang-en" style="display:none;">Understand the mechanism →</span></a>
+      </div>
+    </div>
+    <div class="corridor-preview" aria-label="Prévia visual do corredor HEILLON">
+      <div class="corridor-orbit"></div>
+      <div class="corridor-gate">
+        <div class="corridor-pillar left"></div>
+        <div class="corridor-pillar right"></div>
+        <div class="corridor-core"></div>
+      </div>
+      <div class="corridor-step s1">01 · INTENÇÃO</div>
+      <div class="corridor-step s2">02 · FOUNDATION</div>
+      <div class="corridor-step s3">03 · CORE</div>
+      <div class="corridor-step s4">04 · HDR</div>
+      <div class="corridor-proofline"></div>
+      <div class="corridor-caption">BOUNDARY · VERIFICATION · RECONSTRUCTION</div>
+    </div>
+  </div>
 </section>
 <div class="sdiv"></div>
 
