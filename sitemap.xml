@@ -10,4 +10,10 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://heillon.com/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://heillon.com/"/>
   </url>
+  <url>
+    <loc>https://heillon.com/cinematic</loc>
+    <lastmod>2026-08-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
 </urlset>

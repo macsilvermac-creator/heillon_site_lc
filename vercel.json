@@ -2,6 +2,7 @@
 {
   "version": 2,
   "rewrites": [
+    { "source": "/cinematic", "destination": "/cinematic.html" },
     { "source": "/hpc", "destination": "/hpc-index.html" },
     { "source": "/planos", "destination": "/planos.html" },
     { "source": "/dashboard", "destination": "/pocket.html" }
