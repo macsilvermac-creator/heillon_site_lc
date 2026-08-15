@@ -87,7 +87,11 @@ body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
 @keyframes drF{0%{transform:translateY(0);opacity:0}8%{opacity:1}88%{opacity:.5}100%{transform:translateY(-115vh);opacity:0}}
 
 nav{position:fixed;top:0;left:0;right:0;z-index:900;padding:1.4rem var(--pad);display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(5,5,10,0.92) 0%,transparent 100%);backdrop-filter:blur(14px)}
-.nl{font-family:'Cormorant Garamond',serif;font-size:1.22rem;font-weight:400;letter-spacing:.2em;color:var(--lav-g);text-decoration:none}
+.nl{font-family:'Cormorant Garamond',serif;font-size:1.22rem;font-weight:400;letter-spacing:.2em;color:var(--lav-g);text-decoration:none;display:inline-flex;align-items:center;gap:.72rem}
+.brand-logo{width:34px;height:25px;position:relative;display:inline-block;border:1px solid rgba(123,127,196,.34);background:radial-gradient(ellipse at center,rgba(123,127,196,.16),transparent 62%),linear-gradient(90deg,transparent,rgba(168,171,223,.08),transparent);box-shadow:0 0 18px rgba(123,127,196,.08);flex:0 0 auto}
+.brand-logo::before,.brand-logo::after{content:'';position:absolute;top:4px;width:6px;height:17px;background:var(--ink);clip-path:polygon(0 13%,100% 0,100% 100%,0 87%)}
+.brand-logo::before{left:7px}.brand-logo::after{right:7px;transform:scaleX(-1)}
+.brand-logo i{position:absolute;left:14px;top:11px;width:7px;height:4px;background:linear-gradient(90deg,#5f63a8,var(--lav-b),#5f63a8);box-shadow:0 0 14px rgba(168,171,223,.5)}
 .nm{display:flex;gap:2.5rem;list-style:none}
 .nm a{font-size:var(--xs);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-g);text-decoration:none;transition:color .3s}
 .nm a:hover{color:var(--lav-b)}
@@ -246,9 +250,9 @@ section{position:relative;z-index:10}
 .clink{font-family:'DM Mono',monospace;font-size:var(--sm);letter-spacing:.1em;color:var(--ink-g);text-decoration:none;display:block;text-align:center;padding:.5rem;transition:color .3s}
 .clink:hover{color:var(--lav-b)}
 
-footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);display:flex;justify-content:space-between;align-items:center;position:relative;z-index:10}
-.fl{font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.14em;color:var(--ink-g)}
-.fr{font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.1em;color:var(--lav);opacity:.32}
+footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);display:grid;grid-template-columns:minmax(240px,.8fr) minmax(260px,1fr) minmax(220px,.8fr);gap:1.4rem;align-items:center;position:relative;z-index:10;background:rgba(5,5,10,.72)}
+.footer-brand{display:flex;align-items:center;gap:.85rem}.footer-brand .brand-logo{width:38px;height:28px}.footer-brand .brand-logo::before,.footer-brand .brand-logo::after{height:20px;width:7px}.footer-brand .brand-logo i{left:16px;top:12px;width:8px}.footer-name{font-family:'Cormorant Garamond',serif;font-size:1.12rem;letter-spacing:.22em;color:var(--lav-g);margin:0}.fl{font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.14em;color:var(--ink-g);margin:.25rem 0 0}.footer-company{display:grid;gap:.34rem;font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.08em;color:rgba(226,228,255,.56);line-height:1.55}.footer-company b{font-weight:400;color:rgba(196,198,240,.82)}.fr{font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.1em;color:var(--lav);opacity:.42;text-align:right;line-height:1.8}
+@media(max-width:980px){footer{grid-template-columns:1fr;text-align:left}.fr{text-align:left}}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -2070,7 +2074,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.05);displ
 <div class="orb o3"></div>
 
 <nav>
-  <a href="#" class="nl">HEILLON</a>
+  <a href="#heillon-wow-v20" class="nl"><span class="brand-logo" aria-hidden="true"><i></i></span><span>HEILLON</span></a>
   <ul class="nm">
     <li><a href="#heillon-wow-v20">Corredor</a></li>
     <li><a href="#mechanism">Como funciona</a></li>
@@ -2435,8 +2439,20 @@ async function hlnSubmit(e){
 </section>
 
 <footer>
-  <p class="fl">HEILLON · Infraestrutura de Legitimidade Computacional · Joinville, BR</p>
-  <p class="fr">&copy; 2026 HEILLON &middot; <a href="https://vitrine.heillon.com" style="color:inherit;opacity:.6;text-decoration:none">Produto</a> &middot; <a href="https://hdr.heillon.com" style="color:inherit;opacity:.6;text-decoration:none">HDR</a> &middot; <a href="https://docs.heillon.com" style="color:inherit;opacity:.6;text-decoration:none">Docs</a> &middot; <a href="/privacy.html" style="color:inherit;opacity:.6;text-decoration:none">Privacidade</a> &middot; <a href="/terms.html" style="color:inherit;opacity:.6;text-decoration:none">Termos</a></p>
+  <div class="footer-brand">
+    <span class="brand-logo" aria-hidden="true"><i></i></span>
+    <div>
+      <p class="footer-name">HEILLON</p>
+      <p class="fl">INFRAESTRUTURA COMPUTACIONAL</p>
+    </div>
+  </div>
+  <div class="footer-company" aria-label="Dados públicos HEILLON">
+    <span><b>CNPJ:</b> 16.697.402/0001-27</span>
+    <span><b>Base:</b> Joinville/SC</span>
+    <span><b>Contato:</b> +55 47 99119-9695</span>
+    <span><b>E-mail:</b> contact@heillon.com</span>
+  </div>
+  <p class="fr">&copy; 2026 HEILLON &middot; <a href="https://vitrine.heillon.com" style="color:inherit;opacity:.72;text-decoration:none">Produto</a> &middot; <a href="https://hdr.heillon.com" style="color:inherit;opacity:.72;text-decoration:none">HDR</a> &middot; <a href="https://docs.heillon.com" style="color:inherit;opacity:.72;text-decoration:none">Docs</a> &middot; <a href="/privacy.html" style="color:inherit;opacity:.72;text-decoration:none">Privacidade</a> &middot; <a href="/terms.html" style="color:inherit;opacity:.72;text-decoration:none">Termos</a></p>
 </footer>
 
 <script>
