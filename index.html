@@ -2118,17 +2118,22 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       }
     }
 
-    function updateSoundtrackScroll(value, dynamics) {
-      if (!soundtrack) return;
+    function getCorridorAudioPresence(value) {
       const rect = root.getBoundingClientRect();
       const visiblePx = clamp(Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0), 0, window.innerHeight);
       const visible = visiblePx / Math.max(1, window.innerHeight);
       const corridorPresence = smoothstep(.08, .42, visible);
       const opening = smoothstep(.02, .12, value);
       const finalFade = 1 - smoothstep(.86, .96, value);
+      return corridorPresence * opening * finalFade;
+    }
+
+    function updateSoundtrackScroll(value, dynamics) {
+      if (!soundtrack) return;
+      const scenePresence = getCorridorAudioPresence(value);
       const activity = Math.max(dynamics.cutPulse, dynamics.sealPulse, dynamics.surgePulse);
       const target = audioEnabled
-        ? corridorPresence * opening * finalFade * (0.08 + smoothstep(.12, .82, value) * 0.16 + activity * 0.07)
+        ? scenePresence * (0.08 + smoothstep(.12, .82, value) * 0.16 + activity * 0.07)
         : 0;
       soundtrackVolume += (target - soundtrackVolume) * 0.075;
       soundtrack.volume = clamp(soundtrackVolume, 0, 0.30);
@@ -2150,6 +2155,8 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       const depth = smoothstep(.08, .82, value);
       const finalClarity = smoothstep(.78, .95, value);
       const activity = Math.max(dynamics.cutPulse, dynamics.sealPulse, dynamics.surgePulse);
+      const scenePresence = getCorridorAudioPresence(value);
+      audio.master.gain.setTargetAtTime(audioEnabled ? 0.62 * scenePresence : 0.0001, now, 0.16);
       audio.hum.frequency.setTargetAtTime(58 + depth * 18 + activity * 6, now, 0.10);
       audio.sub.frequency.setTargetAtTime(32 + depth * 5, now, 0.16);
       audio.shimmer.frequency.setTargetAtTime(260 + depth * 220 + finalClarity * 120, now, 0.12);
