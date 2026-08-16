@@ -99,6 +99,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:900;padding:1.4rem var(--pad);di
 .nm a:hover{color:var(--lav-b)}
 .nc{font-size:var(--xs);letter-spacing:.12em;text-transform:uppercase;color:var(--lav);text-decoration:none;border:1px solid rgba(123,127,196,0.26);padding:.48rem 1.18rem;transition:all .3s}
 .nc:hover{background:rgba(123,127,196,0.08);color:var(--lav-g);border-color:rgba(123,127,196,0.52)}
+.sound-nav-toggle{font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.14em;text-transform:uppercase;color:var(--lav-g);background:rgba(123,127,196,.12);border:1px solid rgba(168,171,223,.46);padding:.48rem .9rem;cursor:pointer;transition:all .25s;box-shadow:0 0 18px rgba(123,127,196,.12)}
+.sound-nav-toggle:hover,.sound-nav-toggle[aria-pressed="true"]{color:var(--void);background:var(--lav);border-color:var(--lav);box-shadow:0 0 28px rgba(168,171,223,.22)}
+.sound-nav-toggle:not([aria-pressed="true"]){animation:corridorSoundHint 2.8s ease-in-out infinite}
 @keyframes heillonGlitchText{0%,100%{transform:none;text-shadow:none;filter:none}18%{transform:translate(1px,-1px);text-shadow:-1px 0 rgba(34,197,94,.32),1px 0 rgba(168,171,223,.42)}28%{transform:translate(-1px,1px);text-shadow:1px 0 rgba(34,197,94,.26),-1px 0 rgba(168,171,223,.5)}38%{transform:translate(1px,.5px);filter:brightness(1.35)}52%,86%{transform:none;text-shadow:none;filter:none}}
 @keyframes heillonGlitchMark{0%,100%{transform:none;filter:none;box-shadow:0 0 18px rgba(123,127,196,.08)}16%{transform:translateX(1px) skewX(-3deg);filter:contrast(1.35) brightness(1.15);box-shadow:-3px 0 rgba(34,197,94,.26),3px 0 rgba(168,171,223,.38),0 0 24px rgba(168,171,223,.22)}30%{transform:translateX(-1px) skewX(3deg);box-shadow:3px 0 rgba(34,197,94,.22),-3px 0 rgba(168,171,223,.34),0 0 18px rgba(123,127,196,.16)}48%{transform:none;filter:brightness(1.2)}}
 .nl span:last-child,.nm a,.nc,#lang-toggle{position:relative;display:inline-block;will-change:transform,text-shadow,filter}
@@ -1911,7 +1914,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       'Decision Record',
       'Decision Seal'
     ];
-    const soundButton = root.querySelector('[data-corridor-sound]');
+    const soundButtons = Array.from(document.querySelectorAll('[data-corridor-sound]'));
     let audio = null;
     let audioEnabled = false;
     let lastAudioStage = -1;
@@ -2035,11 +2038,11 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
         const now = sound.context.currentTime;
         sound.master.gain.cancelScheduledValues(now);
         sound.master.gain.setTargetAtTime(nextEnabled ? 0.62 : 0.0001, now, nextEnabled ? 0.08 : 0.08);
-        if (soundButton) {
-          soundButton.setAttribute('aria-pressed', String(nextEnabled));
-          soundButton.textContent = nextEnabled ? 'som ligado 🔊' : 'ativar som 🔊';
-          soundButton.setAttribute('aria-label', nextEnabled ? 'Desativar som do corredor' : 'Ativar som do corredor');
-        }
+        soundButtons.forEach((button) => {
+          button.setAttribute('aria-pressed', String(nextEnabled));
+          button.textContent = nextEnabled ? 'som ligado 🔊' : (button.classList.contains('sound-nav-toggle') ? 'som 🔊' : 'ativar som 🔊');
+          button.setAttribute('aria-label', nextEnabled ? 'Desativar som do corredor' : 'Ativar som do corredor');
+        });
         if (nextEnabled) {
           playWakeTone();
           triggerStageTone(Math.max(0, lastAudioStage));
@@ -2074,18 +2077,18 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       }
     }
 
-    if (soundButton) {
-      soundButton.addEventListener('pointerdown', (event) => {
+    soundButtons.forEach((button) => {
+      button.addEventListener('pointerdown', (event) => {
         event.preventDefault();
         setCorridorAudioState(!audioEnabled);
       });
-      soundButton.addEventListener('keydown', (event) => {
+      button.addEventListener('keydown', (event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
           setCorridorAudioState(!audioEnabled);
         }
       });
-    }
+    });
     let width = 0;
     let height = 0;
     let p = 0;
@@ -2325,6 +2328,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
   </ul>
   <a href="#cta" class="nm-item" style="font-size:var(--xs);letter-spacing:.14em;text-transform:uppercase;color:var(--lav);text-decoration:none;opacity:0.85;transition:opacity .3s;">Piloto</a>
   <div style="display:flex;align-items:center;gap:1rem;">
+    <button class="sound-nav-toggle" type="button" data-corridor-sound aria-pressed="false" aria-label="Ativar som do corredor">som 🔊</button>
     <button id="lang-toggle" onclick="toggleLang()" style="font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.14em;text-transform:uppercase;color:var(--lav);background:transparent;border:1px solid rgba(123,127,196,0.22);padding:.3rem .75rem;cursor:pointer;transition:all .3s;">EN</button>
     <a href="https://hcc.heillon.com" class="nc" style="background:var(--lav);color:var(--void);border:none;text-decoration:none;"><span class="lang-pt">Entrar no HCC</span><span class="lang-en" style="display:none">Enter HCC</span></a>
     <a href="#cta" class="nc">Contact</a>
