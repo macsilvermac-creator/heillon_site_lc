@@ -931,14 +931,16 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
   }
 
   #heillon-wow-v20 .sound-toggle {
-    border: 1px solid rgba(168,171,223,.22);
-    background: rgba(6,16,24,.34);
-    color: rgba(236,234,245,.58);
-    font: 600 10px "DM Mono", ui-monospace, monospace;
+    border: 1px solid rgba(168,171,223,.34);
+    background: rgba(123,127,196,.10);
+    color: rgba(236,234,245,.76);
+    font: 700 10px "DM Mono", ui-monospace, monospace;
     letter-spacing: .14em;
     text-transform: uppercase;
-    padding: 8px 11px;
+    padding: 9px 12px;
     cursor: pointer;
+    min-width: 112px;
+    text-align: center;
     transition: border-color .25s ease, color .25s ease, background .25s ease, box-shadow .25s ease;
   }
 
@@ -1688,7 +1690,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
         <span>core</span>
         <span>seal</span>
       </nav>
-      <button class="sound-toggle" type="button" data-corridor-sound aria-pressed="false" aria-label="Ativar som do corredor">som off</button>
+      <button class="sound-toggle" type="button" data-corridor-sound aria-pressed="false" aria-label="Ativar som do corredor">ativar som</button>
     </header>
 
     <div class="evidence-cargo" aria-hidden="true">
@@ -1907,10 +1909,10 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       const noise = context.createBufferSource();
 
       master.gain.value = 0.0001;
-      humGain.gain.value = 0.020;
-      subGain.gain.value = 0.012;
-      airGain.gain.value = 0.006;
-      shimmerGain.gain.value = 0.0001;
+      humGain.gain.value = 0.052;
+      subGain.gain.value = 0.030;
+      airGain.gain.value = 0.018;
+      shimmerGain.gain.value = 0.001;
 
       hum.type = 'sine';
       sub.type = 'triangle';
@@ -1954,8 +1956,8 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       osc.type = stageIndex >= 4 ? 'sine' : 'triangle';
       osc.frequency.setValueAtTime(frequencies[stageIndex] || 196, now);
       gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(stageIndex >= 4 ? 0.035 : 0.022, now + 0.035);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.62);
+      gain.gain.exponentialRampToValueAtTime(stageIndex >= 4 ? 0.105 : 0.074, now + 0.035);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.74);
       osc.connect(gain).connect(audio.master);
       osc.start(now);
       osc.stop(now + 0.70);
@@ -1965,16 +1967,22 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       const sound = initCorridorAudio();
       if (!sound) return;
       audioEnabled = nextEnabled;
-      if (sound.context.state === 'suspended' && nextEnabled) sound.context.resume();
-      const now = sound.context.currentTime;
-      sound.master.gain.cancelScheduledValues(now);
-      sound.master.gain.setTargetAtTime(nextEnabled ? 0.16 : 0.0001, now, nextEnabled ? 0.18 : 0.08);
-      if (soundButton) {
-        soundButton.setAttribute('aria-pressed', String(nextEnabled));
-        soundButton.textContent = nextEnabled ? 'som on' : 'som off';
-        soundButton.setAttribute('aria-label', nextEnabled ? 'Desativar som do corredor' : 'Ativar som do corredor');
+      const applyState = () => {
+        const now = sound.context.currentTime;
+        sound.master.gain.cancelScheduledValues(now);
+        sound.master.gain.setTargetAtTime(nextEnabled ? 0.34 : 0.0001, now, nextEnabled ? 0.12 : 0.08);
+        if (soundButton) {
+          soundButton.setAttribute('aria-pressed', String(nextEnabled));
+          soundButton.textContent = nextEnabled ? 'som ligado' : 'ativar som';
+          soundButton.setAttribute('aria-label', nextEnabled ? 'Desativar som do corredor' : 'Ativar som do corredor');
+        }
+        if (nextEnabled) triggerStageTone(Math.max(0, lastAudioStage));
+      };
+      if (sound.context.state === 'suspended' && nextEnabled) {
+        sound.context.resume().then(applyState).catch(applyState);
+      } else {
+        applyState();
       }
-      if (nextEnabled) triggerStageTone(Math.max(0, lastAudioStage));
     }
 
     function updateCorridorAudio(stageIndex, value, dynamics) {
@@ -1989,10 +1997,10 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       audio.shimmer.frequency.setTargetAtTime(180 + depth * 260 + finalClarity * 180, now, 0.12);
       audio.humFilter.frequency.setTargetAtTime(480 + depth * 520 + activity * 280, now, 0.12);
       audio.airFilter.frequency.setTargetAtTime(720 + depth * 900, now, 0.20);
-      audio.humGain.gain.setTargetAtTime(0.020 + depth * 0.014, now, 0.16);
-      audio.subGain.gain.setTargetAtTime(0.013 * (1 - finalClarity * .72), now, 0.16);
-      audio.airGain.gain.setTargetAtTime(0.005 + dynamics.dustPulse * 0.014, now, 0.20);
-      audio.shimmerGain.gain.setTargetAtTime(0.001 + finalClarity * 0.018 + dynamics.sealPulse * 0.012, now, 0.12);
+      audio.humGain.gain.setTargetAtTime(0.052 + depth * 0.026, now, 0.16);
+      audio.subGain.gain.setTargetAtTime(0.030 * (1 - finalClarity * .68), now, 0.16);
+      audio.airGain.gain.setTargetAtTime(0.014 + dynamics.dustPulse * 0.030, now, 0.20);
+      audio.shimmerGain.gain.setTargetAtTime(0.004 + finalClarity * 0.042 + dynamics.sealPulse * 0.026, now, 0.12);
       if (stageIndex !== lastAudioStage) {
         lastAudioStage = stageIndex;
         triggerStageTone(stageIndex);
