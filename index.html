@@ -1943,7 +1943,6 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
     let audioEnabled = false;
     let lastAudioStage = -1;
     let soundtrackVolume = 0;
-    let soundtrackUnlocked = false;
     const useCorridorSynth = false;
 
     function createNoiseBuffer(audioContext) {
@@ -2083,9 +2082,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
         }
       }
       soundtrackVolume = 0;
-      soundtrackUnlocked = false;
       if (soundtrack) {
-        soundtrack.muted = true;
         soundtrack.pause();
         soundtrack.currentTime = 0;
         soundtrack.volume = 0;
@@ -2143,11 +2140,11 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
 
       if (soundtrack) {
         soundtrack.currentTime = Math.min(soundtrack.currentTime || 0, 0.2);
-        soundtrack.muted = true;
-        soundtrack.volume = 0;
+        soundtrack.muted = false;
+        soundtrack.volume = 0.001;
         const started = soundtrack.play();
         if (started && typeof started.catch === 'function') {
-          started.then(() => { soundtrackUnlocked = true; }).catch(() => { soundtrackUnlocked = false; });
+          started.catch(() => {});
         }
         requestAnimationFrame(syncCorridorAudioFromScroll);
       }
@@ -2171,16 +2168,15 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
         ? scenePresence * (0.08 + smoothstep(.12, .82, value) * 0.16 + activity * 0.07)
         : 0;
       soundtrackVolume += (target - soundtrackVolume) * 0.075;
-      soundtrack.muted = !audioEnabled || target <= .006;
       soundtrack.volume = clamp(soundtrackVolume, 0, 0.30);
       soundtrack.playbackRate = clamp(0.92 + value * 0.12 + dynamics.cutPulse * 0.035 - dynamics.sealPulse * 0.025, 0.88, 1.08);
       if (audioEnabled && soundtrack.paused && target > .015) {
         const started = soundtrack.play();
         if (started && typeof started.catch === 'function') {
-          started.then(() => { soundtrackUnlocked = true; }).catch(() => { soundtrackUnlocked = false; });
+          started.catch(() => {});
         }
       }
-      if (!audioEnabled || (target < .004 && soundtrackVolume < .006)) {
+      if (!audioEnabled) {
         soundtrack.pause();
       }
     }
