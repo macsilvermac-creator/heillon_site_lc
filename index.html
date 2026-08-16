@@ -2070,29 +2070,60 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       });
     }
 
+    function stopCorridorAudioNow(sound = audio) {
+      if (sound) {
+        const now = sound.context.currentTime;
+        sound.master.gain.cancelScheduledValues(now);
+        sound.master.gain.setValueAtTime(0.0001, now);
+        if (sound.context.state === 'running') {
+          sound.context.suspend().catch(() => {});
+        }
+      }
+      soundtrackVolume = 0;
+      if (soundtrack) {
+        soundtrack.pause();
+        soundtrack.currentTime = 0;
+        soundtrack.volume = 0;
+      }
+    }
+
+    function syncCorridorAudioFromScroll() {
+      if (!audioEnabled) return;
+      updateCorridorAudio(lastAudioStage < 0 ? 0 : lastAudioStage, p, {
+        cutPulse: Number(root.style.getPropertyValue('--cut')) || 0,
+        sealPulse: Number(root.style.getPropertyValue('--seal')) || 0,
+        surgePulse: Number(root.style.getPropertyValue('--surge')) || 0,
+        dustPulse: Number(root.style.getPropertyValue('--dust')) || 0
+      });
+    }
+
     function setCorridorAudioState(nextEnabled) {
+      if (!nextEnabled) {
+        audioEnabled = false;
+        updateSoundButtons(false);
+        stopCorridorAudioNow();
+        return;
+      }
+
       const sound = initCorridorAudio();
       if (!sound && !soundtrack) {
         audioEnabled = false;
         updateSoundButtons(false, true);
         return;
       }
-      audioEnabled = nextEnabled;
-      updateSoundButtons(nextEnabled);
+      audioEnabled = true;
+      updateSoundButtons(true);
 
       const applyWebAudioState = () => {
         if (!sound) return;
         const now = sound.context.currentTime;
         sound.master.gain.cancelScheduledValues(now);
-        sound.master.gain.setTargetAtTime(nextEnabled ? 0.62 : 0.0001, now, nextEnabled ? 0.08 : 0.08);
-        if (nextEnabled) {
-          playWakeTone();
-          triggerStageTone(Math.max(0, lastAudioStage));
-        }
+        sound.master.gain.setValueAtTime(0.0001, now);
+        requestAnimationFrame(syncCorridorAudioFromScroll);
       };
 
       if (sound) {
-        if (sound.context.state === 'suspended' && nextEnabled) {
+        if (sound.context.state === 'suspended') {
           sound.context.resume().then(applyWebAudioState).catch(applyWebAudioState);
         } else {
           applyWebAudioState();
@@ -2100,23 +2131,18 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       }
 
       if (soundtrack) {
-        if (nextEnabled) {
-          soundtrack.currentTime = Math.min(soundtrack.currentTime || 0, 0.2);
-          soundtrack.volume = Math.max(soundtrack.volume || 0, 0.015);
-          const started = soundtrack.play();
-          if (started && typeof started.catch === 'function') {
-            started.catch(() => {
-              if (!sound) {
-                audioEnabled = false;
-                updateSoundButtons(false, true);
-              }
-            });
-          }
-        } else {
-          soundtrackVolume = 0;
-          soundtrack.volume = 0;
-          soundtrack.pause();
+        soundtrack.currentTime = Math.min(soundtrack.currentTime || 0, 0.2);
+        soundtrack.volume = 0;
+        const started = soundtrack.play();
+        if (started && typeof started.catch === 'function') {
+          started.catch(() => {
+            if (!sound) {
+              audioEnabled = false;
+              updateSoundButtons(false, true);
+            }
+          });
         }
+        requestAnimationFrame(syncCorridorAudioFromScroll);
       }
     }
 
@@ -2174,20 +2200,10 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       }
     }
 
-    let lastSoundToggleAt = 0;
     function handleSoundToggle(event) {
-      const now = performance.now();
-      if (event.type === 'click' && now - lastSoundToggleAt < 320) return;
-      lastSoundToggleAt = now;
       event.preventDefault();
       setCorridorAudioState(!audioEnabled);
     }
-
-    document.addEventListener('pointerdown', (event) => {
-      const button = event.target.closest('[data-corridor-sound]');
-      if (!button) return;
-      handleSoundToggle(event);
-    });
 
     document.addEventListener('click', (event) => {
       const button = event.target.closest('[data-corridor-sound]');
