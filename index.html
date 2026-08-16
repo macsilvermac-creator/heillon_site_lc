@@ -1934,7 +1934,9 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       'Decision Record',
       'Decision Seal'
     ];
-    const soundButtons = Array.from(document.querySelectorAll('[data-corridor-sound]'));
+    function getSoundButtons() {
+      return Array.from(document.querySelectorAll('[data-corridor-sound]'));
+    }
     const soundtrack = document.getElementById('corridor-soundtrack');
     if (soundtrack) soundtrack.volume = 0.78;
     let audio = null;
@@ -2053,7 +2055,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
     }
 
     function updateSoundButtons(nextEnabled, blocked = false) {
-      soundButtons.forEach((button) => {
+      getSoundButtons().forEach((button) => {
         button.setAttribute('aria-pressed', String(nextEnabled && !blocked));
         if (blocked) {
           button.textContent = button.classList.contains('sound-nav-toggle') ? 'som bloqueado' : 'áudio bloqueado';
@@ -2142,15 +2144,25 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       setCorridorAudioState(!audioEnabled);
     }
 
-    soundButtons.forEach((button) => {
-      button.addEventListener('pointerdown', handleSoundToggle);
-      button.addEventListener('click', handleSoundToggle);
-      button.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          handleSoundToggle(event);
-        }
-      });
+    document.addEventListener('pointerdown', (event) => {
+      const button = event.target.closest('[data-corridor-sound]');
+      if (!button) return;
+      handleSoundToggle(event);
     });
+
+    document.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-corridor-sound]');
+      if (!button) return;
+      handleSoundToggle(event);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      const button = event.target.closest('[data-corridor-sound]');
+      if (!button) return;
+      handleSoundToggle(event);
+    });
+
     let width = 0;
     let height = 0;
     let p = 0;
