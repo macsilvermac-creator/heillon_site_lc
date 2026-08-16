@@ -99,6 +99,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:900;padding:1.4rem var(--pad);di
 .nm a:hover{color:var(--lav-b)}
 .nc{font-size:var(--xs);letter-spacing:.12em;text-transform:uppercase;color:var(--lav);text-decoration:none;border:1px solid rgba(123,127,196,0.26);padding:.48rem 1.18rem;transition:all .3s}
 .nc:hover{background:rgba(123,127,196,0.08);color:var(--lav-g);border-color:rgba(123,127,196,0.52)}
+@keyframes heillonGlitchText{0%,100%{transform:none;text-shadow:none;filter:none}18%{transform:translate(1px,-1px);text-shadow:-1px 0 rgba(34,197,94,.32),1px 0 rgba(168,171,223,.42)}28%{transform:translate(-1px,1px);text-shadow:1px 0 rgba(34,197,94,.26),-1px 0 rgba(168,171,223,.5)}38%{transform:translate(1px,.5px);filter:brightness(1.35)}52%,86%{transform:none;text-shadow:none;filter:none}}
+@keyframes heillonGlitchMark{0%,100%{transform:none;filter:none;box-shadow:0 0 18px rgba(123,127,196,.08)}16%{transform:translateX(1px) skewX(-3deg);filter:contrast(1.35) brightness(1.15);box-shadow:-3px 0 rgba(34,197,94,.26),3px 0 rgba(168,171,223,.38),0 0 24px rgba(168,171,223,.22)}30%{transform:translateX(-1px) skewX(3deg);box-shadow:3px 0 rgba(34,197,94,.22),-3px 0 rgba(168,171,223,.34),0 0 18px rgba(123,127,196,.16)}48%{transform:none;filter:brightness(1.2)}}
+.nl span:last-child,.nm a,.nc,#lang-toggle{position:relative;display:inline-block;will-change:transform,text-shadow,filter}
+.nl:hover span:last-child,.nl:focus-visible span:last-child,.nm a:hover,.nm a:focus-visible,.nc:hover,.nc:focus-visible,#lang-toggle:hover,#lang-toggle:focus-visible{animation:heillonGlitchText .54s steps(2,end)}
+.nl:hover .brand-logo,.nl:focus-visible .brand-logo{animation:heillonGlitchMark .62s steps(2,end)}
 
 section{position:relative;z-index:10}
 
@@ -952,6 +957,36 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
     box-shadow: 0 0 18px rgba(123,127,196,.10);
   }
 
+  #heillon-wow-v20 .sound-toggle:not([aria-pressed="true"]) {
+    animation: corridorSoundHint 2.8s ease-in-out infinite;
+  }
+
+  @keyframes corridorSoundHint {
+    0%, 100% { box-shadow: 0 0 0 rgba(168,171,223,0); border-color: rgba(168,171,223,.28); }
+    50% { box-shadow: 0 0 22px rgba(168,171,223,.18); border-color: rgba(168,171,223,.56); }
+  }
+
+  #heillon-wow-v20 .brand strong,
+  #heillon-wow-v20 .nav span,
+  #heillon-wow-v20 .sound-toggle {
+    position: relative;
+    display: inline-block;
+    will-change: transform, text-shadow, filter;
+  }
+
+  #heillon-wow-v20 .brand:hover strong,
+  #heillon-wow-v20 .brand:focus-within strong,
+  #heillon-wow-v20 .nav span:hover,
+  #heillon-wow-v20 .sound-toggle:hover,
+  #heillon-wow-v20 .sound-toggle:focus-visible {
+    animation: heillonGlitchText .54s steps(2,end);
+  }
+
+  #heillon-wow-v20 .brand:hover .brand-glyph,
+  #heillon-wow-v20 .brand:focus-within .brand-glyph {
+    animation: heillonGlitchMark .62s steps(2,end);
+  }
+
   #heillon-wow-v20 .camera {
     inset: 68px 0 0;
     z-index: 10;
@@ -1690,7 +1725,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
         <span>core</span>
         <span>seal</span>
       </nav>
-      <button class="sound-toggle" type="button" data-corridor-sound aria-pressed="false" aria-label="Ativar som do corredor">ativar som</button>
+      <button class="sound-toggle" type="button" data-corridor-sound aria-pressed="false" aria-label="Ativar som do corredor">ativar som 🔊</button>
     </header>
 
     <div class="evidence-cargo" aria-hidden="true">
@@ -1897,6 +1932,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       if (!AudioContext) return null;
       const context = new AudioContext();
       const master = context.createGain();
+      const compressor = context.createDynamicsCompressor();
       const humGain = context.createGain();
       const subGain = context.createGain();
       const airGain = context.createGain();
@@ -1909,10 +1945,15 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       const noise = context.createBufferSource();
 
       master.gain.value = 0.0001;
-      humGain.gain.value = 0.052;
-      subGain.gain.value = 0.030;
-      airGain.gain.value = 0.018;
-      shimmerGain.gain.value = 0.001;
+      compressor.threshold.value = -18;
+      compressor.knee.value = 18;
+      compressor.ratio.value = 6;
+      compressor.attack.value = 0.006;
+      compressor.release.value = 0.18;
+      humGain.gain.value = 0.072;
+      subGain.gain.value = 0.026;
+      airGain.gain.value = 0.026;
+      shimmerGain.gain.value = 0.004;
 
       hum.type = 'sine';
       sub.type = 'triangle';
@@ -1935,14 +1976,14 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       sub.connect(subGain).connect(master);
       shimmer.connect(shimmerGain).connect(master);
       noise.connect(airFilter).connect(airGain).connect(master);
-      master.connect(context.destination);
+      master.connect(compressor).connect(context.destination);
 
       hum.start();
       sub.start();
       shimmer.start();
       noise.start();
 
-      audio = { context, master, hum, sub, shimmer, humFilter, airFilter, humGain, subGain, airGain, shimmerGain };
+      audio = { context, master, compressor, hum, sub, shimmer, humFilter, airFilter, humGain, subGain, airGain, shimmerGain };
       return audio;
     }
 
@@ -1963,6 +2004,29 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       osc.stop(now + 0.70);
     }
 
+    function playWakeTone() {
+      if (!audio || !audioEnabled) return;
+      const context = audio.context;
+      const now = context.currentTime + 0.018;
+      const frequencies = [196.00, 293.66, 392.00, 523.25];
+      frequencies.forEach((frequency, index) => {
+        const osc = context.createOscillator();
+        const gain = context.createGain();
+        const filter = context.createBiquadFilter();
+        osc.type = index === 0 ? 'triangle' : 'sine';
+        osc.frequency.setValueAtTime(frequency, now);
+        osc.frequency.exponentialRampToValueAtTime(frequency * 1.16, now + 0.34);
+        filter.type = 'lowpass';
+        filter.frequency.value = 1800;
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(index === 0 ? 0.20 : 0.11, now + 0.038 + index * 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.62 + index * 0.045);
+        osc.connect(filter).connect(gain).connect(audio.master);
+        osc.start(now);
+        osc.stop(now + 0.82 + index * 0.045);
+      });
+    }
+
     function setCorridorAudioState(nextEnabled) {
       const sound = initCorridorAudio();
       if (!sound) return;
@@ -1970,13 +2034,16 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       const applyState = () => {
         const now = sound.context.currentTime;
         sound.master.gain.cancelScheduledValues(now);
-        sound.master.gain.setTargetAtTime(nextEnabled ? 0.34 : 0.0001, now, nextEnabled ? 0.12 : 0.08);
+        sound.master.gain.setTargetAtTime(nextEnabled ? 0.62 : 0.0001, now, nextEnabled ? 0.08 : 0.08);
         if (soundButton) {
           soundButton.setAttribute('aria-pressed', String(nextEnabled));
-          soundButton.textContent = nextEnabled ? 'som ligado' : 'ativar som';
+          soundButton.textContent = nextEnabled ? 'som ligado 🔊' : 'ativar som 🔊';
           soundButton.setAttribute('aria-label', nextEnabled ? 'Desativar som do corredor' : 'Ativar som do corredor');
         }
-        if (nextEnabled) triggerStageTone(Math.max(0, lastAudioStage));
+        if (nextEnabled) {
+          playWakeTone();
+          triggerStageTone(Math.max(0, lastAudioStage));
+        }
       };
       if (sound.context.state === 'suspended' && nextEnabled) {
         sound.context.resume().then(applyState).catch(applyState);
@@ -1997,10 +2064,10 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       audio.shimmer.frequency.setTargetAtTime(180 + depth * 260 + finalClarity * 180, now, 0.12);
       audio.humFilter.frequency.setTargetAtTime(480 + depth * 520 + activity * 280, now, 0.12);
       audio.airFilter.frequency.setTargetAtTime(720 + depth * 900, now, 0.20);
-      audio.humGain.gain.setTargetAtTime(0.052 + depth * 0.026, now, 0.16);
-      audio.subGain.gain.setTargetAtTime(0.030 * (1 - finalClarity * .68), now, 0.16);
-      audio.airGain.gain.setTargetAtTime(0.014 + dynamics.dustPulse * 0.030, now, 0.20);
-      audio.shimmerGain.gain.setTargetAtTime(0.004 + finalClarity * 0.042 + dynamics.sealPulse * 0.026, now, 0.12);
+      audio.humGain.gain.setTargetAtTime(0.072 + depth * 0.032, now, 0.16);
+      audio.subGain.gain.setTargetAtTime(0.026 * (1 - finalClarity * .68), now, 0.16);
+      audio.airGain.gain.setTargetAtTime(0.022 + dynamics.dustPulse * 0.034, now, 0.20);
+      audio.shimmerGain.gain.setTargetAtTime(0.006 + finalClarity * 0.052 + dynamics.sealPulse * 0.034, now, 0.12);
       if (stageIndex !== lastAudioStage) {
         lastAudioStage = stageIndex;
         triggerStageTone(stageIndex);
@@ -2008,7 +2075,16 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
     }
 
     if (soundButton) {
-      soundButton.addEventListener('click', () => setCorridorAudioState(!audioEnabled));
+      soundButton.addEventListener('pointerdown', (event) => {
+        event.preventDefault();
+        setCorridorAudioState(!audioEnabled);
+      });
+      soundButton.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          setCorridorAudioState(!audioEnabled);
+        }
+      });
     }
     let width = 0;
     let height = 0;
