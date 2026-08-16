@@ -930,6 +930,26 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
     text-transform: uppercase;
   }
 
+  #heillon-wow-v20 .sound-toggle {
+    border: 1px solid rgba(168,171,223,.22);
+    background: rgba(6,16,24,.34);
+    color: rgba(236,234,245,.58);
+    font: 600 10px "DM Mono", ui-monospace, monospace;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    padding: 8px 11px;
+    cursor: pointer;
+    transition: border-color .25s ease, color .25s ease, background .25s ease, box-shadow .25s ease;
+  }
+
+  #heillon-wow-v20 .sound-toggle:hover,
+  #heillon-wow-v20 .sound-toggle[aria-pressed="true"] {
+    border-color: rgba(168,171,223,.58);
+    color: var(--proof);
+    background: rgba(123,127,196,.10);
+    box-shadow: 0 0 18px rgba(123,127,196,.10);
+  }
+
   #heillon-wow-v20 .camera {
     inset: 68px 0 0;
     z-index: 10;
@@ -1668,6 +1688,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
         <span>core</span>
         <span>seal</span>
       </nav>
+      <button class="sound-toggle" type="button" data-corridor-sound aria-pressed="false" aria-label="Ativar som do corredor">som off</button>
     </header>
 
     <div class="evidence-cargo" aria-hidden="true">
@@ -1853,6 +1874,134 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       'Decision Record',
       'Decision Seal'
     ];
+    const soundButton = root.querySelector('[data-corridor-sound]');
+    let audio = null;
+    let audioEnabled = false;
+    let lastAudioStage = -1;
+
+    function createNoiseBuffer(audioContext) {
+      const length = audioContext.sampleRate * 2;
+      const buffer = audioContext.createBuffer(1, length, audioContext.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < length; i += 1) {
+        data[i] = (Math.random() * 2 - 1) * 0.18;
+      }
+      return buffer;
+    }
+
+    function initCorridorAudio() {
+      if (audio) return audio;
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return null;
+      const context = new AudioContext();
+      const master = context.createGain();
+      const humGain = context.createGain();
+      const subGain = context.createGain();
+      const airGain = context.createGain();
+      const shimmerGain = context.createGain();
+      const humFilter = context.createBiquadFilter();
+      const airFilter = context.createBiquadFilter();
+      const hum = context.createOscillator();
+      const sub = context.createOscillator();
+      const shimmer = context.createOscillator();
+      const noise = context.createBufferSource();
+
+      master.gain.value = 0.0001;
+      humGain.gain.value = 0.020;
+      subGain.gain.value = 0.012;
+      airGain.gain.value = 0.006;
+      shimmerGain.gain.value = 0.0001;
+
+      hum.type = 'sine';
+      sub.type = 'triangle';
+      shimmer.type = 'sine';
+      hum.frequency.value = 48;
+      sub.frequency.value = 24;
+      shimmer.frequency.value = 220;
+
+      humFilter.type = 'lowpass';
+      humFilter.frequency.value = 620;
+      humFilter.Q.value = 0.7;
+      airFilter.type = 'bandpass';
+      airFilter.frequency.value = 920;
+      airFilter.Q.value = 0.45;
+
+      noise.buffer = createNoiseBuffer(context);
+      noise.loop = true;
+
+      hum.connect(humFilter).connect(humGain).connect(master);
+      sub.connect(subGain).connect(master);
+      shimmer.connect(shimmerGain).connect(master);
+      noise.connect(airFilter).connect(airGain).connect(master);
+      master.connect(context.destination);
+
+      hum.start();
+      sub.start();
+      shimmer.start();
+      noise.start();
+
+      audio = { context, master, hum, sub, shimmer, humFilter, airFilter, humGain, subGain, airGain, shimmerGain };
+      return audio;
+    }
+
+    function triggerStageTone(stageIndex) {
+      if (!audio || !audioEnabled) return;
+      const context = audio.context;
+      const now = context.currentTime;
+      const frequencies = [82.41, 110.00, 146.83, 196.00, 246.94, 329.63];
+      const osc = context.createOscillator();
+      const gain = context.createGain();
+      osc.type = stageIndex >= 4 ? 'sine' : 'triangle';
+      osc.frequency.setValueAtTime(frequencies[stageIndex] || 196, now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(stageIndex >= 4 ? 0.035 : 0.022, now + 0.035);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.62);
+      osc.connect(gain).connect(audio.master);
+      osc.start(now);
+      osc.stop(now + 0.70);
+    }
+
+    function setCorridorAudioState(nextEnabled) {
+      const sound = initCorridorAudio();
+      if (!sound) return;
+      audioEnabled = nextEnabled;
+      if (sound.context.state === 'suspended' && nextEnabled) sound.context.resume();
+      const now = sound.context.currentTime;
+      sound.master.gain.cancelScheduledValues(now);
+      sound.master.gain.setTargetAtTime(nextEnabled ? 0.16 : 0.0001, now, nextEnabled ? 0.18 : 0.08);
+      if (soundButton) {
+        soundButton.setAttribute('aria-pressed', String(nextEnabled));
+        soundButton.textContent = nextEnabled ? 'som on' : 'som off';
+        soundButton.setAttribute('aria-label', nextEnabled ? 'Desativar som do corredor' : 'Ativar som do corredor');
+      }
+      if (nextEnabled) triggerStageTone(Math.max(0, lastAudioStage));
+    }
+
+    function updateCorridorAudio(stageIndex, value, dynamics) {
+      if (!audio || !audioEnabled) return;
+      const context = audio.context;
+      const now = context.currentTime;
+      const depth = smoothstep(.08, .82, value);
+      const finalClarity = smoothstep(.78, .95, value);
+      const activity = Math.max(dynamics.cutPulse, dynamics.sealPulse, dynamics.surgePulse);
+      audio.hum.frequency.setTargetAtTime(45 + depth * 26 + activity * 10, now, 0.10);
+      audio.sub.frequency.setTargetAtTime(22 + depth * 8, now, 0.16);
+      audio.shimmer.frequency.setTargetAtTime(180 + depth * 260 + finalClarity * 180, now, 0.12);
+      audio.humFilter.frequency.setTargetAtTime(480 + depth * 520 + activity * 280, now, 0.12);
+      audio.airFilter.frequency.setTargetAtTime(720 + depth * 900, now, 0.20);
+      audio.humGain.gain.setTargetAtTime(0.020 + depth * 0.014, now, 0.16);
+      audio.subGain.gain.setTargetAtTime(0.013 * (1 - finalClarity * .72), now, 0.16);
+      audio.airGain.gain.setTargetAtTime(0.005 + dynamics.dustPulse * 0.014, now, 0.20);
+      audio.shimmerGain.gain.setTargetAtTime(0.001 + finalClarity * 0.018 + dynamics.sealPulse * 0.012, now, 0.12);
+      if (stageIndex !== lastAudioStage) {
+        lastAudioStage = stageIndex;
+        triggerStageTone(stageIndex);
+      }
+    }
+
+    if (soundButton) {
+      soundButton.addEventListener('click', () => setCorridorAudioState(!audioEnabled));
+    }
     let width = 0;
     let height = 0;
     let p = 0;
@@ -1967,6 +2116,12 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
         stageCurrentNumber.textContent = String(stageIndex + 1).padStart(2, '0');
         stageCurrentLabel.textContent = stageNames[stageIndex];
       }
+      updateCorridorAudio(stageIndex, p, {
+        cutPulse,
+        sealPulse,
+        surgePulse,
+        dustPulse
+      });
 
       cargoItems.forEach((item) => {
         const local = smoothstep(item.start, item.start + .18, p);
