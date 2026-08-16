@@ -1710,6 +1710,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
 </head>
 <body>
 <div id="heillon-wow-v20" aria-label="HEILLON cinematic corridor: intenção, autoridade, decisão e HDR">
+  <audio id="corridor-soundtrack" preload="auto" loop playsinline src="/corridor-soundtrack.wav"></audio>
   <section class="stage">
     <canvas class="particle-field" aria-hidden="true"></canvas>
     <div class="shade" aria-hidden="true"></div>
@@ -1895,6 +1896,17 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
 </div>
 
 <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((registration) => registration.unregister());
+    }).catch(() => {});
+  }
+  if (window.caches) {
+    caches.keys().then((keys) => {
+      keys.filter((key) => key.indexOf('heillon-') === 0).forEach((key) => caches.delete(key));
+    }).catch(() => {});
+  }
+
   (() => {
     const root = document.getElementById('heillon-wow-v20');
     if (!root) return;
@@ -1923,6 +1935,8 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       'Decision Seal'
     ];
     const soundButtons = Array.from(document.querySelectorAll('[data-corridor-sound]'));
+    const soundtrack = document.getElementById('corridor-soundtrack');
+    if (soundtrack) soundtrack.volume = 0.78;
     let audio = null;
     let audioEnabled = false;
     let lastAudioStage = -1;
@@ -2038,28 +2052,62 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       });
     }
 
+    function updateSoundButtons(nextEnabled, blocked = false) {
+      soundButtons.forEach((button) => {
+        button.setAttribute('aria-pressed', String(nextEnabled && !blocked));
+        if (blocked) {
+          button.textContent = button.classList.contains('sound-nav-toggle') ? 'som bloqueado' : 'áudio bloqueado';
+          button.setAttribute('aria-label', 'O navegador bloqueou ou não suporta o áudio do corredor');
+          return;
+        }
+        button.textContent = nextEnabled ? 'som ligado 🔊' : (button.classList.contains('sound-nav-toggle') ? 'som 🔊' : 'ativar som 🔊');
+        button.setAttribute('aria-label', nextEnabled ? 'Desativar som do corredor' : 'Ativar som do corredor');
+      });
+    }
+
     function setCorridorAudioState(nextEnabled) {
       const sound = initCorridorAudio();
-      if (!sound) return;
+      if (!sound && !soundtrack) {
+        audioEnabled = false;
+        updateSoundButtons(false, true);
+        return;
+      }
       audioEnabled = nextEnabled;
-      const applyState = () => {
+      updateSoundButtons(nextEnabled);
+
+      const applyWebAudioState = () => {
+        if (!sound) return;
         const now = sound.context.currentTime;
         sound.master.gain.cancelScheduledValues(now);
         sound.master.gain.setTargetAtTime(nextEnabled ? 0.62 : 0.0001, now, nextEnabled ? 0.08 : 0.08);
-        soundButtons.forEach((button) => {
-          button.setAttribute('aria-pressed', String(nextEnabled));
-          button.textContent = nextEnabled ? 'som ligado 🔊' : (button.classList.contains('sound-nav-toggle') ? 'som 🔊' : 'ativar som 🔊');
-          button.setAttribute('aria-label', nextEnabled ? 'Desativar som do corredor' : 'Ativar som do corredor');
-        });
         if (nextEnabled) {
           playWakeTone();
           triggerStageTone(Math.max(0, lastAudioStage));
         }
       };
-      if (sound.context.state === 'suspended' && nextEnabled) {
-        sound.context.resume().then(applyState).catch(applyState);
-      } else {
-        applyState();
+
+      if (sound) {
+        if (sound.context.state === 'suspended' && nextEnabled) {
+          sound.context.resume().then(applyWebAudioState).catch(applyWebAudioState);
+        } else {
+          applyWebAudioState();
+        }
+      }
+
+      if (soundtrack) {
+        if (nextEnabled) {
+          const started = soundtrack.play();
+          if (started && typeof started.catch === 'function') {
+            started.catch(() => {
+              if (!sound) {
+                audioEnabled = false;
+                updateSoundButtons(false, true);
+              }
+            });
+          }
+        } else {
+          soundtrack.pause();
+        }
       }
     }
 

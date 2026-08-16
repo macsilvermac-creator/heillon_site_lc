@@ -1,28 +1,38 @@
-/* HEILLON Service Worker v3 — HPC era
- * Substitui o heillon-companion-v2 completamente.
- * Responsabilidade: cache do site principal apenas.
+/* HEILLON Service Worker v4
+ * Network-first for HTML to avoid stale institutional pages.
  */
-const CACHE = 'heillon-v3';
-const OFFLINE_ASSETS = ['/', '/index.html'];
+const CACHE = 'heillon-v4';
+const OFFLINE_ASSETS = ['/index.html'];
 
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(OFFLINE_ASSETS)));
+self.addEventListener('install', event => {
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(OFFLINE_ASSETS)));
   self.skipWaiting();
 });
 
-self.addEventListener('activate', e => {
-  // Remover caches antigos (heillon-companion-v2, etc.)
-  e.waitUntil(
+self.addEventListener('activate', event => {
+  event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+      Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))
     )
   );
   self.clients.claim();
 });
 
-self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
-  e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
-  );
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+  const accept = event.request.headers.get('accept') || '';
+  const isHtml = event.request.mode === 'navigate' || accept.includes('text/html');
+  if (isHtml) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          const copy = response.clone();
+          caches.open(CACHE).then(cache => cache.put('/index.html', copy));
+          return response;
+        })
+        .catch(() => caches.match('/index.html'))
+    );
+    return;
+  }
+  event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request)));
 });
