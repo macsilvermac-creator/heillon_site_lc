@@ -2133,15 +2133,21 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       }
     }
 
+    let lastSoundToggleAt = 0;
+    function handleSoundToggle(event) {
+      const now = performance.now();
+      if (event.type === 'click' && now - lastSoundToggleAt < 320) return;
+      lastSoundToggleAt = now;
+      event.preventDefault();
+      setCorridorAudioState(!audioEnabled);
+    }
+
     soundButtons.forEach((button) => {
-      button.addEventListener('pointerdown', (event) => {
-        event.preventDefault();
-        setCorridorAudioState(!audioEnabled);
-      });
+      button.addEventListener('pointerdown', handleSoundToggle);
+      button.addEventListener('click', handleSoundToggle);
       button.addEventListener('keydown', (event) => {
         if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          setCorridorAudioState(!audioEnabled);
+          handleSoundToggle(event);
         }
       });
     });
