@@ -1943,6 +1943,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
     let audioEnabled = false;
     let lastAudioStage = -1;
     let soundtrackVolume = 0;
+    const useCorridorSynth = false;
 
     function createNoiseBuffer(audioContext) {
       const length = audioContext.sampleRate * 2;
@@ -1955,6 +1956,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
     }
 
     function initCorridorAudio() {
+      if (!useCorridorSynth) return null;
       if (audio) return audio;
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       if (!AudioContext) return null;
@@ -2087,6 +2089,12 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       }
     }
 
+    function isCorridorAudioActive() {
+      const soundtrackPlaying = Boolean(soundtrack && !soundtrack.paused);
+      const contextRunning = Boolean(audio && audio.context && audio.context.state === 'running');
+      return Boolean(audioEnabled || soundtrackPlaying || contextRunning);
+    }
+
     function syncCorridorAudioFromScroll() {
       if (!audioEnabled) return;
       updateCorridorAudio(lastAudioStage < 0 ? 0 : lastAudioStage, p, {
@@ -2202,7 +2210,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
 
     function handleSoundToggle(event) {
       event.preventDefault();
-      setCorridorAudioState(!audioEnabled);
+      setCorridorAudioState(!isCorridorAudioActive());
     }
 
     document.addEventListener('click', (event) => {
