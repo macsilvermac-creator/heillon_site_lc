@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR" translate="no">
 <head>
 <meta charset="UTF-8">
@@ -1938,17 +1938,18 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       return Array.from(document.querySelectorAll('[data-corridor-sound]'));
     }
     const soundtrack = document.getElementById('corridor-soundtrack');
-    if (soundtrack) soundtrack.volume = 0.78;
+    if (soundtrack) soundtrack.volume = 0;
     let audio = null;
     let audioEnabled = false;
     let lastAudioStage = -1;
+    let soundtrackVolume = 0;
 
     function createNoiseBuffer(audioContext) {
       const length = audioContext.sampleRate * 2;
       const buffer = audioContext.createBuffer(1, length, audioContext.sampleRate);
       const data = buffer.getChannelData(0);
       for (let i = 0; i < length; i += 1) {
-        data[i] = (Math.random() * 2 - 1) * 0.18;
+        data[i] = (Math.random() * 2 - 1) * 0.045;
       }
       return buffer;
     }
@@ -1979,8 +1980,8 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       compressor.release.value = 0.18;
       humGain.gain.value = 0.072;
       subGain.gain.value = 0.026;
-      airGain.gain.value = 0.026;
-      shimmerGain.gain.value = 0.004;
+      airGain.gain.value = 0.004;
+      shimmerGain.gain.value = 0.007;
 
       hum.type = 'sine';
       sub.type = 'triangle';
@@ -1993,8 +1994,8 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       humFilter.frequency.value = 620;
       humFilter.Q.value = 0.7;
       airFilter.type = 'bandpass';
-      airFilter.frequency.value = 920;
-      airFilter.Q.value = 0.45;
+      airFilter.frequency.value = 1320;
+      airFilter.Q.value = 0.22;
 
       noise.buffer = createNoiseBuffer(context);
       noise.loop = true;
@@ -2098,6 +2099,8 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
 
       if (soundtrack) {
         if (nextEnabled) {
+          soundtrack.currentTime = Math.min(soundtrack.currentTime || 0, 0.2);
+          soundtrack.volume = Math.max(soundtrack.volume || 0, 0.015);
           const started = soundtrack.play();
           if (started && typeof started.catch === 'function') {
             started.catch(() => {
@@ -2108,27 +2111,54 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
             });
           }
         } else {
+          soundtrackVolume = 0;
+          soundtrack.volume = 0;
           soundtrack.pause();
         }
       }
     }
 
+    function updateSoundtrackScroll(value, dynamics) {
+      if (!soundtrack) return;
+      const rect = root.getBoundingClientRect();
+      const visiblePx = clamp(Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0), 0, window.innerHeight);
+      const visible = visiblePx / Math.max(1, window.innerHeight);
+      const corridorPresence = smoothstep(.08, .42, visible);
+      const opening = smoothstep(.02, .12, value);
+      const finalFade = 1 - smoothstep(.86, .96, value);
+      const activity = Math.max(dynamics.cutPulse, dynamics.sealPulse, dynamics.surgePulse);
+      const target = audioEnabled
+        ? corridorPresence * opening * finalFade * (0.08 + smoothstep(.12, .82, value) * 0.16 + activity * 0.07)
+        : 0;
+      soundtrackVolume += (target - soundtrackVolume) * 0.075;
+      soundtrack.volume = clamp(soundtrackVolume, 0, 0.30);
+      soundtrack.playbackRate = clamp(0.92 + value * 0.12 + dynamics.cutPulse * 0.035 - dynamics.sealPulse * 0.025, 0.88, 1.08);
+      if (audioEnabled && soundtrack.paused && target > .015) {
+        const started = soundtrack.play();
+        if (started && typeof started.catch === 'function') started.catch(() => {});
+      }
+      if (!audioEnabled || (target < .004 && soundtrackVolume < .006)) {
+        soundtrack.pause();
+      }
+    }
+
     function updateCorridorAudio(stageIndex, value, dynamics) {
+      updateSoundtrackScroll(value, dynamics);
       if (!audio || !audioEnabled) return;
       const context = audio.context;
       const now = context.currentTime;
       const depth = smoothstep(.08, .82, value);
       const finalClarity = smoothstep(.78, .95, value);
       const activity = Math.max(dynamics.cutPulse, dynamics.sealPulse, dynamics.surgePulse);
-      audio.hum.frequency.setTargetAtTime(45 + depth * 26 + activity * 10, now, 0.10);
-      audio.sub.frequency.setTargetAtTime(22 + depth * 8, now, 0.16);
-      audio.shimmer.frequency.setTargetAtTime(180 + depth * 260 + finalClarity * 180, now, 0.12);
-      audio.humFilter.frequency.setTargetAtTime(480 + depth * 520 + activity * 280, now, 0.12);
-      audio.airFilter.frequency.setTargetAtTime(720 + depth * 900, now, 0.20);
-      audio.humGain.gain.setTargetAtTime(0.072 + depth * 0.032, now, 0.16);
-      audio.subGain.gain.setTargetAtTime(0.026 * (1 - finalClarity * .68), now, 0.16);
-      audio.airGain.gain.setTargetAtTime(0.022 + dynamics.dustPulse * 0.034, now, 0.20);
-      audio.shimmerGain.gain.setTargetAtTime(0.006 + finalClarity * 0.052 + dynamics.sealPulse * 0.034, now, 0.12);
+      audio.hum.frequency.setTargetAtTime(58 + depth * 18 + activity * 6, now, 0.10);
+      audio.sub.frequency.setTargetAtTime(32 + depth * 5, now, 0.16);
+      audio.shimmer.frequency.setTargetAtTime(260 + depth * 220 + finalClarity * 120, now, 0.12);
+      audio.humFilter.frequency.setTargetAtTime(520 + depth * 460 + activity * 180, now, 0.12);
+      audio.airFilter.frequency.setTargetAtTime(840 + depth * 640, now, 0.20);
+      audio.humGain.gain.setTargetAtTime(0.018 + depth * 0.018, now, 0.16);
+      audio.subGain.gain.setTargetAtTime(0.006 * (1 - finalClarity * .75), now, 0.16);
+      audio.airGain.gain.setTargetAtTime(0.0018 + dynamics.dustPulse * 0.0025, now, 0.26);
+      audio.shimmerGain.gain.setTargetAtTime(0.006 + finalClarity * 0.016 + dynamics.sealPulse * 0.012, now, 0.12);
       if (stageIndex !== lastAudioStage) {
         lastAudioStage = stageIndex;
         triggerStageTone(stageIndex);
