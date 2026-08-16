@@ -1,7 +1,7 @@
 /* HEILLON Service Worker v4
  * Network-first for HTML to avoid stale institutional pages.
  */
-const CACHE = 'heillon-v7';
+const CACHE = 'heillon-v8';
 const OFFLINE_ASSETS = ['/index.html'];
 
 self.addEventListener('install', event => {

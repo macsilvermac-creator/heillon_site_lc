@@ -1944,6 +1944,9 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
     let lastAudioStage = -1;
     let soundtrackVolume = 0;
     const useCorridorSynth = false;
+    const audioInstanceId = Math.random().toString(36).slice(2);
+    const audioCommandKey = 'heillon-corridor-audio-command';
+    const audioChannel = 'BroadcastChannel' in window ? new BroadcastChannel('heillon-corridor-audio') : null;
 
     function createNoiseBuffer(audioContext) {
       const length = audioContext.sampleRate * 2;
@@ -2089,6 +2092,28 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       }
     }
 
+    function stopCorridorAudioEverywhere() {
+      const command = { type: 'HEILLON_CORRIDOR_AUDIO_STOP', source: audioInstanceId, at: Date.now() };
+      try { audioChannel?.postMessage(command); } catch (error) {}
+      try { localStorage.setItem(audioCommandKey, JSON.stringify(command)); } catch (error) {}
+    }
+
+    function applyExternalAudioCommand(command) {
+      if (!command || command.type !== 'HEILLON_CORRIDOR_AUDIO_STOP' || command.source === audioInstanceId) return;
+      audioEnabled = false;
+      updateSoundButtons(false);
+      stopCorridorAudioNow();
+    }
+
+    if (audioChannel) {
+      audioChannel.addEventListener('message', (event) => applyExternalAudioCommand(event.data));
+    }
+
+    window.addEventListener('storage', (event) => {
+      if (event.key !== audioCommandKey || !event.newValue) return;
+      try { applyExternalAudioCommand(JSON.parse(event.newValue)); } catch (error) {}
+    });
+
     function isCorridorAudioActive() {
       const soundtrackPlaying = Boolean(soundtrack && !soundtrack.paused);
       const contextRunning = Boolean(audio && audio.context && audio.context.state === 'running');
@@ -2208,7 +2233,13 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
 
     function handleSoundToggle(event) {
       event.preventDefault();
-      setCorridorAudioState(!isCorridorAudioActive());
+      if (isCorridorAudioActive()) {
+        setCorridorAudioState(false);
+        stopCorridorAudioEverywhere();
+        return;
+      }
+      stopCorridorAudioEverywhere();
+      setCorridorAudioState(true);
     }
 
     document.addEventListener('click', (event) => {
