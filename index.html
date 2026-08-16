@@ -99,10 +99,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:900;padding:1.4rem var(--pad);di
 .nm a:hover{color:var(--lav-b)}
 .nc{font-size:var(--xs);letter-spacing:.12em;text-transform:uppercase;color:var(--lav);text-decoration:none;border:1px solid rgba(123,127,196,0.26);padding:.48rem 1.18rem;transition:all .3s}
 .nc:hover{background:rgba(123,127,196,0.08);color:var(--lav-g);border-color:rgba(123,127,196,0.52)}
-.sound-nav-toggle{font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.14em;text-transform:uppercase;color:var(--lav-g);background:rgba(123,127,196,.12);border:1px solid rgba(168,171,223,.46);padding:.48rem .9rem;cursor:pointer;transition:all .25s;box-shadow:0 0 18px rgba(123,127,196,.12)}
+.sound-nav-toggle{width:34px;height:34px;display:inline-grid;place-items:center;font-family:'DM Mono',monospace;font-size:.9rem;line-height:1;color:var(--lav-g);background:rgba(123,127,196,.10);border:1px solid rgba(168,171,223,.34);padding:0;cursor:pointer;transition:all .25s;box-shadow:0 0 14px rgba(123,127,196,.10)}
 .sound-nav-toggle:hover{color:var(--void);background:var(--lav);border-color:var(--lav);box-shadow:0 0 28px rgba(168,171,223,.22)}
 .sound-nav-toggle[aria-pressed="true"]{color:#061018;background:linear-gradient(135deg,#44d984 0%,#d8bd58 100%);border-color:rgba(68,217,132,.86);box-shadow:0 0 0 1px rgba(216,189,88,.18),0 0 30px rgba(68,217,132,.26),0 0 54px rgba(216,189,88,.14)}
-.sound-nav-toggle[aria-pressed="true"]::after{content:'ON';margin-left:.48rem;color:#061018;opacity:.72;font-weight:800}
 .sound-nav-toggle:not([aria-pressed="true"]){animation:corridorSoundHint 2.8s ease-in-out infinite}
 @keyframes heillonGlitchText{0%,100%{transform:none;text-shadow:none;filter:none}18%{transform:translate(1px,-1px);text-shadow:-1px 0 rgba(34,197,94,.32),1px 0 rgba(168,171,223,.42)}28%{transform:translate(-1px,1px);text-shadow:1px 0 rgba(34,197,94,.26),-1px 0 rgba(168,171,223,.5)}38%{transform:translate(1px,.5px);filter:brightness(1.35)}52%,86%{transform:none;text-shadow:none;filter:none}}
 @keyframes heillonGlitchMark{0%,100%{transform:none;filter:none;box-shadow:0 0 18px rgba(123,127,196,.08)}16%{transform:translateX(1px) skewX(-3deg);filter:contrast(1.35) brightness(1.15);box-shadow:-3px 0 rgba(34,197,94,.26),3px 0 rgba(168,171,223,.38),0 0 24px rgba(168,171,223,.22)}30%{transform:translateX(-1px) skewX(3deg);box-shadow:3px 0 rgba(34,197,94,.22),-3px 0 rgba(168,171,223,.34),0 0 18px rgba(123,127,196,.16)}48%{transform:none;filter:brightness(1.2)}}
@@ -944,12 +943,13 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
     border: 1px solid rgba(168,171,223,.34);
     background: rgba(123,127,196,.10);
     color: rgba(236,234,245,.76);
-    font: 700 10px "DM Mono", ui-monospace, monospace;
-    letter-spacing: .14em;
-    text-transform: uppercase;
-    padding: 9px 12px;
+    font: 700 15px/1 "DM Mono", ui-monospace, monospace;
+    padding: 0;
     cursor: pointer;
-    min-width: 112px;
+    width: 38px;
+    height: 38px;
+    display: inline-grid;
+    place-items: center;
     text-align: center;
     transition: border-color .25s ease, color .25s ease, background .25s ease, box-shadow .25s ease;
   }
@@ -1737,7 +1737,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
         <span>core</span>
         <span>seal</span>
       </nav>
-      <button class="sound-toggle" type="button" data-corridor-sound aria-pressed="false" aria-label="Ativar som do corredor">ativar som 🔊</button>
+      <button class="sound-toggle" type="button" data-corridor-sound aria-pressed="false" aria-label="Ativar som do corredor" title="Ativar som do corredor">🔇</button>
     </header>
 
     <div class="evidence-cargo" aria-hidden="true">
@@ -2059,12 +2059,14 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
       getSoundButtons().forEach((button) => {
         button.setAttribute('aria-pressed', String(nextEnabled && !blocked));
         if (blocked) {
-          button.textContent = button.classList.contains('sound-nav-toggle') ? 'som bloqueado' : 'áudio bloqueado';
+          button.textContent = '!';
           button.setAttribute('aria-label', 'O navegador bloqueou ou não suporta o áudio do corredor');
+          button.setAttribute('title', 'Áudio bloqueado pelo navegador');
           return;
         }
-        button.textContent = nextEnabled ? 'som ligado 🔊' : (button.classList.contains('sound-nav-toggle') ? 'som 🔊' : 'ativar som 🔊');
+        button.textContent = nextEnabled ? '🔊' : '🔇';
         button.setAttribute('aria-label', nextEnabled ? 'Desativar som do corredor' : 'Ativar som do corredor');
+        button.setAttribute('title', nextEnabled ? 'Desativar som do corredor' : 'Ativar som do corredor');
       });
     }
 
@@ -2439,7 +2441,7 @@ footer{padding:2rem var(--pad);border-top:1px solid rgba(123,127,196,0.08);displ
   </ul>
   <a href="#cta" class="nm-item" style="font-size:var(--xs);letter-spacing:.14em;text-transform:uppercase;color:var(--lav);text-decoration:none;opacity:0.85;transition:opacity .3s;">Piloto</a>
   <div style="display:flex;align-items:center;gap:1rem;">
-    <button class="sound-nav-toggle" type="button" data-corridor-sound aria-pressed="false" aria-label="Ativar som do corredor">som 🔊</button>
+    <button class="sound-nav-toggle" type="button" data-corridor-sound aria-pressed="false" aria-label="Ativar som do corredor" title="Ativar som do corredor">🔇</button>
     <button id="lang-toggle" onclick="toggleLang()" style="font-family:'DM Mono',monospace;font-size:var(--xs);letter-spacing:.14em;text-transform:uppercase;color:var(--lav);background:transparent;border:1px solid rgba(123,127,196,0.22);padding:.3rem .75rem;cursor:pointer;transition:all .3s;">EN</button>
     <a href="https://hcc.heillon.com" class="nc" style="background:var(--lav);color:var(--void);border:none;text-decoration:none;"><span class="lang-pt">Entrar no HCC</span><span class="lang-en" style="display:none">Enter HCC</span></a>
     <a href="#cta" class="nc">Contact</a>
